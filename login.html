@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Welcome back — The App</title>
+    <meta name="i18n-title" content="meta.loginTitle" />
+    <meta
+      name="description"
+      content="Discover games and apps, complete simple tasks, and earn rewards once your proof is reviewed and approved."
+    />
+    <meta name="theme-color" content="#080a14" />
+
+    <!-- Sets language and direction before first paint; see index.html. -->
+    <script>
+      (function () {
+        try {
+          var supported = ["en", "ar"];
+          var stored = null;
+          try { stored = localStorage.getItem("theapp.locale"); } catch (e) {}
+          var locale = supported.indexOf(stored) > -1 ? stored : null;
+          if (!locale) {
+            var tags =
+              navigator.languages && navigator.languages.length
+                ? navigator.languages
+                : [navigator.language];
+            for (var i = 0; i < tags.length; i++) {
+              var base = String(tags[i] || "").toLowerCase().split("-")[0];
+              if (supported.indexOf(base) > -1) { locale = base; break; }
+            }
+          }
+          locale = locale || "en";
+          var root = document.documentElement;
+          root.lang = locale;
+          root.dir = locale === "ar" ? "rtl" : "ltr";
+          if (locale !== "en") root.classList.add("i18n-pending");
+        } catch (e) {}
+      })();
+    </script>
+
+    <link rel="icon" href="assets/icons/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://www.gstatic.com" />
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/components.css" />
+    <link rel="stylesheet" href="css/responsive.css" />
+    <script type="module" src="js/main.js"></script>
+  </head>
+
+  <body class="auth-page">
+    <a class="skip-link" href="#main" data-i18n="common.skipToContent">Skip to content</a>
+
+    <header>
+      <div class="container auth-page__bar">
+        <a class="brand" href="index.html">
+          <span class="brand__mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <rect x="3.5" y="14" width="4" height="6.5" rx="1.6" fill="#fff" fill-opacity=".62" />
+              <rect x="10" y="9.5" width="4" height="11" rx="1.6" fill="#fff" fill-opacity=".82" />
+              <rect x="16.5" y="4" width="4" height="16.5" rx="1.6" fill="#fff" />
+            </svg>
+          </span>
+          <span class="brand__name">The App</span>
+        </a>
+        <div class="lang-switch" data-lang-switch aria-label="Change language"></div>
+      </div>
+    </header>
+
+    <main class="auth-page__main" id="main">
+      <div class="card auth-card">
+        <!-- Shown instead of everything else when Firebase has no
+             configuration, so nobody is handed a form that cannot
+             succeed. -->
+        <div class="state auth-card__state" data-auth-notice hidden>
+          <p class="state__title" data-i18n="auth.notConfiguredTitle">
+            Sign-in is not configured yet
+          </p>
+          <p class="state__body" data-i18n="auth.notConfiguredBody">
+            Firebase credentials are missing from this environment, so accounts cannot be created
+            or used.
+          </p>
+        </div>
+
+        <div data-auth-panel>
+          <!-- ============================================= log in view -->
+          <div data-login-view>
+            <h1 class="auth-card__title" data-i18n="auth.loginTitle">Welcome back</h1>
+            <p class="auth-card__subtitle" data-i18n="auth.loginSubtitle">
+              Log in to continue where you left off.
+            </p>
+
+            <form class="form" data-auth-form="login" novalidate>
+              <div class="field" data-field="email">
+                <label class="field__label" for="email" data-i18n="auth.fields.email">Email</label>
+                <input
+                  class="field__control"
+                  id="email"
+                  name="email"
+                  type="email"
+                  autocomplete="email"
+                  dir="ltr"
+                  placeholder="you@example.com"
+                  aria-describedby="email-error"
+                  data-i18n-placeholder="auth.fields.emailPlaceholder"
+                />
+                <p class="field__error" id="email-error" data-field-error></p>
+              </div>
+
+              <div class="field" data-field="password">
+                <label class="field__label" for="password" data-i18n="auth.fields.password">
+                  Password
+                </label>
+                <input
+                  class="field__control"
+                  id="password"
+                  name="password"
+                  type="password"
+                  autocomplete="current-password"
+                  aria-describedby="password-error"
+                />
+                <p class="field__error" id="password-error" data-field-error></p>
+              </div>
+              <p class="form__error" role="alert" data-form-error></p>
+
+              <button
+                class="btn btn--primary btn--block"
+                type="submit"
+                data-auth-submit
+                data-i18n="auth.loginSubmit"
+              >
+                Log in
+              </button>
+            </form>
+
+            <div class="auth-divider"><span data-i18n="auth.orDivider">or</span></div>
+
+            <button class="btn btn--secondary btn--block" type="button" data-google-auth>
+              <svg class="google-icon" viewBox="0 0 20 20" aria-hidden="true">
+                <path fill="#4285F4" d="M19.6 10.23c0-.68-.06-1.33-.17-1.96H10v3.71h5.38a4.6 4.6 0 0 1-2 3.02v2.5h3.23c1.89-1.74 2.98-4.3 2.98-7.27Z" />
+                <path fill="#34A853" d="M10 20c2.7 0 4.96-.89 6.61-2.42l-3.23-2.5c-.9.6-2.05.96-3.38.96-2.6 0-4.8-1.75-5.59-4.11H1.07v2.59A10 10 0 0 0 10 20Z" />
+                <path fill="#FBBC05" d="M4.41 11.93A5.99 5.99 0 0 1 4.09 10c0-.67.12-1.32.32-1.93V5.48H1.07A10 10 0 0 0 0 10c0 1.61.39 3.14 1.07 4.52l3.34-2.59Z" />
+                <path fill="#EA4335" d="M10 3.96c1.47 0 2.79.5 3.83 1.49l2.87-2.87C14.95.99 12.7 0 10 0 6.09 0 2.71 2.24 1.07 5.48l3.34 2.59C5.2 5.71 7.4 3.96 10 3.96Z" />
+              </svg>
+              <span data-i18n="auth.google">Continue with Google</span>
+            </button>
+
+            <p class="auth-card__footer">
+              <button type="button" class="auth-card__link" data-forgot-trigger data-i18n="auth.forgotPassword">
+                Forgot password?
+              </button>
+            </p>
+            <p class="auth-card__footer">
+              <span data-i18n="auth.loginSwitchPrompt">New here?</span>
+              <a href="register.html" data-i18n="auth.loginSwitchAction">Create an account</a>
+            </p>
+          </div>
+
+          <!-- ======================================= forgot password view -->
+          <div data-reset-view hidden>
+            <h1 class="auth-card__title" data-i18n="auth.forgotPasswordTitle">
+              Reset your password
+            </h1>
+            <p class="auth-card__subtitle" data-i18n="auth.forgotPasswordSubtitle">
+              Enter your email and we'll send you a reset link.
+            </p>
+
+            <div class="state auth-card__state" data-reset-sent hidden>
+              <p class="state__title" data-i18n="auth.forgotPasswordSentTitle">Check your email</p>
+              <p class="state__body" data-i18n="auth.forgotPasswordSentBody">
+                If an account uses that address, a password reset link is on its way.
+              </p>
+            </div>
+
+            <form class="form" data-reset-form novalidate>
+              <div class="field" data-field="email">
+                <label class="field__label" for="reset-email" data-i18n="auth.fields.email">
+                  Email
+                </label>
+                <input
+                  class="field__control"
+                  id="reset-email"
+                  name="email"
+                  type="email"
+                  autocomplete="email"
+                  dir="ltr"
+                  placeholder="you@example.com"
+                  aria-describedby="reset-email-error"
+                  data-i18n-placeholder="auth.fields.emailPlaceholder"
+                />
+                <p class="field__error" id="reset-email-error" data-field-error></p>
+              </div>
+              <p class="form__error" role="alert" data-form-error></p>
+
+              <button
+                class="btn btn--primary btn--block"
+                type="submit"
+                data-auth-submit
+                data-i18n="auth.forgotPasswordSubmit"
+              >
+                Send reset link
+              </button>
+            </form>
+
+            <p class="auth-card__footer">
+              <button type="button" class="auth-card__link" data-reset-back data-i18n="auth.forgotPasswordBack">
+                Back to log in
+              </button>
+            </p>
+          </div>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>

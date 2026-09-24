@@ -1,0 +1,87 @@
+rules_version = '2';
+
+// Security model
+// --------------
+// Authentication itself (who you are) is Firebase Authentication's job.
+// This file only decides what a signed-in identity may read or write.
+//
+// The user's own profile at users/{uid} is the only collection this
+// phase of the app uses. The rules below let someone read and lightly
+// edit *their own* profile document and nothing else:
+//   - an unauthenticated request can read or write nothing;
+//   - a signed-in user can read only their own profile, never anyone
+//     else's, and no query may list the collection (so there is no way
+//     to enumerate every user even one document at a time);
+//   - a profile may only be created by its own owner, with exactly the
+//     expected fields, and role == "user" — the literal string, never
+//     taken from the document being written in any other way;
+//   - once created, `uid`, `email`, and `role` can never be changed by
+//     the client at all. There is no client path to self-promotion, and
+//     none is planned: a future admin role would be granted through the
+//     Admin SDK or the Firebase console, never through these rules.
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    match /users/{userId} {
+      // Only the owner may fetch their own document by id. `list` is not
+      // granted at all, so no client can query the collection — not even
+      // to page through their own document, and certainly not anyone
+      // else's.
+      allow get: if isOwner(userId);
+      allow list: if false;
+
+      // First write for this uid. Every field is required, exactly this
+      // set and no more; `role` must be the literal "user"; the email
+      // must match the caller's own authenticated email, so no client
+      // can claim a different address was used to sign up; and the
+      // timestamps must actually be timestamps, not an arbitrary
+      // client-supplied number or string standing in for one.
+      allow create: if isOwner(userId)
+        && request.resource.data.keys().hasOnly([
+             'uid', 'email', 'displayName', 'photoURL',
+             'role', 'preferredLanguage', 'createdAt', 'updatedAt'
+           ])
+        && request.resource.data.keys().hasAll([
+             'uid', 'email', 'displayName', 'photoURL',
+             'role', 'preferredLanguage', 'createdAt', 'updatedAt'
+           ])
+        && request.resource.data.uid == userId
+        && request.resource.data.role == 'user'
+        && request.resource.data.email == request.auth.token.email
+        && request.resource.data.displayName is string
+        && (request.resource.data.photoURL == null || request.resource.data.photoURL is string)
+        && request.resource.data.preferredLanguage is string
+        && request.resource.data.createdAt is timestamp
+        && request.resource.data.updatedAt is timestamp;
+
+      // Later writes from the owner may only touch presentation fields.
+      // `uid`, `email`, and `role` must come out of the write identical
+      // to what they already were — this is what makes
+      // role: "admin" unreachable from the client, permanently, not just
+      // at creation time.
+      allow update: if isOwner(userId)
+        && request.resource.data.uid == resource.data.uid
+        && request.resource.data.email == resource.data.email
+        && request.resource.data.role == resource.data.role
+        && request.resource.data.updatedAt is timestamp
+        && request.resource.data.diff(resource.data).affectedKeys()
+             .hasOnly(['displayName', 'photoURL', 'preferredLanguage', 'updatedAt']);
+
+      allow delete: if false;
+    }
+
+    // Everything else is closed by default.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

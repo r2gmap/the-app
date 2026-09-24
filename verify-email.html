@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Verify your email — The App</title>
+    <meta name="i18n-title" content="verify.title" />
+    <meta name="robots" content="noindex" />
+    <meta
+      name="description"
+      content="Discover games and apps, complete simple tasks, and earn rewards once your proof is reviewed and approved."
+    />
+    <meta name="theme-color" content="#080a14" />
+
+    <!-- Sets language and direction before first paint; see index.html. -->
+    <script>
+      (function () {
+        try {
+          var supported = ["en", "ar"];
+          var stored = null;
+          try { stored = localStorage.getItem("theapp.locale"); } catch (e) {}
+          var locale = supported.indexOf(stored) > -1 ? stored : null;
+          if (!locale) {
+            var tags =
+              navigator.languages && navigator.languages.length
+                ? navigator.languages
+                : [navigator.language];
+            for (var i = 0; i < tags.length; i++) {
+              var base = String(tags[i] || "").toLowerCase().split("-")[0];
+              if (supported.indexOf(base) > -1) { locale = base; break; }
+            }
+          }
+          locale = locale || "en";
+          var root = document.documentElement;
+          root.lang = locale;
+          root.dir = locale === "ar" ? "rtl" : "ltr";
+          if (locale !== "en") root.classList.add("i18n-pending");
+        } catch (e) {}
+      })();
+    </script>
+
+    <link rel="icon" href="assets/icons/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://www.gstatic.com" />
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/components.css" />
+    <link rel="stylesheet" href="css/responsive.css" />
+    <script type="module" src="js/main.js"></script>
+  </head>
+
+  <body class="auth-page">
+    <a class="skip-link" href="#main" data-i18n="common.skipToContent">Skip to content</a>
+
+    <header>
+      <div class="container auth-page__bar">
+        <a class="brand" href="index.html">
+          <span class="brand__mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <rect x="3.5" y="14" width="4" height="6.5" rx="1.6" fill="#fff" fill-opacity=".62" />
+              <rect x="10" y="9.5" width="4" height="11" rx="1.6" fill="#fff" fill-opacity=".82" />
+              <rect x="16.5" y="4" width="4" height="16.5" rx="1.6" fill="#fff" />
+            </svg>
+          </span>
+          <span class="brand__name">The App</span>
+        </a>
+        <div class="lang-switch" data-lang-switch aria-label="Change language"></div>
+      </div>
+    </header>
+
+    <main class="auth-page__main" id="main">
+      <div class="card auth-card" data-verify-page>
+        <!-- Shown until requireAuth() resolves the first real auth state,
+             so this page never flashes the wrong content while Firebase
+             restores the session. -->
+        <div class="state auth-card__state" data-verify-loading>
+          <p class="state__title" data-i18n="verify.loadingTitle">Checking your session</p>
+        </div>
+
+        <!-- Safety net only: requireAuth() already redirects to
+             login.html when no one is signed in. This covers the instant
+             before that navigation lands. -->
+        <div class="state auth-card__state" data-verify-guest hidden>
+          <p class="state__title" data-i18n="verify.guestTitle">You need to log in first</p>
+          <p class="state__body" data-i18n="verify.guestBody">
+            Log in or create an account to verify an email address.
+          </p>
+        </div>
+
+        <div data-verify-pending hidden>
+          <h1 class="auth-card__title" data-i18n="verify.title">Verify your email</h1>
+          <p class="auth-card__subtitle" data-i18n="verify.subtitle">
+            We sent a verification link to:
+          </p>
+          <p class="auth-card__email" data-verify-email dir="ltr"></p>
+          <p class="auth-card__note" data-i18n="verify.instructions">
+            Open the link in that email to verify your address. Check your spam folder if it does
+            not arrive within a few minutes.
+          </p>
+
+          <div class="state auth-card__state" data-verify-resend-sent hidden>
+            <p class="state__title" data-i18n="verify.resendSentTitle">Verification email sent</p>
+          </div>
+          <div class="state auth-card__state state--error" data-verify-still-unverified hidden>
+            <p class="state__title" data-i18n="verify.stillUnverified">
+              Still not verified. Check your inbox, or resend the email.
+            </p>
+          </div>
+
+          <div class="auth-card__actions">
+            <button
+              class="btn btn--primary btn--block"
+              type="button"
+              data-verify-check
+              data-i18n="verify.checkVerification"
+            >
+              I verified my email
+            </button>
+            <button
+              class="btn btn--secondary btn--block"
+              type="button"
+              data-verify-resend
+              data-i18n="verify.resend"
+            >
+              Resend verification email
+            </button>
+          </div>
+
+          <p class="auth-card__footer">
+            <button type="button" class="auth-card__link" data-auth-logout data-i18n="verify.logout">
+              Log out
+            </button>
+          </p>
+        </div>
+
+        <div data-verify-verified hidden>
+          <h1 class="auth-card__title" data-i18n="verify.verifiedTitle">Your email is verified</h1>
+          <p class="auth-card__subtitle" data-i18n="verify.verifiedBody">
+            You're all set. There is nothing else to do here yet.
+          </p>
+          <div class="auth-card__actions">
+            <a class="btn btn--primary btn--block" href="index.html" data-i18n="verify.goHome">
+              Back to home
+            </a>
+          </div>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>

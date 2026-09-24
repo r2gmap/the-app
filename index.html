@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>The App — Play. Try. Earn.</title>
+    <meta name="i18n-title" content="meta.title" />
+    <meta
+      name="description"
+      content="Discover games and apps, complete simple tasks, and earn rewards once your proof is reviewed and approved."
+    />
+    <meta name="theme-color" content="#080a14" />
+
+    <!--
+      Sets language and direction before first paint, so an Arabic
+      visitor never sees the page flip from LTR. The cloak class is only
+      added for a non-English locale, and is removed once the strings are
+      applied — a visitor without JavaScript never gets a hidden page,
+      because this script does not run for them either.
+    -->
+    <script>
+      (function () {
+        try {
+          var supported = ["en", "ar"];
+          var stored = null;
+          try {
+            stored = localStorage.getItem("theapp.locale");
+          } catch (e) {}
+          var locale = supported.indexOf(stored) > -1 ? stored : null;
+          if (!locale) {
+            var tags =
+              navigator.languages && navigator.languages.length
+                ? navigator.languages
+                : [navigator.language];
+            for (var i = 0; i < tags.length; i++) {
+              var base = String(tags[i] || "").toLowerCase().split("-")[0];
+              if (supported.indexOf(base) > -1) {
+                locale = base;
+                break;
+              }
+            }
+          }
+          locale = locale || "en";
+          var root = document.documentElement;
+          root.lang = locale;
+          root.dir = locale === "ar" ? "rtl" : "ltr";
+          if (locale !== "en") root.classList.add("i18n-pending");
+        } catch (e) {}
+      })();
+    </script>
+
+    <link rel="icon" href="assets/icons/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://www.gstatic.com" />
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/components.css" />
+    <link rel="stylesheet" href="css/responsive.css" />
+    <script type="module" src="js/main.js"></script>
+  </head>
+
+  <body>
+    <a class="skip-link" href="#main" data-i18n="common.skipToContent">Skip to content</a>
+
+    <header class="site-header">
+      <div class="container site-header__bar">
+        <a class="brand" href="index.html">
+          <span class="brand__mark" aria-hidden="true">
+            <!-- Three ascending bars: pick a task, complete it, get paid.
+                 Not mirrored under RTL — a logo is a mark, not a layout. -->
+            <svg viewBox="0 0 24 24" fill="none">
+              <rect x="3.5" y="14" width="4" height="6.5" rx="1.6" fill="#fff" fill-opacity=".62" />
+              <rect x="10" y="9.5" width="4" height="11" rx="1.6" fill="#fff" fill-opacity=".82" />
+              <rect x="16.5" y="4" width="4" height="16.5" rx="1.6" fill="#fff" />
+            </svg>
+          </span>
+          <span class="brand__name">The App</span>
+        </a>
+
+        <nav class="site-nav" aria-label="Main" data-i18n-aria-label="nav.primary">
+          <ul class="site-nav__list">
+            <li><a class="site-nav__link" href="#games" data-i18n="nav.games">Games</a></li>
+            <li><a class="site-nav__link" href="#apps" data-i18n="nav.apps">Apps</a></li>
+            <li>
+              <a class="site-nav__link" href="#how-it-works" data-i18n="nav.howItWorks">
+                How it works
+              </a>
+            </li>
+          </ul>
+        </nav>
+
+        <div class="site-header__actions">
+          <div class="lang-switch" data-lang-switch aria-label="Change language"></div>
+
+          <div class="site-header__auth">
+            <!-- Both states start hidden and stay that way until Firebase
+                 reports the real session, so a returning user is never
+                 shown "Log in" for a flicker before it does. -->
+            <div data-auth-guest hidden>
+              <a class="btn btn--ghost btn--sm" href="login.html" data-i18n="nav.login">Log in</a>
+              <a class="btn btn--primary btn--sm" href="register.html" data-i18n="nav.signUp">
+                Sign up
+              </a>
+            </div>
+            <div class="site-header__user" data-auth-user hidden>
+              <span class="site-header__user-name" data-auth-user-name></span>
+              <button class="btn btn--ghost btn--sm" type="button" data-auth-logout data-i18n="nav.logout">
+                Log out
+              </button>
+            </div>
+          </div>
+
+          <button
+            class="menu-trigger"
+            type="button"
+            data-menu-trigger
+            aria-expanded="false"
+            aria-controls="mobile-nav"
+            aria-label="Open menu"
+          >
+            <svg class="menu-trigger__open" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+              <path d="M3.5 6h13M3.5 10h13M3.5 14h13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+            </svg>
+            <svg class="menu-trigger__close" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+              <path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="mobile-nav" id="mobile-nav" data-menu-panel hidden>
+        <div class="container mobile-nav__inner">
+          <nav aria-label="Main" data-i18n-aria-label="nav.primary">
+            <ul>
+              <li><a class="mobile-nav__link" href="#games" data-i18n="nav.games">Games</a></li>
+              <li><a class="mobile-nav__link" href="#apps" data-i18n="nav.apps">Apps</a></li>
+              <li>
+                <a class="mobile-nav__link" href="#how-it-works" data-i18n="nav.howItWorks">
+                  How it works
+                </a>
+              </li>
+            </ul>
+          </nav>
+          <div class="mobile-nav__actions" data-auth-guest hidden>
+            <a class="btn btn--secondary" href="login.html" data-i18n="nav.login">Log in</a>
+            <a class="btn btn--primary" href="register.html" data-i18n="nav.signUp">Sign up</a>
+          </div>
+          <div class="mobile-nav__actions" data-auth-user hidden>
+            <span class="site-header__user-name site-header__user-name--mobile" data-auth-user-name></span>
+            <button class="btn btn--secondary" type="button" data-auth-logout data-i18n="nav.logout">
+              Log out
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main id="main">
+      <!-- ============================================ hero -->
+      <section class="hero">
+        <div class="container hero__grid">
+          <div>
+            <h1 class="hero__title">
+              <span data-i18n="hero.play">Play.</span>
+              <span data-i18n="hero.tryIt">Try.</span>
+              <span data-i18n="hero.earn">Earn.</span>
+            </h1>
+            <p class="hero__lead" data-i18n="hero.subtitle">
+              Discover games and apps, complete a simple task, and earn a reward once your proof is
+              approved.
+            </p>
+            <div class="hero__actions">
+              <a class="btn btn--primary btn--lg" href="register.html" data-i18n="hero.primaryCta">
+                Start earning
+              </a>
+              <a class="btn btn--secondary btn--lg" href="#how-it-works" data-i18n="hero.secondaryCta">
+                How it works
+              </a>
+            </div>
+            <p class="hero__note" data-i18n="hero.note">
+              Free to join. No payment required to start.
+            </p>
+          </div>
+
+          <!-- A miniature of the real flow, not a collage of floating
+               cards. Labelled as a demo and built from an invented offer,
+               so nothing reads as live data or a real balance. -->
+          <div class="hero__demo">
+            <div class="card hero-demo">
+              <div class="hero-demo__head">
+                <p class="hero-demo__notice" data-i18n="common.demoNotice">
+                  Example content, shown while no live offers are published.
+                </p>
+                <span class="badge" data-i18n="common.demoLabel">Demo preview</span>
+              </div>
+
+              <ol>
+                <li class="hero-demo__node">
+                  <div class="hero-demo__rail">
+                    <span class="hero-demo__dot hero-demo__dot--offer"></span>
+                    <span class="hero-demo__line"></span>
+                  </div>
+                  <div class="hero-demo__content">
+                    <p class="hero-demo__label" data-i18n="hero.demo.stepOffer">Pick an offer</p>
+                    <div class="hero-demo__row">
+                      <div class="hero-demo__thumb" data-hero-thumb></div>
+                      <div class="hero-demo__text">
+                        <p class="hero-demo__name" data-i18n="hero.demo.offerTitle">Space Frontier</p>
+                        <p class="hero-demo__meta" data-i18n="hero.demo.offerRequirement">
+                          Reach level 5
+                        </p>
+                      </div>
+                      <p class="hero-demo__amount" data-demo-amount>$0.50</p>
+                    </div>
+                  </div>
+                </li>
+
+                <li class="hero-demo__node">
+                  <div class="hero-demo__rail">
+                    <span class="hero-demo__dot hero-demo__dot--proof"></span>
+                    <span class="hero-demo__line"></span>
+                  </div>
+                  <div class="hero-demo__content">
+                    <p class="hero-demo__label" data-i18n="hero.demo.stepProof">Send your proof</p>
+                    <div class="hero-demo__row">
+                      <span class="hero-demo__icon">
+                        <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                          <rect x="2.5" y="4.5" width="15" height="11" rx="2" stroke="currentColor" stroke-width="1.5" />
+                          <circle cx="7" cy="9" r="1.6" stroke="currentColor" stroke-width="1.4" />
+                          <path d="M3 14l4.5-4 4 3.5 2.5-2 3 2.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                      </span>
+                      <div class="hero-demo__text">
+                        <p class="hero-demo__strong" data-i18n="hero.demo.proofLabel">
+                          Screenshot uploaded
+                        </p>
+                      </div>
+                      <span class="badge badge--pending" data-i18n="hero.demo.proofStatus">
+                        Pending review
+                      </span>
+                    </div>
+                  </div>
+                </li>
+
+                <li class="hero-demo__node">
+                  <div class="hero-demo__rail">
+                    <span class="hero-demo__dot hero-demo__dot--reward"></span>
+                  </div>
+                  <div class="hero-demo__content">
+                    <p class="hero-demo__label" data-i18n="hero.demo.stepReward">Get paid</p>
+                    <div class="hero-demo__row hero-demo__row--reward">
+                      <span class="hero-demo__icon hero-demo__icon--reward">
+                        <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                          <rect x="2.5" y="5" width="15" height="10.5" rx="2.5" stroke="currentColor" stroke-width="1.5" />
+                          <path d="M13.5 10.25h3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+                        </svg>
+                      </span>
+                      <div class="hero-demo__text">
+                        <p class="hero-demo__strong" data-i18n="hero.demo.walletLabel">Wallet</p>
+                        <p class="hero-demo__sub" data-i18n="hero.demo.walletNote">
+                          Added after approval
+                        </p>
+                      </div>
+                      <p class="hero-demo__amount hero-demo__amount--lg" data-demo-amount-credit>
+                        +$0.50
+                      </p>
+                    </div>
+                  </div>
+                </li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================ how it works -->
+      <section class="section" id="how-it-works" aria-labelledby="how-title">
+        <div class="container">
+          <header class="section-head">
+            <div>
+              <h2 class="section-head__title" id="how-title" data-i18n="how.title">
+                Three steps, start to finish
+              </h2>
+              <p class="section-head__subtitle" data-i18n="how.subtitle">
+                No tracking software and no hidden conditions. You send proof, a person reviews it.
+              </p>
+            </div>
+          </header>
+
+          <ol class="steps">
+            <li class="step">
+              <span class="step__number" aria-hidden="true">1</span>
+              <h3 class="step__title" data-i18n="how.step1Title">Choose a task</h3>
+              <p class="step__body" data-i18n="how.step1Body">
+                Find a game or app and pick an available reward.
+              </p>
+            </li>
+            <li class="step">
+              <span class="step__number" aria-hidden="true">2</span>
+              <h3 class="step__title" data-i18n="how.step2Title">Complete it</h3>
+              <p class="step__body" data-i18n="how.step2Body">
+                Follow the requirement, such as reaching a specific level.
+              </p>
+            </li>
+            <li class="step">
+              <span class="step__number" aria-hidden="true">3</span>
+              <h3 class="step__title" data-i18n="how.step3Title">Get rewarded</h3>
+              <p class="step__body" data-i18n="how.step3Body">
+                Submit proof. Once an admin approves it, the reward is added to your wallet.
+              </p>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- ============================================ offers -->
+      <section class="section" id="offers" aria-labelledby="offers-title">
+        <div class="container">
+          <header class="section-head">
+            <div>
+              <h2 class="section-head__title" id="offers-title" data-i18n="offers.title">
+                Earn from games and apps
+              </h2>
+              <p class="section-head__subtitle" data-i18n="offers.subtitle">
+                Choose an offer, complete the requirement, and submit your proof.
+              </p>
+            </div>
+            <span class="badge badge--pending" data-offers-demo-badge hidden data-i18n="common.demoLabel">
+              Demo preview
+            </span>
+          </header>
+
+          <p class="notice notice--demo" data-offers-notice hidden data-i18n="common.demoNotice">
+            Example content, shown while no live offers are published.
+          </p>
+
+          <!-- Loading, empty and error states are painted here. -->
+          <div data-offers-status></div>
+
+          <div data-offers-groups hidden>
+            <section class="offer-group" id="games" aria-labelledby="games-title">
+              <div class="offer-group__head">
+                <h3 class="offer-group__title" id="games-title" data-i18n="nav.games">Games</h3>
+                <span class="offer-group__rule" aria-hidden="true"></span>
+                <span class="offer-group__count" data-offers-count aria-hidden="true"></span>
+              </div>
+              <div class="offer-grid" data-offers-grid="game"></div>
+            </section>
+
+            <section class="offer-group" id="apps" aria-labelledby="apps-title">
+              <div class="offer-group__head">
+                <h3 class="offer-group__title" id="apps-title" data-i18n="nav.apps">Apps</h3>
+                <span class="offer-group__rule" aria-hidden="true"></span>
+                <span class="offer-group__count" data-offers-count aria-hidden="true"></span>
+              </div>
+              <div class="offer-grid" data-offers-grid="app"></div>
+            </section>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================ trust -->
+      <section class="section trust" aria-labelledby="trust-title">
+        <div class="container trust__grid">
+          <div class="trust__intro">
+            <h2 class="section-head__title" id="trust-title" data-i18n="trust.title">
+              How rewards actually work
+            </h2>
+            <p class="section-head__subtitle" data-i18n="trust.subtitle">
+              Every reward is tied to a task, and every payout is traceable.
+            </p>
+          </div>
+
+          <ul class="trust__list">
+            <li class="trust__item">
+              <span class="trust__icon" aria-hidden="true">
+                <svg viewBox="0 0 20 20" fill="none">
+                  <path d="M4 10.5l4 4 8-9" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </span>
+              <div>
+                <h3 class="trust__title" data-i18n="trust.tiedTitle">Rewards are tied to tasks</h3>
+                <p class="trust__body" data-i18n="trust.tiedBody">
+                  Each offer states its requirement and its exact reward before you start.
+                </p>
+              </div>
+            </li>
+            <li class="trust__item">
+              <span class="trust__icon" aria-hidden="true">
+                <svg viewBox="0 0 20 20" fill="none">
+                  <path d="M4 10.5l4 4 8-9" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </span>
+              <div>
+                <h3 class="trust__title" data-i18n="trust.proofTitle">You submit proof</h3>
+                <p class="trust__body" data-i18n="trust.proofBody">
+                  Finish the requirement, then upload a screenshot showing it is done.
+                </p>
+              </div>
+            </li>
+            <li class="trust__item">
+              <span class="trust__icon" aria-hidden="true">
+                <svg viewBox="0 0 20 20" fill="none">
+                  <path d="M4 10.5l4 4 8-9" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </span>
+              <div>
+                <h3 class="trust__title" data-i18n="trust.reviewTitle">A person reviews it</h3>
+                <p class="trust__body" data-i18n="trust.reviewBody">
+                  Submissions are checked manually by an administrator, not by an automated tracker.
+                </p>
+              </div>
+            </li>
+            <li class="trust__item">
+              <span class="trust__icon" aria-hidden="true">
+                <svg viewBox="0 0 20 20" fill="none">
+                  <path d="M4 10.5l4 4 8-9" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </span>
+              <div>
+                <h3 class="trust__title" data-i18n="trust.approvedTitle">
+                  Approved rewards reach your wallet
+                </h3>
+                <p class="trust__body" data-i18n="trust.approvedBody">
+                  An approved submission creates a wallet transaction you can trace back to the offer.
+                </p>
+              </div>
+            </li>
+            <li class="trust__item">
+              <span class="trust__icon" aria-hidden="true">
+                <svg viewBox="0 0 20 20" fill="none">
+                  <path d="M4 10.5l4 4 8-9" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </span>
+              <div>
+                <h3 class="trust__title" data-i18n="trust.rejectedTitle">Rejections come with a reason</h3>
+                <p class="trust__body" data-i18n="trust.rejectedBody">
+                  If a submission is rejected, you receive the reason in the app and can try again.
+                </p>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ============================================ final cta -->
+      <section class="section final-cta" aria-labelledby="cta-title">
+        <div class="container">
+          <div class="final-cta__panel">
+            <div class="final-cta__inner">
+              <h2 class="final-cta__title" id="cta-title" data-i18n="cta.title">Ready to start?</h2>
+              <p class="final-cta__body" data-i18n="cta.body">
+                Create your account and explore the rewards that are available.
+              </p>
+              <div class="final-cta__actions">
+                <a class="btn btn--primary btn--lg" href="register.html" data-i18n="cta.button">
+                  Create free account
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <div class="site-footer__grid">
+          <div class="site-footer__about">
+            <div class="brand">
+              <span class="brand__mark" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <rect x="3.5" y="14" width="4" height="6.5" rx="1.6" fill="#fff" fill-opacity=".62" />
+                  <rect x="10" y="9.5" width="4" height="11" rx="1.6" fill="#fff" fill-opacity=".82" />
+                  <rect x="16.5" y="4" width="4" height="16.5" rx="1.6" fill="#fff" />
+                </svg>
+              </span>
+              <span class="brand__name">The App</span>
+            </div>
+            <p class="site-footer__tagline" data-i18n="footer.description">
+              Complete simple tasks in games and apps, and earn rewards after review.
+            </p>
+          </div>
+
+          <div>
+            <h2 class="site-footer__heading" data-i18n="footer.product">Product</h2>
+            <ul class="site-footer__list">
+              <li><a class="site-footer__link" href="#games" data-i18n="nav.games">Games</a></li>
+              <li><a class="site-footer__link" href="#apps" data-i18n="nav.apps">Apps</a></li>
+              <li>
+                <a class="site-footer__link" href="#how-it-works" data-i18n="nav.howItWorks">
+                  How it works
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <h2 class="site-footer__heading" data-i18n="footer.account">Account</h2>
+            <ul class="site-footer__list">
+              <li><a class="site-footer__link" href="login.html" data-i18n="nav.login">Log in</a></li>
+              <li>
+                <a class="site-footer__link" href="register.html" data-i18n="nav.signUp">Sign up</a>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Space reserved for Terms and Privacy. No link is shown for
+               a page that does not exist yet. -->
+          <div>
+            <h2 class="site-footer__heading" data-i18n="footer.legal">Legal</h2>
+            <p class="site-footer__note" data-i18n="footer.legalSoon">
+              Terms and privacy pages are being prepared.
+            </p>
+          </div>
+        </div>
+
+        <div class="site-footer__bottom">
+          <p class="site-footer__copyright">
+            © <span data-current-year>2026</span> The App.
+            <span data-i18n="footer.rights">All rights reserved.</span>
+          </p>
+          <div class="lang-switch" data-lang-switch aria-label="Change language"></div>
+        </div>
+      </div>
+    </footer>
+
+    <!--
+      Offer card markup lives here rather than in a JavaScript string, so
+      the card stays editable as HTML. It is cloned per offer and filled
+      through the data-card-* hooks — identical whether the data is the
+      demo set or a Firestore document.
+    -->
+    <template id="offer-card-template">
+      <article class="card card--interactive offer-card">
+        <div class="offer-card__media" data-card-media>
+          <span class="badge badge--primary offer-card__type" data-card-type></span>
+        </div>
+        <div class="offer-card__body">
+          <h4 class="offer-card__title" data-card-title></h4>
+          <p class="offer-card__desc" data-card-desc></p>
+          <p class="offer-card__requirement">
+            <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
+              <path d="M4 10.5l4 4 8-9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+            <span class="visually-hidden" data-card-requirement-label></span>
+            <span data-card-requirement></span>
+          </p>
+          <div class="offer-card__footer">
+            <div>
+              <p class="offer-card__reward-label" data-card-reward-label></p>
+              <p class="offer-card__reward" data-card-reward></p>
+            </div>
+            <a class="btn btn--secondary btn--sm" href="register.html" data-card-cta></a>
+          </div>
+        </div>
+      </article>
+    </template>
+  </body>
+</html>
