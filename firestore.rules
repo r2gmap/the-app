@@ -1,27 +1,40 @@
 rules_version = '2';
 
-// Security model
-// --------------
-// Authentication itself (who you are) is Firebase Authentication's job.
-// This file only decides what a signed-in identity may read or write.
+// =====================================================================
+// Firestore Security Rules
+// =====================================================================
+// Authentication (who you are) is Firebase Authentication's job. This
+// file decides what a signed-in identity may read or write.
 //
-// The user's own profile at users/{uid} is the only collection this
-// phase of the app uses. The rules below let someone read and lightly
-// edit *their own* profile document and nothing else:
-//   - an unauthenticated request can read or write nothing;
-//   - a signed-in user can read only their own profile, never anyone
-//     else's, and no query may list the collection (so there is no way
-//     to enumerate every user even one document at a time);
-//   - a profile may only be created by its own owner, with exactly the
-//     expected fields, and role == "user" — the literal string, never
-//     taken from the document being written in any other way;
-//   - once created, `uid`, `email`, and `role` can never be changed by
-//     the client at all. There is no client path to self-promotion, and
-//     none is planned: a future admin role would be granted through the
-//     Admin SDK or the Firebase console, never through these rules.
+// Security model, in short:
+//   - Unauthenticated requests can only read ACTIVE offers and resolve
+//     admin username aliases (adminUsernames/{username}).
+//   - A signed-in user may read/write their own profile (limited
+//     fields), create submissions + withdrawal requests, and read/
+//     mark-read their own notifications and transactions.
+//   - Users can NEVER write transactions or notifications, and can
+//     never change a submission status — money moves only through an
+//     admin (role == "admin" on users/{uid}).
+//   - The admin role is granted ONLY via the Firebase console or the
+//     Admin SDK. There is no client path to self-promotion, at create
+//     time or afterwards.
+//
+// Collections:
+//   users/{uid}                 user profiles (role, wallet-facing data)
+//   offers/{id}                 platform content: games / apps /
+//                               websites / offers (draft | published)
+//   taskSubmissions/{id}        proof submissions (pending -> reviewed)
+//   transactions/{id}           append-only wallet ledger (admin writes)
+//   withdrawals/{id}            payout requests
+//   notifications/{id}          in-app user notifications
+//   config/telegram             Telegram bot config (admin only)
+//   adminUsernames/{username}   optional username -> email admin aliases
+// =====================================================================
 
 service cloud.firestore {
   match /databases/{database}/documents {
+
+    // ------------------------------------------------ helpers
 
     function isSignedIn() {
       return request.auth != null;
@@ -31,20 +44,30 @@ service cloud.firestore {
       return isSignedIn() && request.auth.uid == userId;
     }
 
-    match /users/{userId} {
-      // Only the owner may fetch their own document by id. `list` is not
-      // granted at all, so no client can query the collection — not even
-      // to page through their own document, and certainly not anyone
-      // else's.
-      allow get: if isOwner(userId);
-      allow list: if false;
+    // The admin check reads the caller's own profile. "admin" can only
+    // be set through the console/Admin SDK — the users rules below make
+    // the client unable to ever write `role`.
+    function isAdmin() {
+      return isSignedIn()
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
 
-      // First write for this uid. Every field is required, exactly this
-      // set and no more; `role` must be the literal "user"; the email
-      // must match the caller's own authenticated email, so no client
-      // can claim a different address was used to sign up; and the
-      // timestamps must actually be timestamps, not an arbitrary
-      // client-supplied number or string standing in for one.
+    function isTimestamp(value) {
+      return value is timestamp;
+    }
+
+    // ================================================================
+    // users/{uid} — profiles
+    // ================================================================
+    match /users/{userId} {
+      // Owner reads their own profile; admins can read and list everyone
+      // (user management + joining names onto transactions).
+      allow get: if isOwner(userId) || isAdmin();
+      allow list: if isAdmin();
+
+      // First write for this uid: exactly the expected field set, role
+      // locked to the literal "user", email matching the caller's own
+      // authenticated email.
       allow create: if isOwner(userId)
         && request.resource.data.keys().hasOnly([
              'uid', 'email', 'displayName', 'photoURL',
@@ -60,26 +83,215 @@ service cloud.firestore {
         && request.resource.data.displayName is string
         && (request.resource.data.photoURL == null || request.resource.data.photoURL is string)
         && request.resource.data.preferredLanguage is string
-        && request.resource.data.createdAt is timestamp
-        && request.resource.data.updatedAt is timestamp;
+        && isTimestamp(request.resource.data.createdAt)
+        && isTimestamp(request.resource.data.updatedAt);
 
-      // Later writes from the owner may only touch presentation fields.
-      // `uid`, `email`, and `role` must come out of the write identical
-      // to what they already were — this is what makes
-      // role: "admin" unreachable from the client, permanently, not just
-      // at creation time.
+      // Later owner writes: presentation fields only. uid, email and
+      // role must come out identical — this is what makes
+      // role: "admin" unreachable from the client, permanently.
       allow update: if isOwner(userId)
         && request.resource.data.uid == resource.data.uid
         && request.resource.data.email == resource.data.email
         && request.resource.data.role == resource.data.role
-        && request.resource.data.updatedAt is timestamp
+        && isTimestamp(request.resource.data.updatedAt)
         && request.resource.data.diff(resource.data).affectedKeys()
              .hasOnly(['displayName', 'photoURL', 'preferredLanguage', 'updatedAt']);
 
       allow delete: if false;
     }
 
-    // Everything else is closed by default.
+    // ================================================================
+    // offers — the content collection (games / apps / websites /
+    // offers) managed through the admin CMS
+    // ================================================================
+    match /offers/{offerId} {
+      // Anyone (including guests on the landing page) can read
+      // PUBLISHED content. Listing requires the query to filter
+      // active == true (Firestore verifies rules against query
+      // constraints). Drafts are invisible to non-admins entirely.
+      allow get: if resource.data.active == true || isAdmin();
+      allow list: if isAdmin() || resource.data.active == true;
+
+      // Writes are admin-only, with the full content schema enforced
+      // so a broken admin client cannot corrupt the public catalogue.
+      // `status` is the source of truth for draft/publish; `active`
+      // must mirror it exactly (legacy compatibility field).
+      allow create: if isAdmin()
+        && request.resource.data.title is string
+        && request.resource.data.title.size() > 0
+        && request.resource.data.category in ['game', 'app', 'website', 'offer']
+        && request.resource.data.reward is number
+        && request.resource.data.reward >= 0
+        && request.resource.data.difficulty in ['easy', 'medium', 'hard']
+        && request.resource.data.status in ['draft', 'published']
+        && request.resource.data.active is bool
+        && request.resource.data.active == (request.resource.data.status == 'published')
+        && request.resource.data.featured is bool
+        && request.resource.data.displayOrder is number
+        && request.resource.data.requirements is list
+        && isTimestamp(request.resource.data.createdAt);
+
+      allow update: if isAdmin()
+        && request.resource.data.title is string
+        && request.resource.data.title.size() > 0
+        && request.resource.data.category in ['game', 'app', 'website', 'offer']
+        && request.resource.data.reward is number
+        && request.resource.data.reward >= 0
+        && request.resource.data.difficulty in ['easy', 'medium', 'hard']
+        && request.resource.data.status in ['draft', 'published']
+        && request.resource.data.active is bool
+        && request.resource.data.active == (request.resource.data.status == 'published')
+        && request.resource.data.featured is bool
+        && request.resource.data.displayOrder is number
+        && request.resource.data.requirements is list
+        && isTimestamp(request.resource.data.updatedAt);
+
+      allow delete: if isAdmin();
+    }
+
+    // ================================================================
+    // taskSubmissions — the proof pipeline
+    // ================================================================
+    match /taskSubmissions/{submissionId} {
+      // Owners see their own submissions; admins see and list all.
+      allow get, list: if isAdmin() || (isSignedIn() && resource.data.userId == request.auth.uid);
+
+      // The owner creates their own submission, always starting pending,
+      // with their real authenticated identity — no spoofing another
+      // user or pre-approving themselves.
+      allow create: if isOwner(request.resource.data.userId)
+        && request.resource.data.keys().hasAll([
+             'userId', 'userName', 'email', 'offerId', 'offerTitle',
+             'taskTitle', 'message', 'walletNumber', 'proofImages',
+             'rewardSnapshot', 'status', 'createdAt', 'updatedAt'
+           ])
+        && request.resource.data.status == 'pending'
+        && request.resource.data.email == request.auth.token.email
+        && request.resource.data.proofImages is list
+        && request.resource.data.proofImages.size() == 0
+        && request.resource.data.rewardSnapshot is number
+        && isTimestamp(request.resource.data.createdAt)
+        && isTimestamp(request.resource.data.updatedAt);
+
+      // Owner update: ONLY the proof-image completion right after
+      // creation (upload finishes after the document exists). Status
+      // and every money-facing field are untouchable.
+      allow update: if isOwner(resource.data.userId)
+        && request.resource.data.status == resource.data.status
+        && request.resource.data.rewardSnapshot == resource.data.rewardSnapshot
+        && request.resource.data.diff(resource.data).affectedKeys()
+             .hasOnly(['proofImages', 'updatedAt'])
+        && request.resource.data.proofImages is list
+        && request.resource.data.proofImages.size() <= 5
+        && isTimestamp(request.resource.data.updatedAt);
+
+      // Admin review: flip status to approved/rejected with a reason.
+      allow update: if isAdmin()
+        && request.resource.data.status in ['approved', 'rejected']
+        && request.resource.data.diff(resource.data).affectedKeys()
+             .hasOnly(['status', 'rejectionReason', 'reviewedBy', 'reviewedAt', 'updatedAt']);
+
+      allow delete: if false;
+    }
+
+    // ================================================================
+    // transactions — append-only wallet ledger
+    // ================================================================
+    match /transactions/{transactionId} {
+      // Users read their own ledger; admins read and list everything.
+      allow get, list: if isAdmin() || (isSignedIn() && resource.data.userId == request.auth.uid);
+
+      // ONLY admins append. This is the single money-creation path in
+      // the whole system (rewards, withdrawals, adjustments).
+      allow create: if isAdmin()
+        && request.resource.data.keys().hasAll(
+             ['userId', 'type', 'amount', 'description', 'createdBy', 'createdAt'])
+        && request.resource.data.keys().hasOnly(
+             ['userId', 'type', 'amount', 'description', 'createdBy', 'createdAt',
+              'submissionId', 'offerId', 'withdrawalId'])
+        && request.resource.data.type in ['reward', 'withdrawal', 'adjustment']
+        && request.resource.data.amount is number
+        && request.resource.data.description is string
+        && request.resource.data.createdBy == request.auth.uid
+        && isTimestamp(request.resource.data.createdAt);
+
+      // Append-only: no updates, no deletes, ever.
+      allow update, delete: if false;
+    }
+
+    // ================================================================
+    // withdrawals — payout requests
+    // ================================================================
+    match /withdrawals/{withdrawalId} {
+      allow get, list: if isAdmin() || (isSignedIn() && resource.data.userId == request.auth.uid);
+
+      // The owner creates their own request, always pending, positive
+      // amount, with their real identity.
+      allow create: if isOwner(request.resource.data.userId)
+        && request.resource.data.keys().hasAll(
+             ['userId', 'userName', 'email', 'amount', 'walletNumber',
+              'status', 'createdAt', 'updatedAt'])
+        && request.resource.data.status == 'pending'
+        && request.resource.data.amount is number
+        && request.resource.data.amount > 0
+        && request.resource.data.walletNumber is string
+        && request.resource.data.email == request.auth.token.email
+        && isTimestamp(request.resource.data.createdAt)
+        && isTimestamp(request.resource.data.updatedAt);
+
+      // Only admins move a request out of pending.
+      allow update: if isAdmin()
+        && request.resource.data.status in ['approved', 'rejected']
+        && request.resource.data.diff(resource.data).affectedKeys()
+             .hasOnly(['status', 'rejectionReason', 'reviewedBy', 'reviewedAt', 'updatedAt']);
+
+      allow delete: if false;
+    }
+
+    // ================================================================
+    // notifications — in-app user inbox
+    // ================================================================
+    match /notifications/{notificationId} {
+      allow get, list: if isAdmin() || (isSignedIn() && resource.data.userId == request.auth.uid);
+
+      // Only admins create notifications (part of review batches).
+      allow create: if isAdmin()
+        && request.resource.data.type in [
+             'submission_approved', 'submission_rejected',
+             'withdrawal_approved', 'withdrawal_rejected'
+           ]
+        && request.resource.data.read == false
+        && isTimestamp(request.resource.data.createdAt);
+
+      // Owners may only flip `read` to true — nothing else, ever.
+      allow update: if isOwner(resource.data.userId)
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['read'])
+        && request.resource.data.read == true;
+
+      allow delete: if false;
+    }
+
+    // ================================================================
+    // config — service settings (Telegram)
+    // ================================================================
+    match /config/{docId} {
+      // Admin-only: contains the Telegram bot token + chat id.
+      allow read, write: if isAdmin();
+    }
+
+    // ================================================================
+    // adminUsernames — optional username -> email aliases for the
+    // admin login page ("Email or username" field)
+    // ================================================================
+    match /adminUsernames/{username} {
+      // Unauthenticated GET so the login page can resolve a username
+      // before signing in. Enumeration reveals only the email bound to
+      // an already-known username; documents are created via console.
+      allow get: if true;
+      allow list, create, update, delete: if false;
+    }
+
+    // ------------------------------------------------ catch-all
     match /{document=**} {
       allow read, write: if false;
     }

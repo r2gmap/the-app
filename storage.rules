@@ -1,0 +1,86 @@
+rules_version = '2';
+
+// =====================================================================
+// Firebase Storage Security Rules
+// =====================================================================
+// Folders:
+//   proofs/{userId}/…        task proof images (owner writes, owner +
+//                            admins read; image-only, max 5 MB)
+//   offer-images/…           offer cover images (admins write, public
+//                            read — offers are public content)
+//   avatars/{userId}/…       profile pictures (owner writes ≤ 2 MB,
+//                            public read — avatars appear on shared UI)
+//
+// Admin checks cross into Firestore (users/{uid}.role == 'admin'),
+// which keeps a single source of truth for the role.
+// =====================================================================
+
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isSignedIn()
+        && firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    function isImageUnder(maxBytes) {
+      return request.resource.contentType.matches('image/.*')
+        && request.resource.size > 0
+        && request.resource.size < maxBytes;
+    }
+
+    // ----------------------------------------------------------------
+    // Task proof images
+    // ----------------------------------------------------------------
+    match /proofs/{userId}/{allPaths=**} {
+      // Readable by the owner and by admins (review). Never public:
+      // proofs can contain personal information.
+      allow read: if isSignedIn() && (request.auth.uid == userId || isAdmin());
+
+      // The owner uploads their own proofs (image, under 5 MB).
+      // Written right after the taskSubmissions document is created.
+      allow create, update: if isSignedIn()
+        && request.auth.uid == userId
+        && isImageUnder(5 * 1024 * 1024);
+
+      allow delete: if false;
+    }
+
+    // ----------------------------------------------------------------
+    // Offer cover images
+    // ----------------------------------------------------------------
+    match /offer-images/{allPaths=**} {
+      // Public read: active offers (and their covers) are public content.
+      allow read: if true;
+
+      // Admin-only upload (image, under 5 MB).
+      allow create, update: if isAdmin() && isImageUnder(5 * 1024 * 1024);
+
+      allow delete: if isAdmin();
+    }
+
+    // ----------------------------------------------------------------
+    // Profile avatars
+    // ----------------------------------------------------------------
+    match /avatars/{userId}/{allPaths=**} {
+      // Public read: avatars are displayed across shared surfaces.
+      allow read: if true;
+
+      // The owner uploads their own avatar (image, under 2 MB).
+      allow create, update: if isSignedIn()
+        && request.auth.uid == userId
+        && isImageUnder(2 * 1024 * 1024);
+
+      allow delete: if false;
+    }
+
+    // Everything else is closed.
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

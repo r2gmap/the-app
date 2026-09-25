@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Users — Admin — The App</title>
+    <meta name="description" content="Search user accounts and inspect their activity." />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="theme-color" content="#080a14" />
+
+    <!-- Sets language and direction before first paint (see index.html). -->
+    <script>
+      (function () {
+        try {
+          var supported = ["en", "ar"];
+          var stored = null;
+          try { stored = localStorage.getItem("theapp.locale"); } catch (e) {}
+          var locale = supported.indexOf(stored) > -1 ? stored : null;
+          if (!locale) {
+            var tags =
+              navigator.languages && navigator.languages.length
+                ? navigator.languages
+                : [navigator.language];
+            for (var i = 0; i < tags.length; i++) {
+              var base = String(tags[i] || "").toLowerCase().split("-")[0];
+              if (supported.indexOf(base) > -1) { locale = base; break; }
+            }
+          }
+          locale = locale || "en";
+          var root = document.documentElement;
+          root.lang = locale;
+          root.dir = locale === "ar" ? "rtl" : "ltr";
+          if (locale !== "en") root.classList.add("i18n-pending");
+        } catch (e) {}
+      })();
+    </script>
+
+    <link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://www.gstatic.com" />
+    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="stylesheet" href="../css/components.css" />
+    <link rel="stylesheet" href="../css/admin.css" />
+    <link rel="stylesheet" href="../css/responsive.css" />
+    <script type="module" src="../js/admin/admin.js"></script>
+  </head>
+
+  <body class="admin-page" data-admin-page="users">
+    <a class="skip-link" href="#main" data-i18n="common.skipToContent">Skip to content</a>
+
+    <div class="admin-shell">
+      <!-- ================================================ admin sidebar -->
+      <aside class="admin-sidebar" id="admin-sidebar">
+        <a class="brand" href="dashboard.html">
+          <span class="brand__mark" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <rect x="3.5" y="14" width="4" height="6.5" rx="1.6" fill="#fff" fill-opacity=".62" />
+                  <rect x="10" y="9.5" width="4" height="11" rx="1.6" fill="#fff" fill-opacity=".82" />
+                  <rect x="16.5" y="4" width="4" height="16.5" rx="1.6" fill="#fff" />
+                </svg>
+          </span>
+          <span class="brand__name">The App</span>
+        </a>
+
+        <div>
+          <p class="admin-sidebar__heading" data-i18n="admin.shell.title">Admin panel</p>
+          <nav class="admin-nav" aria-label="Admin" data-i18n-aria-label="admin.shell.title">
+          <a class="admin-nav__link" href="dashboard.html" data-admin-nav-link="overview" data-i18n="admin.nav.overview">
+            <svg viewBox="0 0 20 20" fill="none"><rect x="2.5" y="2.5" width="6" height="6" rx="1.6" stroke="currentColor" stroke-width="1.6"/><rect x="11.5" y="2.5" width="6" height="6" rx="1.6" stroke="currentColor" stroke-width="1.6"/><rect x="2.5" y="11.5" width="6" height="6" rx="1.6" stroke="currentColor" stroke-width="1.6"/><rect x="11.5" y="11.5" width="6" height="6" rx="1.6" stroke="currentColor" stroke-width="1.6"/></svg>
+            <span>Overview</span>
+          </a>
+          <a class="admin-nav__link" href="content.html" data-admin-nav-link="content" data-i18n="admin.nav.content">
+            <svg viewBox="0 0 20 20" fill="none"><rect x="3" y="3" width="14" height="14" rx="2.4" stroke="currentColor" stroke-width="1.6"/><path d="M3 7h14" stroke="currentColor" stroke-width="1.6"/></svg>
+            <span>Content</span>
+          </a>
+          <a class="admin-nav__link" href="submissions.html" data-admin-nav-link="submissions" data-i18n="admin.nav.submissions">
+            <svg viewBox="0 0 20 20" fill="none"><path d="M5 3.5h10a1.5 1.5 0 011.5 1.5v11L15 14.5H5A1.5 1.5 0 013.5 13V5A1.5 1.5 0 015 3.5z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M7 7.5h6M7 10.5h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            <span>Submissions</span>
+          </a>
+          <a class="admin-nav__link" href="users.html" data-admin-nav-link="users" data-i18n="admin.nav.users">
+            <svg viewBox="0 0 20 20" fill="none"><circle cx="8" cy="7" r="3" stroke="currentColor" stroke-width="1.6"/><path d="M2.5 16c1-2.6 3-4 5.5-4s4.5 1.4 5.5 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="15" cy="8.5" r="2.2" stroke="currentColor" stroke-width="1.5"/><path d="M14.5 12.6c2 .2 3.4 1.4 4 3.4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            <span>Users</span>
+          </a>
+          <a class="admin-nav__link" href="wallet.html" data-admin-nav-link="wallet" data-i18n="admin.nav.wallet">
+            <svg viewBox="0 0 20 20" fill="none"><rect x="2.5" y="5" width="15" height="10.5" rx="2.5" stroke="currentColor" stroke-width="1.6"/><path d="M13.5 10.25h3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            <span>Wallet</span>
+          </a>
+          <a class="admin-nav__link" href="withdrawals.html" data-admin-nav-link="withdrawals" data-i18n="admin.nav.withdrawals">
+            <svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="7" stroke="currentColor" stroke-width="1.6"/><path d="M10 6.5V10l2.5 1.8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+            <span>Withdrawals</span>
+          </a>
+          </nav>
+        </div>
+
+        <div class="admin-sidebar__footer">
+          <a class="admin-nav__link" href="../index.html">
+            <svg viewBox="0 0 20 20" fill="none">
+              <path d="M8 3.5L3 10l5 6.5M3.8 10H17" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+            <span data-i18n="admin.nav.viewSite">View website</span>
+          </a>
+          <button class="btn btn--ghost btn--sm" type="button" data-admin-logout data-i18n="admin.nav.logout">
+            Log out
+          </button>
+        </div>
+      </aside>
+
+      <div class="admin-shell-column">
+        <!-- ================================================ admin topbar -->
+        <header class="admin-topbar">
+          <button class="admin-trigger" type="button" data-admin-nav-trigger aria-expanded="false" aria-controls="admin-sidebar" aria-label="Open menu">
+            <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
+              <path d="M3.5 6h13M3.5 10h13M3.5 14h13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+            </svg>
+          </button>
+          <p class="admin-topbar__title" data-i18n="admin.users.title">Users</p>
+          <div class="admin-topbar__spacer"></div>
+          <div class="lang-switch" data-lang-switch aria-label="Change language"></div>
+          <div class="admin-topbar__user">
+            <span class="admin-topbar__user-name" data-admin-user-name></span>
+            <button class="btn btn--ghost btn--sm" type="button" data-admin-logout data-i18n="admin.nav.logout">
+              Log out
+            </button>
+          </div>
+        </header>
+
+        <main class="admin-main" id="main">
+          <div class="page-head">
+            <div>
+              <h1 class="page-head__title" data-i18n="admin.users.title">User management</h1>
+              <p class="page-head__subtitle" data-i18n="admin.users.subtitle">
+                Search accounts and inspect their activity.
+              </p>
+            </div>
+          </div>
+
+          <!-- ============================================ search + list -->
+          <div class="admin-toolbar">
+            <div class="admin-toolbar__search">
+              <input class="field__control" type="search" data-admin-users-search
+                placeholder="Search by name or email…" data-i18n-placeholder="admin.users.searchPlaceholder" />
+            </div>
+          </div>
+
+          <div data-admin-users-status></div>
+          <div class="admin-list" data-admin-users-list></div>
+        </main>
+      </div>
+    </div>
+
+    <!-- User row -->
+    <template id="admin-user-row-template">
+      <div class="admin-row">
+        <div class="avatar avatar--sm" data-ur-avatar></div>
+        <div class="admin-row__cell" style="flex: 1.4; min-width: 200px;">
+          <span class="admin-row__value" data-ur-name style="font-size: var(--text-md);"></span>
+          <p class="muted" data-ur-email dir="ltr" style="margin: 0; font-size: var(--text-xs);"></p>
+        </div>
+        <div class="admin-row__cell">
+          <span class="admin-row__label" data-i18n="admin.users.joined">Joined</span>
+          <span class="admin-row__value" data-ur-joined></span>
+        </div>
+        <div class="admin-row__cell">
+          <span class="badge" data-ur-role></span>
+        </div>
+        <div class="admin-row__actions">
+          <button class="btn btn--secondary btn--sm" type="button" data-ur-activity data-i18n="admin.users.viewActivity">
+            View activity
+          </button>
+        </div>
+      </div>
+    </template>
+
+    <!-- ============================================ activity dialog -->
+    <dialog class="modal" data-user-activity-dialog>
+      <div class="modal__panel">
+        <h2 class="modal__title" data-i18n="admin.users.activityTitle">Account activity</h2>
+        <div class="state" data-activity-loading>
+          <span class="spinner" aria-hidden="true"></span>
+          <p class="state__title" data-i18n="common.loading">Loading…</p>
+        </div>
+        <div data-activity-body></div>
+        <div class="modal__actions">
+          <button class="btn btn--ghost" type="button" onclick="this.closest('dialog').close()" data-i18n="common.close">
+            Close
+          </button>
+        </div>
+      </div>
+    </dialog>
+
+    <!-- Transaction row (shared renderer, used inside the dialog) -->
+    <template id="transaction-row-template">
+      <div class="transaction-row">
+        <div class="transaction-row__main">
+          <p class="transaction-row__type" data-tx-type></p>
+          <p class="transaction-row__desc" data-tx-desc></p>
+        </div>
+        <p class="transaction-row__date" data-tx-date></p>
+        <p class="transaction-row__amount" data-tx-amount></p>
+      </div>
+    </template>
+  </body>
+</html>

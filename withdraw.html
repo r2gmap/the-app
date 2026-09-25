@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Withdraw funds — The App</title>
+    <meta name="i18n-title" content="meta.withdrawTitle" />
+    <meta name="description" content="Discover games and apps, complete simple tasks, and earn rewards once your proof is reviewed and approved." />
+    <meta name="theme-color" content="#080a14" />
+
+    <!--
+      Sets language and direction before first paint, so an Arabic
+      visitor never sees the page flip from LTR. The cloak class is only
+      added for a non-English locale, and is removed once the strings
+      are applied by js/i18n.js.
+    -->
+    <script>
+      (function () {
+        try {
+          var supported = ["en", "ar"];
+          var stored = null;
+          try { stored = localStorage.getItem("theapp.locale"); } catch (e) {}
+          var locale = supported.indexOf(stored) > -1 ? stored : null;
+          if (!locale) {
+            var tags =
+              navigator.languages && navigator.languages.length
+                ? navigator.languages
+                : [navigator.language];
+            for (var i = 0; i < tags.length; i++) {
+              var base = String(tags[i] || "").toLowerCase().split("-")[0];
+              if (supported.indexOf(base) > -1) { locale = base; break; }
+            }
+          }
+          locale = locale || "en";
+          var root = document.documentElement;
+          root.lang = locale;
+          root.dir = locale === "ar" ? "rtl" : "ltr";
+          if (locale !== "en") root.classList.add("i18n-pending");
+        } catch (e) {}
+      })();
+    </script>
+
+    <link rel="icon" href="assets/icons/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://www.gstatic.com" />
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/components.css" />
+    <link rel="stylesheet" href="css/responsive.css" />
+    <script type="module" src="js/main.js"></script>
+  </head>
+
+  <body data-page="withdraw">
+    <a class="skip-link" href="#main" data-i18n="common.skipToContent">Skip to content</a>
+
+    <header class="site-header">
+      <div class="container site-header__bar">
+        <a class="brand" href="index.html">
+          <span class="brand__mark" aria-hidden="true">
+            <!-- Three ascending bars: pick a task, complete it, get paid. -->
+              <svg viewBox="0 0 24 24" fill="none">
+                <rect x="3.5" y="14" width="4" height="6.5" rx="1.6" fill="#fff" fill-opacity=".62" />
+                <rect x="10" y="9.5" width="4" height="11" rx="1.6" fill="#fff" fill-opacity=".82" />
+                <rect x="16.5" y="4" width="4" height="16.5" rx="1.6" fill="#fff" />
+              </svg>
+          </span>
+          <span class="brand__name">The App</span>
+        </a>
+
+        <nav class="site-nav" aria-label="Main" data-i18n-aria-label="nav.primary">
+          <ul class="site-nav__list">
+            <li><a class="site-nav__link" href="games.html" data-i18n="nav.games">Games</a></li>
+            <li><a class="site-nav__link" href="apps.html" data-i18n="nav.apps">Apps</a></li>
+            <li><a class="site-nav__link" href="websites.html" data-i18n="nav.websites">Websites</a></li>
+            <li><a class="site-nav__link" href="offers.html" data-i18n="nav.offers">Offers</a></li>
+            <li><a class="site-nav__link" href="dashboard.html" data-i18n="nav.dashboard">Dashboard</a></li>
+            <li><a class="site-nav__link" href="wallet.html" data-i18n="nav.wallet">Wallet</a></li>
+          </ul>
+        </nav>
+
+        <div class="site-header__actions">
+          <div class="lang-switch" data-lang-switch aria-label="Change language"></div>
+
+          <div class="site-header__auth">
+            <!-- Both states start hidden until Firebase reports the real session. -->
+            <div data-auth-guest hidden>
+              <a class="btn btn--ghost btn--sm" href="login.html" data-i18n="nav.login">Log in</a>
+              <a class="btn btn--primary btn--sm" href="register.html" data-i18n="nav.signUp">
+                Sign up
+              </a>
+            </div>
+            <div class="site-header__user" data-auth-user hidden>
+              <a class="site-header__user-name" href="profile.html" data-auth-user-name></a>
+              <a class="btn btn--ghost btn--sm" href="dashboard.html" data-i18n="nav.dashboard">
+                Dashboard
+              </a>
+              <button class="btn btn--ghost btn--sm" type="button" data-auth-logout data-i18n="nav.logout">
+                Log out
+              </button>
+            </div>          </div>
+
+          <button
+            class="menu-trigger"
+            type="button"
+            data-menu-trigger
+            aria-expanded="false"
+            aria-controls="mobile-nav"
+            aria-label="Open menu"
+          >
+            <svg class="menu-trigger__open" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+              <path d="M3.5 6h13M3.5 10h13M3.5 14h13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+            </svg>
+            <svg class="menu-trigger__close" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+              <path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="mobile-nav" id="mobile-nav" data-menu-panel hidden>
+        <div class="container mobile-nav__inner">
+          <nav aria-label="Main" data-i18n-aria-label="nav.primary">
+            <ul>
+              <li><a class="mobile-nav__link" href="games.html" data-i18n="nav.games">Games</a></li>
+              <li><a class="mobile-nav__link" href="apps.html" data-i18n="nav.apps">Apps</a></li>
+              <li><a class="mobile-nav__link" href="websites.html" data-i18n="nav.websites">Websites</a></li>
+              <li><a class="mobile-nav__link" href="offers.html" data-i18n="nav.offers">Offers</a></li>
+              <li><a class="mobile-nav__link" href="dashboard.html" data-i18n="nav.dashboard">Dashboard</a></li>
+              <li><a class="mobile-nav__link" href="wallet.html" data-i18n="nav.wallet">Wallet</a></li>
+              <li><a class="mobile-nav__link" href="submissions.html" data-i18n="nav.submissions">My submissions</a></li>
+              <li><a class="mobile-nav__link" href="notifications.html" data-i18n="nav.notifications">Notifications</a></li>
+              <li><a class="mobile-nav__link" href="profile.html" data-i18n="nav.profile">Profile</a></li>
+            </ul>
+          </nav>
+          <div class="mobile-nav__actions" data-auth-guest hidden>
+            <a class="btn btn--secondary" href="login.html" data-i18n="nav.login">Log in</a>
+            <a class="btn btn--primary" href="register.html" data-i18n="nav.signUp">Sign up</a>
+          </div>
+          <div class="mobile-nav__actions" data-auth-user hidden>
+            <span class="site-header__user-name site-header__user-name--mobile" data-auth-user-name></span>
+            <a class="btn btn--secondary" href="dashboard.html" data-i18n="nav.dashboard">Dashboard</a>
+            <button class="btn btn--secondary" type="button" data-auth-logout data-i18n="nav.logout">
+              Log out
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main id="main">
+      <section class="section" aria-labelledby="withdraw-title">
+        <div class="container" style="max-width: 760px;">
+          <div class="page-head">
+            <div>
+              <h1 class="page-head__title" id="withdraw-title" data-i18n="withdraw.title">Withdraw funds</h1>
+              <p class="page-head__subtitle" data-i18n="withdraw.subtitle">
+                Requests are reviewed by an admin, usually within a few days.
+              </p>
+            </div>
+          </div>
+
+          <!-- ============================================ request form -->
+          <div class="card" style="margin-bottom: var(--space-8);">
+            <form class="form" data-withdraw-form novalidate>
+              <div class="field">
+                <label class="field__label" for="withdraw-amount" data-i18n="withdraw.amount">Amount (USD)</label>
+                <input class="field__control" id="withdraw-amount" type="number" step="0.01" min="0" dir="ltr"
+                  data-withdraw-amount placeholder="e.g. 5.00" data-i18n-placeholder="withdraw.amountPlaceholder" />
+              </div>
+              <div class="field">
+                <label class="field__label" for="withdraw-wallet" data-i18n="withdraw.walletNumber">Wallet number</label>
+                <input class="field__control" id="withdraw-wallet" type="text" dir="ltr" data-withdraw-wallet
+                  placeholder="Where should we send your money?"
+                  data-i18n-placeholder="withdraw.walletNumberPlaceholder" />
+              </div>
+              <p class="muted" style="margin: 0; font-size: var(--text-sm);">
+                <span data-i18n="withdraw.available">Available to withdraw</span>:
+                <strong data-withdraw-available>—</strong>
+              </p>
+              <div class="state state--success" data-withdraw-success hidden style="padding: var(--space-3) var(--space-4);">
+                <p class="state__title" data-i18n="withdraw.successTitle" style="font-size: var(--text-sm);">Withdrawal requested</p>
+                <p class="state__body" data-i18n="withdraw.successBody" style="font-size: var(--text-xs);">
+                  Your request is pending review. You will be notified once it is processed.
+                </p>
+              </div>
+              <p class="form__error" role="alert" data-withdraw-error></p>
+              <button class="btn btn--primary btn--block" type="submit" data-i18n="withdraw.submit">
+                Request withdrawal
+              </button>
+            </form>
+          </div>
+
+          <!-- ============================================ request history -->
+          <section aria-labelledby="wd-title">
+            <div class="page-head">
+              <div>
+                <h2 class="page-head__title" id="wd-title" data-i18n="withdraw.requestsTitle">Your withdrawal requests</h2>
+                <p class="page-head__subtitle" data-i18n="withdraw.requestsSubtitle">
+                  Track each request from submission to payout.
+                </p>
+              </div>
+            </div>
+            <div data-withdraw-status></div>
+            <div class="submission-list" data-withdraw-list></div>
+          </section>
+        </div>
+      </section>
+
+      <!-- Withdrawal request row template -->
+      <template id="withdrawal-row-template">
+        <article class="card submission-card">
+          <div class="submission-card__head">
+            <p class="submission-card__offer" data-wd-amount></p>
+            <span class="badge" data-wd-status></span>
+          </div>
+          <div class="submission-card__meta">
+            <span>
+              <span data-i18n="withdraw.walletNumber">Wallet number</span>:
+              <span data-wd-wallet dir="ltr"></span>
+            </span>
+            <span>
+              <span data-i18n="submissions.submittedLabel">Submitted</span>:
+              <span data-wd-date></span>
+            </span>
+          </div>
+          <p class="submission-card__reason" data-wd-reason-block hidden>
+            <span data-i18n="submissions.reasonLabel">Reason</span>:
+            <span data-wd-reason></span>
+          </p>
+        </article>
+      </template>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <div class="site-footer__bottom">
+          <p class="site-footer__copyright">
+            © <span data-current-year>2026</span> The App.
+            <span data-i18n="footer.rights">All rights reserved.</span>
+          </p>
+          <div class="lang-switch" data-lang-switch aria-label="Change language"></div>
+        </div>
+      </div>
+    </footer>
+
+
+  </body>
+</html>

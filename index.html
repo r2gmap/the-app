@@ -57,7 +57,7 @@
     <script type="module" src="js/main.js"></script>
   </head>
 
-  <body>
+  <body data-page="home">
     <a class="skip-link" href="#main" data-i18n="common.skipToContent">Skip to content</a>
 
     <header class="site-header">
@@ -77,8 +77,10 @@
 
         <nav class="site-nav" aria-label="Main" data-i18n-aria-label="nav.primary">
           <ul class="site-nav__list">
-            <li><a class="site-nav__link" href="#games" data-i18n="nav.games">Games</a></li>
-            <li><a class="site-nav__link" href="#apps" data-i18n="nav.apps">Apps</a></li>
+            <li><a class="site-nav__link" href="games.html" data-i18n="nav.games">Games</a></li>
+            <li><a class="site-nav__link" href="apps.html" data-i18n="nav.apps">Apps</a></li>
+            <li><a class="site-nav__link" href="websites.html" data-i18n="nav.websites">Websites</a></li>
+            <li><a class="site-nav__link" href="offers.html" data-i18n="nav.offers">Offers</a></li>
             <li>
               <a class="site-nav__link" href="#how-it-works" data-i18n="nav.howItWorks">
                 How it works
@@ -101,12 +103,14 @@
               </a>
             </div>
             <div class="site-header__user" data-auth-user hidden>
-              <span class="site-header__user-name" data-auth-user-name></span>
+              <a class="site-header__user-name" href="profile.html" data-auth-user-name></a>
+              <a class="btn btn--ghost btn--sm" href="dashboard.html" data-i18n="nav.dashboard">
+                Dashboard
+              </a>
               <button class="btn btn--ghost btn--sm" type="button" data-auth-logout data-i18n="nav.logout">
                 Log out
               </button>
-            </div>
-          </div>
+            </div>          </div>
 
           <button
             class="menu-trigger"
@@ -130,8 +134,10 @@
         <div class="container mobile-nav__inner">
           <nav aria-label="Main" data-i18n-aria-label="nav.primary">
             <ul>
-              <li><a class="mobile-nav__link" href="#games" data-i18n="nav.games">Games</a></li>
-              <li><a class="mobile-nav__link" href="#apps" data-i18n="nav.apps">Apps</a></li>
+              <li><a class="mobile-nav__link" href="games.html" data-i18n="nav.games">Games</a></li>
+              <li><a class="mobile-nav__link" href="apps.html" data-i18n="nav.apps">Apps</a></li>
+              <li><a class="mobile-nav__link" href="websites.html" data-i18n="nav.websites">Websites</a></li>
+              <li><a class="mobile-nav__link" href="offers.html" data-i18n="nav.offers">Offers</a></li>
               <li>
                 <a class="mobile-nav__link" href="#how-it-works" data-i18n="nav.howItWorks">
                   How it works
@@ -145,6 +151,7 @@
           </div>
           <div class="mobile-nav__actions" data-auth-user hidden>
             <span class="site-header__user-name site-header__user-name--mobile" data-auth-user-name></span>
+            <a class="btn btn--secondary" href="dashboard.html" data-i18n="nav.dashboard">Dashboard</a>
             <button class="btn btn--secondary" type="button" data-auth-logout data-i18n="nav.logout">
               Log out
             </button>
@@ -168,8 +175,8 @@
               approved.
             </p>
             <div class="hero__actions">
-              <a class="btn btn--primary btn--lg" href="register.html" data-i18n="hero.primaryCta">
-                Start earning
+              <a class="btn btn--primary btn--lg" href="offers.html" data-i18n="hero.primaryCta">
+                Browse rewards
               </a>
               <a class="btn btn--secondary btn--lg" href="#how-it-works" data-i18n="hero.secondaryCta">
                 How it works
@@ -311,6 +318,28 @@
         </div>
       </section>
 
+      <!-- ============================================ featured content -->
+      <!-- Hidden until featured content loads: no featured items in
+           Firestore -> the whole section stays out of the page. -->
+      <section class="section" id="featured" aria-labelledby="featured-title" data-featured-section hidden>
+        <div class="container">
+          <header class="section-head">
+            <div>
+              <h2 class="section-head__title" id="featured-title" data-i18n="featured.title">
+                Featured right now
+              </h2>
+              <p class="section-head__subtitle" data-i18n="featured.subtitle">
+                Hand-picked opportunities, chosen by our team.
+              </p>
+            </div>
+          </header>
+
+          <!-- Loading / error states are painted here. -->
+          <div data-featured-status></div>
+          <div class="offer-grid" data-featured-grid></div>
+        </div>
+      </section>
+
       <!-- ============================================ offers -->
       <section class="section" id="offers" aria-labelledby="offers-title">
         <div class="container">
@@ -341,6 +370,7 @@
                 <h3 class="offer-group__title" id="games-title" data-i18n="nav.games">Games</h3>
                 <span class="offer-group__rule" aria-hidden="true"></span>
                 <span class="offer-group__count" data-offers-count aria-hidden="true"></span>
+                <a class="offer-group__link" href="games.html" data-i18n="common.viewAll">View all</a>
               </div>
               <div class="offer-grid" data-offers-grid="game"></div>
             </section>
@@ -350,8 +380,29 @@
                 <h3 class="offer-group__title" id="apps-title" data-i18n="nav.apps">Apps</h3>
                 <span class="offer-group__rule" aria-hidden="true"></span>
                 <span class="offer-group__count" data-offers-count aria-hidden="true"></span>
+                <a class="offer-group__link" href="apps.html" data-i18n="common.viewAll">View all</a>
               </div>
               <div class="offer-grid" data-offers-grid="app"></div>
+            </section>
+
+            <section class="offer-group" id="websites" aria-labelledby="websites-title">
+              <div class="offer-group__head">
+                <h3 class="offer-group__title" id="websites-title" data-i18n="nav.websites">Websites</h3>
+                <span class="offer-group__rule" aria-hidden="true"></span>
+                <span class="offer-group__count" data-offers-count aria-hidden="true"></span>
+                <a class="offer-group__link" href="websites.html" data-i18n="common.viewAll">View all</a>
+              </div>
+              <div class="offer-grid" data-offers-grid="website"></div>
+            </section>
+
+            <section class="offer-group" id="offers" aria-labelledby="offers-group-title">
+              <div class="offer-group__head">
+                <h3 class="offer-group__title" id="offers-group-title" data-i18n="nav.offers">Offers</h3>
+                <span class="offer-group__rule" aria-hidden="true"></span>
+                <span class="offer-group__count" data-offers-count aria-hidden="true"></span>
+                <a class="offer-group__link" href="offers.html#offers" data-i18n="common.viewAll">View all</a>
+              </div>
+              <div class="offer-grid" data-offers-grid="offer"></div>
             </section>
           </div>
         </div>
@@ -483,8 +534,10 @@
           <div>
             <h2 class="site-footer__heading" data-i18n="footer.product">Product</h2>
             <ul class="site-footer__list">
-              <li><a class="site-footer__link" href="#games" data-i18n="nav.games">Games</a></li>
-              <li><a class="site-footer__link" href="#apps" data-i18n="nav.apps">Apps</a></li>
+              <li><a class="site-footer__link" href="games.html" data-i18n="nav.games">Games</a></li>
+              <li><a class="site-footer__link" href="apps.html" data-i18n="nav.apps">Apps</a></li>
+              <li><a class="site-footer__link" href="websites.html" data-i18n="nav.websites">Websites</a></li>
+              <li><a class="site-footer__link" href="offers.html" data-i18n="nav.offers">Offers</a></li>
               <li>
                 <a class="site-footer__link" href="#how-it-works" data-i18n="nav.howItWorks">
                   How it works
@@ -500,6 +553,7 @@
               <li>
                 <a class="site-footer__link" href="register.html" data-i18n="nav.signUp">Sign up</a>
               </li>
+              <li><a class="site-footer__link" href="dashboard.html" data-i18n="nav.dashboard">Dashboard</a></li>
             </ul>
           </div>
 

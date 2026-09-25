@@ -1,0 +1,146 @@
+/* =====================================================================
+   responsive.css — every breakpoint rule, in one place
+   =====================================================================
+   Layer 3 of 4. Mobile-first: the base styles in style.css and
+   components.css target small screens; this file only ADDS columns,
+   swaps the mobile nav for the desktop nav, and widens layouts as
+   space allows. Breakpoints were chosen where the layouts actually
+   break, not at device names.
+
+     ≤ 560px  : small phones (base styles, nothing to add)
+     ≥ 640px  : wide phones — 2-col grids for stats/quick actions
+     ≥ 768px  : tablets — nav switches to desktop, 2-col offer grids
+     ≥ 1024px : laptops — hero side-by-side, 3-col offers, admin shell
+     ≥ 1280px : desktop — 4-col offer grids, wider containers
+   ===================================================================== */
+
+/* =====================================================================
+   ≥ 640px — wide phones
+   ===================================================================== */
+
+@media (min-width: 640px) {
+  .stat-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .quick-actions {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .trust__list {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .offer-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* =====================================================================
+   ≥ 768px — tablets: desktop navigation appears
+   ===================================================================== */
+
+@media (min-width: 768px) {
+  .steps {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .site-footer__grid {
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+  }
+
+  .auth-page__main {
+    padding-block: var(--space-8);
+  }
+
+  .stat-chips {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* =====================================================================
+   ≥ 1024px — laptops: desktop header, hero split, admin shell
+   ===================================================================== */
+
+@media (min-width: 1024px) {
+  /* Mobile-only chrome hides; desktop nav shows. */
+  .menu-trigger {
+    display: none;
+  }
+
+  .mobile-nav {
+    display: none;
+  }
+
+  .offer-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .hero__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+    align-items: center;
+    gap: var(--space-8);
+  }
+
+  .offer-hero {
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+    align-items: center;
+  }
+
+  .dashboard-hero {
+    background:
+      radial-gradient(500px 180px at 85% -30%, rgba(124, 92, 255, 0.22), transparent 70%),
+      linear-gradient(180deg, var(--surface), var(--bg-elevated));
+  }
+
+  .trust__grid {
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    align-items: start;
+  }
+
+  .stat-grid--four {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .stat-grid--three {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* =====================================================================
+   ≥ 1280px — desktop
+   ===================================================================== */
+
+@media (min-width: 1280px) {
+  .offer-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* =====================================================================
+   ≤ 767px — mobile navigation (explicit, keeps base honest)
+   ===================================================================== */
+
+@media (max-width: 767px) {
+  .site-nav {
+    display: none;
+  }
+
+  .menu-trigger {
+    display: inline-flex;
+  }
+
+  .site-header__auth {
+    display: none;
+  }
+
+  .section {
+    padding-block: var(--space-8);
+  }
+
+  .page-head {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

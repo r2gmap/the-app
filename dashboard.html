@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Dashboard — The App</title>
+    <meta name="i18n-title" content="meta.dashboardTitle" />
+    <meta name="description" content="Discover games and apps, complete simple tasks, and earn rewards once your proof is reviewed and approved." />
+    <meta name="theme-color" content="#080a14" />
+
+    <!--
+      Sets language and direction before first paint, so an Arabic
+      visitor never sees the page flip from LTR. The cloak class is only
+      added for a non-English locale, and is removed once the strings
+      are applied by js/i18n.js.
+    -->
+    <script>
+      (function () {
+        try {
+          var supported = ["en", "ar"];
+          var stored = null;
+          try { stored = localStorage.getItem("theapp.locale"); } catch (e) {}
+          var locale = supported.indexOf(stored) > -1 ? stored : null;
+          if (!locale) {
+            var tags =
+              navigator.languages && navigator.languages.length
+                ? navigator.languages
+                : [navigator.language];
+            for (var i = 0; i < tags.length; i++) {
+              var base = String(tags[i] || "").toLowerCase().split("-")[0];
+              if (supported.indexOf(base) > -1) { locale = base; break; }
+            }
+          }
+          locale = locale || "en";
+          var root = document.documentElement;
+          root.lang = locale;
+          root.dir = locale === "ar" ? "rtl" : "ltr";
+          if (locale !== "en") root.classList.add("i18n-pending");
+        } catch (e) {}
+      })();
+    </script>
+
+    <link rel="icon" href="assets/icons/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://www.gstatic.com" />
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/components.css" />
+    <link rel="stylesheet" href="css/responsive.css" />
+    <script type="module" src="js/main.js"></script>
+  </head>
+
+  <body data-page="dashboard">
+    <a class="skip-link" href="#main" data-i18n="common.skipToContent">Skip to content</a>
+
+    <header class="site-header">
+      <div class="container site-header__bar">
+        <a class="brand" href="index.html">
+          <span class="brand__mark" aria-hidden="true">
+            <!-- Three ascending bars: pick a task, complete it, get paid. -->
+              <svg viewBox="0 0 24 24" fill="none">
+                <rect x="3.5" y="14" width="4" height="6.5" rx="1.6" fill="#fff" fill-opacity=".62" />
+                <rect x="10" y="9.5" width="4" height="11" rx="1.6" fill="#fff" fill-opacity=".82" />
+                <rect x="16.5" y="4" width="4" height="16.5" rx="1.6" fill="#fff" />
+              </svg>
+          </span>
+          <span class="brand__name">The App</span>
+        </a>
+
+        <nav class="site-nav" aria-label="Main" data-i18n-aria-label="nav.primary">
+          <ul class="site-nav__list">
+            <li><a class="site-nav__link" href="games.html" data-i18n="nav.games">Games</a></li>
+            <li><a class="site-nav__link" href="apps.html" data-i18n="nav.apps">Apps</a></li>
+            <li><a class="site-nav__link" href="websites.html" data-i18n="nav.websites">Websites</a></li>
+            <li><a class="site-nav__link" href="offers.html" data-i18n="nav.offers">Offers</a></li>
+            <li><a class="site-nav__link" href="dashboard.html" data-i18n="nav.dashboard">Dashboard</a></li>
+            <li><a class="site-nav__link" href="wallet.html" data-i18n="nav.wallet">Wallet</a></li>
+          </ul>
+        </nav>
+
+        <div class="site-header__actions">
+          <div class="lang-switch" data-lang-switch aria-label="Change language"></div>
+
+          <div class="site-header__auth">
+            <!-- Both states start hidden until Firebase reports the real session. -->
+            <div data-auth-guest hidden>
+              <a class="btn btn--ghost btn--sm" href="login.html" data-i18n="nav.login">Log in</a>
+              <a class="btn btn--primary btn--sm" href="register.html" data-i18n="nav.signUp">
+                Sign up
+              </a>
+            </div>
+            <div class="site-header__user" data-auth-user hidden>
+              <a class="site-header__user-name" href="profile.html" data-auth-user-name></a>
+              <a class="btn btn--ghost btn--sm" href="dashboard.html" data-i18n="nav.dashboard">
+                Dashboard
+              </a>
+              <button class="btn btn--ghost btn--sm" type="button" data-auth-logout data-i18n="nav.logout">
+                Log out
+              </button>
+            </div>          </div>
+
+          <button
+            class="menu-trigger"
+            type="button"
+            data-menu-trigger
+            aria-expanded="false"
+            aria-controls="mobile-nav"
+            aria-label="Open menu"
+          >
+            <svg class="menu-trigger__open" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+              <path d="M3.5 6h13M3.5 10h13M3.5 14h13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+            </svg>
+            <svg class="menu-trigger__close" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+              <path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="mobile-nav" id="mobile-nav" data-menu-panel hidden>
+        <div class="container mobile-nav__inner">
+          <nav aria-label="Main" data-i18n-aria-label="nav.primary">
+            <ul>
+              <li><a class="mobile-nav__link" href="games.html" data-i18n="nav.games">Games</a></li>
+              <li><a class="mobile-nav__link" href="apps.html" data-i18n="nav.apps">Apps</a></li>
+              <li><a class="mobile-nav__link" href="websites.html" data-i18n="nav.websites">Websites</a></li>
+              <li><a class="mobile-nav__link" href="offers.html" data-i18n="nav.offers">Offers</a></li>
+              <li><a class="mobile-nav__link" href="dashboard.html" data-i18n="nav.dashboard">Dashboard</a></li>
+              <li><a class="mobile-nav__link" href="wallet.html" data-i18n="nav.wallet">Wallet</a></li>
+              <li><a class="mobile-nav__link" href="submissions.html" data-i18n="nav.submissions">My submissions</a></li>
+              <li><a class="mobile-nav__link" href="notifications.html" data-i18n="nav.notifications">Notifications</a></li>
+              <li><a class="mobile-nav__link" href="profile.html" data-i18n="nav.profile">Profile</a></li>
+            </ul>
+          </nav>
+          <div class="mobile-nav__actions" data-auth-guest hidden>
+            <a class="btn btn--secondary" href="login.html" data-i18n="nav.login">Log in</a>
+            <a class="btn btn--primary" href="register.html" data-i18n="nav.signUp">Sign up</a>
+          </div>
+          <div class="mobile-nav__actions" data-auth-user hidden>
+            <span class="site-header__user-name site-header__user-name--mobile" data-auth-user-name></span>
+            <a class="btn btn--secondary" href="dashboard.html" data-i18n="nav.dashboard">Dashboard</a>
+            <button class="btn btn--secondary" type="button" data-auth-logout data-i18n="nav.logout">
+              Log out
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main id="main">
+      <!-- ============================================ section: welcome hero -->
+      <section class="section" aria-labelledby="dash-title">
+        <div class="container">
+          <div class="card dashboard-hero">
+            <div class="avatar avatar--lg" data-dash-avatar></div>
+            <div>
+              <p class="dashboard-hero__welcome" data-i18n="dashboard.welcome">Welcome back</p>
+              <h1 class="dashboard-hero__name" id="dash-title" data-dash-name></h1>
+              <p class="dashboard-hero__sub" data-i18n="dashboard.subtitle">
+                Here is what is happening with your account today.
+              </p>
+            </div>
+          </div>
+
+          <!-- ============================================ section: statistics -->
+          <div class="stat-grid stat-grid--three" style="margin-bottom: var(--space-8);">
+            <div class="card stat-card">
+              <span class="stat-card__icon stat-card__icon--wallet" aria-hidden="true">
+                <svg viewBox="0 0 20 20" fill="none">
+                  <rect x="2.5" y="5" width="15" height="10.5" rx="2.5" stroke="currentColor" stroke-width="1.5" />
+                  <path d="M13.5 10.25h3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+                </svg>
+              </span>
+              <p class="stat-card__label" data-i18n="dashboard.stats.wallet">Wallet balance</p>
+              <p class="stat-card__value stat-card__value--success" data-stat-balance>—</p>
+            </div>
+            <div class="card stat-card">
+              <span class="stat-card__icon stat-card__icon--check" aria-hidden="true">
+                <svg viewBox="0 0 20 20" fill="none">
+                  <path d="M4 10.5l4 4 8-9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </span>
+              <p class="stat-card__label" data-i18n="dashboard.stats.completed">Completed tasks</p>
+              <p class="stat-card__value" data-stat-completed>—</p>
+            </div>
+            <div class="card stat-card">
+              <span class="stat-card__icon stat-card__icon--clock" aria-hidden="true">
+                <svg viewBox="0 0 20 20" fill="none">
+                  <circle cx="10" cy="10" r="7" stroke="currentColor" stroke-width="1.5" />
+                  <path d="M10 6.5V10l2.5 1.8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                </svg>
+              </span>
+              <p class="stat-card__label" data-i18n="dashboard.stats.pending">Pending reviews</p>
+              <p class="stat-card__value" data-stat-pending>—</p>
+            </div>
+          </div>
+
+          <!-- ============================================ section: featured opportunities -->
+          <section aria-labelledby="featured-title" style="margin-bottom: var(--space-8);">
+            <div class="page-head">
+              <div>
+                <h2 class="page-head__title" id="featured-title" data-i18n="dashboard.featured.title">
+                  Featured opportunities
+                </h2>
+                <p class="page-head__subtitle" data-i18n="dashboard.featured.subtitle">
+                  Active offers you can complete right now.
+                </p>
+              </div>
+              <a class="btn btn--secondary btn--sm" href="offers.html" data-i18n="dashboard.featured.viewAll">
+                View all offers
+              </a>
+            </div>
+            <div data-dash-featured-status></div>
+            <div class="offer-grid" data-dash-featured></div>
+          </section>
+
+          <!-- ============================================ section: recent activity -->
+          <section aria-labelledby="activity-title" style="margin-bottom: var(--space-8);">
+            <div class="page-head">
+              <h2 class="page-head__title" id="activity-title" data-i18n="dashboard.activity.title">
+                Recent activity
+              </h2>
+              <a class="btn btn--secondary btn--sm" href="submissions.html" data-i18n="dashboard.activity.viewAll">
+                View all submissions
+              </a>
+            </div>
+            <div data-dash-activity-status></div>
+            <div class="submission-list" data-dash-activity></div>
+          </section>
+
+          <!-- ============================================ section: quick actions -->
+          <section aria-labelledby="quick-title">
+            <h2 class="page-head__title" id="quick-title" data-i18n="dashboard.quick.title" style="margin-bottom: var(--space-5);">
+              Quick actions
+            </h2>
+            <div class="quick-actions">
+              <a class="quick-action" href="games.html">
+                <span class="quick-action__icon" aria-hidden="true">
+                  <svg viewBox="0 0 20 20" fill="none">
+                    <path d="M6.5 4.5v11l9-5.5-9-5.5z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" />
+                  </svg>
+                </span>
+                <span data-i18n="dashboard.quick.browseGames">Browse games</span>
+                <span class="quick-action__arrow" aria-hidden="true">→</span>
+              </a>
+              <a class="quick-action" href="apps.html">
+                <span class="quick-action__icon" aria-hidden="true">
+                  <svg viewBox="0 0 20 20" fill="none">
+                    <rect x="4" y="2.5" width="12" height="15" rx="2.5" stroke="currentColor" stroke-width="1.6" />
+                    <path d="M8 15.5h4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+                  </svg>
+                </span>
+                <span data-i18n="dashboard.quick.browseApps">Browse apps</span>
+                <span class="quick-action__arrow" aria-hidden="true">→</span>
+              </a>
+              <a class="quick-action" href="websites.html">
+                <span class="quick-action__icon" aria-hidden="true">
+                  <svg viewBox="0 0 20 20" fill="none">
+                    <circle cx="10" cy="10" r="7" stroke="currentColor" stroke-width="1.6" />
+                    <path d="M3.5 10h13M10 3a11 11 0 010 14M10 3a11 11 0 000 14" stroke="currentColor" stroke-width="1.3" />
+                  </svg>
+                </span>
+                <span data-i18n="dashboard.quick.browseWebsites">Browse websites</span>
+                <span class="quick-action__arrow" aria-hidden="true">→</span>
+              </a>
+              <a class="quick-action" href="offers.html#offers">
+                <span class="quick-action__icon" aria-hidden="true">
+                  <svg viewBox="0 0 20 20" fill="none">
+                    <path d="M10 2.5l1.9 4 4.4.5-3.3 3 1 4.3-4-2.3-4 2.3 1-4.3-3.3-3 4.4-.5 1.9-4z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" />
+                  </svg>
+                </span>
+                <span data-i18n="dashboard.quick.browseOffers">Browse offers</span>
+                <span class="quick-action__arrow" aria-hidden="true">→</span>
+              </a>
+              <a class="quick-action" href="profile.html">
+                <span class="quick-action__icon" aria-hidden="true">
+                  <svg viewBox="0 0 20 20" fill="none">
+                    <circle cx="10" cy="7" r="3.2" stroke="currentColor" stroke-width="1.6" />
+                    <path d="M4 16.5c1.3-2.7 3.4-4 6-4s4.7 1.3 6 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+                  </svg>
+                </span>
+                <span data-i18n="dashboard.quick.profile">Profile</span>
+                <span class="quick-action__arrow" aria-hidden="true">→</span>
+              </a>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <div class="site-footer__bottom">
+          <p class="site-footer__copyright">
+            © <span data-current-year>2026</span> The App.
+            <span data-i18n="footer.rights">All rights reserved.</span>
+          </p>
+          <div class="lang-switch" data-lang-switch aria-label="Change language"></div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Offer card markup lives in a template so it stays editable as
+         HTML; js/offers.js clones it per offer and fills the hooks. -->
+    <template id="offer-card-template">
+      <article class="card card--interactive offer-card">
+        <div class="offer-card__media" data-card-media>
+          <span class="badge badge--primary offer-card__type" data-card-type></span>
+        </div>
+        <div class="offer-card__body">
+          <h4 class="offer-card__title" data-card-title></h4>
+          <p class="offer-card__desc" data-card-desc></p>
+          <p class="offer-card__requirement">
+            <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
+              <path d="M4 10.5l4 4 8-9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+            <span class="visually-hidden" data-card-requirement-label></span>
+            <span data-card-requirement></span>
+          </p>
+          <div class="offer-card__footer">
+            <div>
+              <p class="offer-card__reward-label" data-card-reward-label></p>
+              <p class="offer-card__reward" data-card-reward></p>
+            </div>
+            <a class="btn btn--secondary btn--sm" href="register.html" data-card-cta></a>
+          </div>
+        </div>
+      </article>
+    </template>
+    <!-- Submission card: shared by the dashboard and My submissions. -->
+    <template id="submission-card-template">
+      <article class="card submission-card">
+        <div class="submission-card__head">
+          <div>
+            <p class="submission-card__offer" data-sub-offer></p>
+            <p class="submission-card__task" data-sub-task></p>
+          </div>
+          <span class="badge" data-sub-status></span>
+        </div>
+        <div class="submission-card__meta">
+          <span>
+            <span data-i18n="submissions.rewardLabel">Reward</span>:
+            <span data-sub-reward></span>
+          </span>
+          <span>
+            <span data-i18n="submissions.submittedLabel">Submitted</span>:
+            <span data-sub-date></span>
+          </span>
+        </div>
+        <p class="submission-card__reason" data-sub-reason-block hidden>
+          <span data-i18n="submissions.reasonLabel">Reason</span>:
+          <span data-sub-reason></span>
+        </p>
+        <div class="submission-card__proof" data-sub-proof></div>
+      </article>
+    </template>
+  </body>
+</html>
