@@ -33,6 +33,7 @@ function offerIdFromUrl() {
   return (params.get("id") || "").trim();
 }
 
+/** Loads the offer from the URL id and paints the right visitor state. */
 async function renderOfferShell() {
   const statusArea = qs("[data-offer-status]");
   const content = qs("[data-offer-content]");
@@ -60,6 +61,7 @@ async function renderOfferShell() {
   await renderVisitorState();
 }
 
+/** Shows the not-found state (bad link, removed or unpublished content). */
 function showNotFound(statusArea, content) {
   content.hidden = true;
   renderState(statusArea, "empty", {
@@ -129,6 +131,7 @@ function renderBanner() {
   banner.hidden = false;
 }
 
+/** Applies generated cover art when an offer has no uploaded image. */
 function applyGenerated(media) {
   media.setAttribute("style", generatedCoverStyle(offer.category));
   media.append(
@@ -201,6 +204,7 @@ function initFilePicker() {
   renderPreviews(previews);
 }
 
+/** Renders the selected proof-image thumbnails with remove buttons. */
 function renderPreviews(previews) {
   previews.replaceChildren();
   selectedFiles.forEach((file, index) => {

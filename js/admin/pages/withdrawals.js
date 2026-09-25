@@ -86,6 +86,7 @@ async function renderWithdrawals() {
   statusArea.replaceChildren();
 }
 
+/** Wires the status filter tabs (all / pending / approved / rejected). */
 function initFilters() {
   for (const tab of qsa("[data-withdrawals-filter]")) {
     tab.addEventListener("click", () => {
@@ -138,6 +139,7 @@ async function approve(request) {
   });
 }
 
+/** Opens the reject dialog for one withdrawal request. */
 function openRejectDialog(request) {
   rejectingWithdrawal = request;
   const dialog = qs("[data-withdraw-reject-dialog]");
@@ -146,6 +148,7 @@ function openRejectDialog(request) {
   dialog.showModal();
 }
 
+/** Wires the shared reject dialog (reason textarea + confirm). */
 function initRejectDialog() {
   const dialog = qs("[data-withdraw-reject-dialog]");
   dialog.querySelector("form").addEventListener("submit", async (event) => {

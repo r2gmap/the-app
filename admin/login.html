@@ -63,12 +63,14 @@
       </div>
     </header>
 
+    <!-- ================================================== page content -->
     <main class="auth-page__main" id="main">
       <div class="card auth-card">
         <!-- ============================================ admin sign-in form -->
         <h1 class="auth-card__title" data-i18n="admin.loginTitle">Admin sign in</h1>
         <p class="auth-card__subtitle" data-i18n="admin.loginSubtitle">Administration access only.</p>
 
+        <!-- ============================== credentials (email or username) -->
         <form class="form" data-admin-login-form novalidate>
           <div class="field">
             <label class="field__label" for="admin-identifier" data-i18n="admin.login.identifier">
@@ -84,11 +86,14 @@
               data-admin-password />
           </div>
           <p class="form__error" role="alert" data-admin-login-error></p>
+
+          <!-- ================================ submit + server-side feedback -->
           <button class="btn btn--primary btn--block" type="submit" data-i18n="admin.login.submit">
             Sign in
           </button>
         </form>
 
+        <!-- ============================================ back-to-site link -->
         <p class="auth-card__footer">
           <a class="auth-card__link" href="../index.html" data-i18n="admin.login.backToSite">Back to website</a>
         </p>

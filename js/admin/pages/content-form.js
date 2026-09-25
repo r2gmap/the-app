@@ -308,6 +308,7 @@ const bannerMedia = initMediaField({
   wide: true,
 });
 
+/** Entry point: wires the form actions, then loads create or edit mode. */
 async function init(adminUser) {
   currentAdminUid = adminUser?.uid || null;
 

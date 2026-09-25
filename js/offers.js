@@ -39,6 +39,14 @@ function categoryLabel(category) {
   return t(`categories.${category}`);
 }
 
+/**
+ * Plural variant for category-page headings and empty states
+ * ("No Games available right now" reads better than "No Game…").
+ */
+function categoryLabelPlural(category) {
+  return t(`categoriesPlural.${category}`);
+}
+
 /** Localized difficulty label. */
 function difficultyLabel(difficulty) {
   return t(`difficulty.${difficulty}` || "difficulty.medium");
@@ -257,4 +265,4 @@ function demoOffers() {
   ];
 }
 
-export { renderOfferCard, demoOffers, categoryLabel, difficultyLabel, localizedRequirements, generatedCoverStyle, CATEGORIES };
+export { renderOfferCard, demoOffers, categoryLabel, categoryLabelPlural, difficultyLabel, localizedRequirements, generatedCoverStyle, CATEGORIES };

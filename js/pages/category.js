@@ -18,7 +18,7 @@
 import { waitForAuthState } from "../firebase.js";
 import { t, onLocaleChange } from "../i18n.js";
 import { qs, renderState, el } from "../ui.js";
-import { renderOfferCard } from "../offers.js";
+import { renderOfferCard, categoryLabelPlural } from "../offers.js";
 import { fetchActiveOffers } from "../services/offers-service.js";
 
 let authed = false;
@@ -56,10 +56,11 @@ async function renderCategory() {
     }
   }
 
-  // Professional empty state: what's coming + where to go next.
+  // Professional empty state: names the category (e.g. "No Games
+  // available right now"), explains what's coming, and links onward.
   if (!items.length) {
     renderState(statusArea, "empty", {
-      title: t("categoryPage.emptyTitle"),
+      title: t("categoryPage.emptyTitle", { category: categoryLabelPlural(category) }),
       body: t("categoryPage.emptyBody"),
     });
     statusArea.firstElementChild?.append(

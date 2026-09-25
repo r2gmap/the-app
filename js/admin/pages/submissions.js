@@ -139,6 +139,7 @@ function openRejectDialog(submission) {
   dialog.showModal();
 }
 
+/** Wires the shared reject dialog (reason textarea + confirm). */
 function initRejectDialog() {
   const dialog = qs("[data-reject-dialog]");
   dialog.querySelector("form").addEventListener("submit", async (event) => {

@@ -45,6 +45,7 @@ function initAdminLoginPage() {
   });
 }
 
+/** Handles the admin login form: resolve identifier -> sign in -> role check. */
 async function submitAdminLogin(form) {
   const errorNode = qs("[data-admin-login-error]", form);
   errorNode.textContent = "";

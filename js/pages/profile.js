@@ -139,6 +139,7 @@ function showEditError(form, message) {
   if (node) node.textContent = message;
 }
 
+/** Clears every inline error in the edit-profile dialog. */
 function clearEditErrors(form) {
   const node = qs("[data-profile-edit-error]", form);
   if (node) node.textContent = "";

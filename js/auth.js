@@ -203,6 +203,7 @@ function initLoginForm() {
   form.addEventListener("input", () => clearFormErrors(form));
 }
 
+/** Handles the login form: validate, sign in, then route by email state. */
 async function submitLogin(form) {
   const values = validateForm(form);
   if (!values) return; // invalid: no Firebase call at all
@@ -231,6 +232,7 @@ function initRegisterForm() {
   form.addEventListener("input", () => clearFormErrors(form));
 }
 
+/** Handles the register form: validate, create the account + profile. */
 async function submitRegister(form) {
   const values = validateForm(form);
   if (!values) return;

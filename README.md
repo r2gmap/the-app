@@ -515,7 +515,7 @@ Storage (harmless; delete them from the Firebase console if you want).
   `data-i18n-aria-label`, `data-i18n-title`, and
   `<meta name="i18n-title">` for the browser tab title.
 - **`js/i18n.js`** holds both catalogues (English and Arabic — kept
-  in exact 1:1 parity, 537 keys each) and applies them to the whole
+  in exact 1:1 parity, 563 keys each) and applies them to the whole
   page.
 - **Admin-authored content** (titles, descriptions, requirements…)
   is stored *with the content itself* (`titleAr` and friends) and

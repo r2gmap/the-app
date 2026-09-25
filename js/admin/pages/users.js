@@ -42,6 +42,7 @@ async function renderUsers() {
   applySearch();
 }
 
+/** Re-renders the user list filtered by the search box term. */
 function applySearch() {
   const list = qs("[data-admin-users-list]");
   const statusArea = qs("[data-admin-users-status]");
