@@ -1,0 +1,600 @@
+/* =====================================================================
+   style.css — Design tokens, reset, base type, page sections
+   =====================================================================
+   Layer 1 of 4 (style -> components -> responsive -> admin).
+
+   Every colour, radius, shadow, spacing step and type size is a custom
+   property on :root. Themes are adjusted by editing ONLY this block.
+
+   Layout uses CSS logical properties (margin-inline, inset-inline…)
+   so Arabic (RTL) mirrors automatically with zero extra rules.
+   ===================================================================== */
+
+/* =====================================================================
+   Design tokens
+   ===================================================================== */
+
+:root {
+  /* --- surfaces (dark, premium, gaming-inspired but trustworthy) --- */
+  --bg: #080a14;
+  --bg-elevated: #0d1020;
+  --surface: #101426;
+  --surface-2: #161b31;
+  --surface-3: #1c2240;
+  --border: rgba(148, 163, 202, 0.14);
+  --border-strong: rgba(148, 163, 202, 0.26);
+
+  /* --- text --- */
+  --text: #eef1f9;
+  --text-muted: #9aa3bc;
+  --text-faint: #6b7490;
+
+  /* --- brand + feedback --- */
+  --accent: #7c5cff; /* primary violet */
+  --accent-strong: #9d85ff;
+  --accent-soft: rgba(124, 92, 255, 0.16);
+  --accent-2: #38d1bf; /* supporting teal */
+  --success: #34d399;
+  --success-soft: rgba(52, 211, 153, 0.14);
+  --warning: #fbbf24;
+  --warning-soft: rgba(251, 191, 36, 0.14);
+  --danger: #f87171;
+  --danger-soft: rgba(248, 113, 113, 0.14);
+
+  /* --- glow + gradients (soft, subtle — never neon) --- */
+  --glow: 0 0 0 1px rgba(124, 92, 255, 0.22), 0 10px 40px -12px rgba(124, 92, 255, 0.45);
+  --shadow-card: 0 1px 0 rgba(255, 255, 255, 0.03) inset, 0 18px 40px -24px rgba(2, 4, 16, 0.9);
+  --gradient-brand: linear-gradient(135deg, #7c5cff 0%, #38d1bf 130%);
+  --gradient-hero: radial-gradient(900px 480px at 85% -10%, rgba(124, 92, 255, 0.16), transparent 60%),
+    radial-gradient(700px 420px at -10% 30%, rgba(56, 209, 191, 0.10), transparent 55%);
+
+  /* --- geometry --- */
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-pill: 999px;
+
+  /* --- spacing scale --- */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 28px;
+  --space-7: 40px;
+  --space-8: 56px;
+  --space-9: 80px;
+
+  /* --- type --- */
+  --font-sans: "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue",
+    Tahoma, "Noto Sans Arabic", "Segoe UI Arabic", Arial, sans-serif;
+  --text-xs: 0.75rem;
+  --text-sm: 0.86rem;
+  --text-md: 0.95rem;
+  --text-lg: 1.05rem;
+  --text-xl: 1.3rem;
+  --text-2xl: clamp(1.6rem, 1.2rem + 2vw, 2.3rem);
+  --text-3xl: clamp(2.1rem, 1.4rem + 3.4vw, 3.4rem);
+
+  /* --- motion --- */
+  --ease: cubic-bezier(0.22, 0.8, 0.36, 1);
+  --speed: 220ms;
+
+  /* --- layout --- */
+  --container: 1120px;
+  --header-height: 68px;
+}
+
+/* =====================================================================
+   Reset + base
+   ===================================================================== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: var(--text-md);
+  line-height: 1.65;
+  color: var(--text);
+  background:
+    var(--gradient-hero),
+    var(--bg);
+  background-attachment: fixed;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  flex: 1;
+}
+
+img,
+svg {
+  max-width: 100%;
+  display: block;
+}
+
+a {
+  color: var(--accent-strong);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  line-height: 1.25;
+  margin: 0 0 var(--space-3);
+  text-wrap: balance;
+}
+
+p {
+  margin: 0 0 var(--space-3);
+}
+
+p:last-child {
+  margin-bottom: 0;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+}
+
+/* THE single deliberate !important in this codebase: a class that sets
+   `display` must never win the cascade tie against the browser's own
+   [hidden] default. Every show/hide toggle depends on this. */
+[hidden] {
+  display: none !important;
+}
+
+/* Pre-paint cloak for non-English locales (added inline in <head>,
+   removed by i18n.js once translations are applied). */
+html.i18n-pending body {
+  visibility: hidden;
+}
+
+::selection {
+  background: rgba(124, 92, 255, 0.35);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent-strong);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* =====================================================================
+   Utilities
+   ===================================================================== */
+
+.container {
+  width: min(100% - 2 * var(--space-4), var(--container));
+  margin-inline: auto;
+}
+
+.section {
+  padding-block: var(--space-9);
+}
+
+.section-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-5);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-7);
+}
+
+.section-head__title {
+  font-size: var(--text-2xl);
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+
+.section-head__subtitle {
+  color: var(--text-muted);
+  max-width: 56ch;
+  margin: var(--space-2) 0 0;
+}
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skip-link {
+  position: absolute;
+  inset-inline-start: var(--space-4);
+  inset-block-start: -100px;
+  z-index: 100;
+  background: var(--accent);
+  color: #fff;
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-sm);
+  transition: inset-block-start var(--speed) var(--ease);
+}
+
+.skip-link:focus {
+  inset-block-start: var(--space-4);
+  text-decoration: none;
+}
+
+.muted {
+  color: var(--text-muted);
+}
+
+/* App-page header block (dashboard, wallet, offers… page titles). */
+.page-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-6);
+}
+
+.page-head__title {
+  font-size: var(--text-2xl);
+  margin: 0;
+}
+
+.page-head__subtitle {
+  color: var(--text-muted);
+  margin: var(--space-2) 0 0;
+  max-width: 60ch;
+}
+
+/* =====================================================================
+   Landing: hero
+   ===================================================================== */
+
+.hero {
+  padding-block: var(--space-9) var(--space-8);
+}
+
+.hero__grid > div:first-child {
+  max-width: 640px;
+}
+
+.hero__title {
+  font-size: var(--text-3xl);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-bottom: var(--space-5);
+}
+
+/* The three words Play. Try. Earn. get a soft two-tone treatment. */
+.hero__title span {
+  display: inline-block;
+  margin-inline-end: 0.35em;
+}
+
+.hero__title span:nth-child(2) {
+  background: var(--gradient-brand);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.hero__lead {
+  color: var(--text-muted);
+  font-size: var(--text-lg);
+  margin-bottom: var(--space-6);
+}
+
+.hero__actions {
+  display: flex;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-4);
+}
+
+.hero__note {
+  color: var(--text-faint);
+  font-size: var(--text-sm);
+}
+
+/* =====================================================================
+   Landing: how it works
+   ===================================================================== */
+
+.steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-4);
+  counter-reset: step;
+}
+
+.step {
+  position: relative;
+  padding: var(--space-5);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: linear-gradient(180deg, var(--surface), var(--bg-elevated));
+  box-shadow: var(--shadow-card);
+}
+
+.step__number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-pill);
+  background: var(--accent-soft);
+  color: var(--accent-strong);
+  font-weight: 700;
+  margin-bottom: var(--space-3);
+}
+
+.step__title {
+  font-size: var(--text-lg);
+  margin-bottom: var(--space-2);
+}
+
+.step__body {
+  color: var(--text-muted);
+  margin: 0;
+}
+
+/* =====================================================================
+   Landing: offers section
+   ===================================================================== */
+
+.offer-group:not(:first-child) {
+  margin-top: var(--space-8);
+}
+
+.offer-group__head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  margin-bottom: var(--space-5);
+}
+
+.offer-group__title {
+  font-size: var(--text-xl);
+  margin: 0;
+}
+
+.offer-group__rule {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, var(--border-strong), transparent);
+}
+
+[dir="rtl"] .offer-group__rule {
+  background: linear-gradient(-90deg, var(--border-strong), transparent);
+}
+
+.offer-group__count {
+  color: var(--text-faint);
+  font-size: var(--text-sm);
+}
+
+/* "View all" link at the end of a homepage category group head. */
+.offer-group__link {
+  margin-inline-start: auto;
+  color: var(--accent-strong);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.offer-group__link:hover {
+  text-decoration: underline;
+}
+
+.notice {
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-sm);
+  border: 1px dashed var(--border-strong);
+  color: var(--text-muted);
+  font-size: var(--text-sm);
+}
+
+.notice--demo {
+  margin-bottom: var(--space-5);
+  background: rgba(251, 191, 36, 0.05);
+}
+
+/* =====================================================================
+   Landing: trust
+   ===================================================================== */
+
+.trust__grid {
+  display: grid;
+  gap: var(--space-7);
+}
+
+.trust__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-4);
+}
+
+.trust__item {
+  display: flex;
+  gap: var(--space-4);
+  padding: var(--space-5);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+}
+
+.trust__icon {
+  flex: none;
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-pill);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--success-soft);
+  color: var(--success);
+}
+
+.trust__icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.trust__title {
+  font-size: var(--text-md);
+  font-weight: 600;
+  margin-bottom: var(--space-1);
+}
+
+.trust__body {
+  color: var(--text-muted);
+  font-size: var(--text-sm);
+  margin: 0;
+}
+
+/* =====================================================================
+   Landing: final call to action
+   ===================================================================== */
+
+.final-cta__panel {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background:
+    radial-gradient(600px 200px at 50% -40%, rgba(124, 92, 255, 0.25), transparent 70%),
+    var(--surface);
+  box-shadow: var(--shadow-card);
+  padding: var(--space-8) var(--space-5);
+  text-align: center;
+}
+
+.final-cta__title {
+  font-size: var(--text-2xl);
+}
+
+.final-cta__body {
+  color: var(--text-muted);
+  max-width: 48ch;
+  margin-inline: auto;
+}
+
+.final-cta__actions {
+  margin-top: var(--space-5);
+}
+
+/* =====================================================================
+   Footer
+   ===================================================================== */
+
+.site-footer {
+  border-top: 1px solid var(--border);
+  background: rgba(5, 7, 16, 0.6);
+  margin-top: var(--space-8);
+}
+
+.site-footer__grid {
+  display: grid;
+  gap: var(--space-6);
+  padding-block: var(--space-8);
+}
+
+.site-footer__tagline {
+  color: var(--text-muted);
+  font-size: var(--text-sm);
+  max-width: 34ch;
+}
+
+.site-footer__heading {
+  font-size: var(--text-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-faint);
+  margin-bottom: var(--space-3);
+}
+
+.site-footer__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-2);
+}
+
+.site-footer__link {
+  color: var(--text-muted);
+  font-size: var(--text-sm);
+}
+
+.site-footer__link:hover {
+  color: var(--text);
+  text-decoration: none;
+}
+
+.site-footer__note {
+  color: var(--text-faint);
+  font-size: var(--text-sm);
+}
+
+.site-footer__bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  padding-block: var(--space-5);
+  border-top: 1px solid var(--border);
+}
+
+.site-footer__copyright {
+  color: var(--text-faint);
+  font-size: var(--text-sm);
+  margin: 0;
+}
+
+/* =====================================================================
+   Auth pages (login / register / verify-email)
+   ===================================================================== */
+
+.auth-page {
+  justify-content: flex-start;
+}
+
+.auth-page__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-block: var(--space-5);
+}
+
+.auth-page__main {
+  flex: 1;
+  display: grid;
+  place-items: center;
+  padding-block: var(--space-6) var(--space-9);
+}

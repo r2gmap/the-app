@@ -1,0 +1,544 @@
+/* =====================================================================
+   admin.css — admin panel shell + admin-only components
+   =====================================================================
+   Layer 4 of 4. Loaded ONLY by /admin pages (alongside style.css and
+   components.css, which it reuses: buttons, badges, fields, modals…).
+
+   Layout: fixed sidebar on desktop (≥1024px), slide-in drawer on
+   smaller screens. The drawer reuses the shared [data-menu-trigger]
+   / [data-menu-panel] hooks wired by navigation.js.
+   ===================================================================== */
+
+/* =====================================================================
+   Shell
+   ===================================================================== */
+
+.admin-page {
+  --admin-sidebar-width: 248px;
+  display: block; /* sidebar is positioned, main centers in place */
+}
+
+.admin-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  min-height: var(--header-height);
+  padding-inline: var(--space-4);
+  background: rgba(8, 10, 20, 0.86);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--border);
+}
+
+.admin-topbar__title {
+  font-weight: 700;
+  font-size: var(--text-lg);
+  margin: 0;
+}
+
+.admin-topbar__spacer {
+  flex: 1;
+}
+
+.admin-topbar__user {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.admin-topbar__user-name {
+  color: var(--text-muted);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Sidebar: off-canvas drawer until 1024px (transform-based so the
+   desktop layout never fights the [hidden] attribute rules) */
+.admin-sidebar {
+  position: fixed;
+  inset-block: 0;
+  inset-inline-start: 0;
+  z-index: 70;
+  width: min(84vw, var(--admin-sidebar-width));
+  background: var(--bg-elevated);
+  border-inline-end: 1px solid var(--border);
+  padding: var(--space-5) var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  overflow-y: auto;
+  transform: translateX(-104%);
+  transition: transform 260ms var(--ease);
+}
+
+[dir="rtl"] .admin-sidebar {
+  transform: translateX(104%);
+}
+
+.admin-page.menu-open .admin-sidebar {
+  transform: none;
+}
+
+/* Drawer trigger (mobile only) */
+.admin-trigger {
+  width: 42px;
+  height: 42px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-strong);
+  background: var(--surface-2);
+  color: var(--text);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.admin-trigger svg {
+  width: 20px;
+  height: 20px;
+}
+
+.admin-sidebar__heading {
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-faint);
+  margin: 0;
+}
+
+.admin-nav {
+  display: grid;
+  gap: 2px;
+}
+
+.admin-nav__link {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: 0.6em 0.9em;
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.admin-nav__link svg {
+  width: 18px;
+  height: 18px;
+  flex: none;
+  opacity: 0.8;
+}
+
+.admin-nav__link:hover {
+  color: var(--text);
+  background: var(--surface-2);
+  text-decoration: none;
+}
+
+.admin-nav__link[aria-current="page"] {
+  background: var(--accent-soft);
+  color: var(--accent-strong);
+}
+
+.admin-sidebar__footer {
+  margin-top: auto;
+  display: grid;
+  gap: var(--space-2);
+}
+
+/* Drawer backdrop on small screens */
+.admin-page.menu-open::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 65;
+  background: rgba(4, 6, 14, 0.6);
+}
+
+.admin-main {
+  padding: var(--space-6) var(--space-4) var(--space-9);
+  max-width: 1160px;
+  margin-inline: auto;
+  width: 100%;
+}
+
+/* =====================================================================
+   Admin lists + rows (cards that behave like tables)
+   ===================================================================== */
+
+.admin-list {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.admin-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  padding: var(--space-4) var(--space-5);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: linear-gradient(180deg, var(--surface), var(--bg-elevated));
+}
+
+.admin-row__cell {
+  min-width: 0;
+}
+
+.admin-row__label {
+  display: block;
+  color: var(--text-faint);
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 2px;
+}
+
+.admin-row__value {
+  font-weight: 600;
+  font-size: var(--text-sm);
+  overflow-wrap: anywhere;
+}
+
+.admin-row__actions {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  margin-inline-start: auto;
+}
+
+.admin-row--detail {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+/* Offer thumbnail cell */
+.admin-thumb {
+  width: 52px;
+  height: 52px;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  flex: none;
+  border: 1px solid var(--border-strong);
+  display: grid;
+  place-items: center;
+}
+
+.admin-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Review cards (submissions/withdrawals) header line */
+.admin-row__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.admin-row__user {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.admin-row__grid {
+  display: grid;
+  gap: var(--space-3) var(--space-5);
+}
+
+.admin-row__reason {
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-sm);
+  background: var(--danger-soft);
+  border: 1px solid rgba(248, 113, 113, 0.3);
+  color: var(--danger);
+  font-size: var(--text-sm);
+}
+
+/* =====================================================================
+   Toolbar (search + primary action above lists)
+   ===================================================================== */
+
+.admin-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-5);
+}
+
+.admin-toolbar__search {
+  position: relative;
+  flex: 1;
+  min-width: 220px;
+  max-width: 380px;
+}
+
+.admin-toolbar__search .field__control {
+  padding-inline-start: 2.5em;
+}
+
+.admin-toolbar__search::before {
+  content: "";
+  position: absolute;
+  inset-inline-start: 0.9em;
+  inset-block-start: 50%;
+  transform: translateY(-50%);
+  width: 15px;
+  height: 15px;
+  border: 2px solid var(--text-faint);
+  border-radius: 50%;
+  box-shadow: 0 5px 0 -3px var(--text-faint);
+  opacity: 0.8;
+}
+
+/* =====================================================================
+   ≥ 1024px — desktop shell: sidebar becomes a static column
+   ===================================================================== */
+
+@media (min-width: 1024px) {
+  .admin-trigger {
+    display: none !important;
+  }
+
+  .admin-sidebar {
+    position: sticky;
+    inset-block-start: 0;
+    height: 100vh;
+    width: var(--admin-sidebar-width);
+    z-index: 40;
+    transform: none;
+  }
+
+  .admin-page.menu-open::after {
+    content: none;
+  }
+
+  .admin-shell {
+    display: grid;
+    grid-template-columns: var(--admin-sidebar-width) minmax(0, 1fr);
+    min-height: 100vh;
+  }
+
+  .admin-shell-column {
+    min-width: 0;
+  }
+
+  .admin-main {
+    padding: var(--space-7) var(--space-6) var(--space-9);
+  }
+
+  .admin-row__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* ===================================================================== */
+/* Content management — list page                                        */
+/* ===================================================================== */
+/* admin/content.html: filter chip rows, badges row, reorder arrows. */
+
+/* Filter chip rows (category + status). Reuses .tab__btn from
+   components.css; this only adds vertical rhythm between the rows. */
+.admin-filter-tabs {
+  margin-bottom: var(--space-4);
+}
+
+.admin-filter-tabs:last-of-type {
+  margin-bottom: var(--space-6);
+}
+
+/* Badges stacked under the title cell (category + featured). */
+.admin-row__badges {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+  flex-wrap: wrap;
+}
+
+/* Display-order cell: value between the up/down arrow buttons. */
+.admin-row__order {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+
+/* ===================================================================== */
+/* Content management — icon buttons                                     */
+/* ===================================================================== */
+/* Small square icon buttons: reorder arrows and the featured star. */
+
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-elevated);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.icon-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.icon-btn:hover {
+  border-color: var(--accent);
+  color: var(--text);
+}
+
+/* Featured star: gold when the content is featured. */
+.icon-btn--active {
+  border-color: rgba(251, 191, 36, 0.45);
+  background: var(--warning-soft);
+  color: var(--warning);
+}
+
+/* ===================================================================== */
+/* Content management — form page (add / edit content)                   */
+/* ===================================================================== */
+/* admin/content-form.html: a full-page form built from stacked card
+   sections. Mobile-first: sections stack, fields stack, and the media
+   preview grows full-width. */
+
+.admin-content-form {
+  display: grid;
+  gap: var(--space-6);
+  max-width: 860px;
+}
+
+/* One card section (Content / Task details / Media / Arabic / Publishing). */
+.form__section {
+  display: grid;
+  gap: var(--space-5);
+  padding: var(--space-6);
+}
+
+.form__section-title {
+  font-size: var(--text-lg);
+  font-weight: 700;
+  margin: 0;
+}
+
+/* Two fields side by side where space allows (reward + difficulty). */
+.field-grid-2 {
+  display: grid;
+  gap: var(--space-5);
+}
+
+@media (min-width: 640px) {
+  .field-grid-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Action bar: cancel / save / delete. */
+.form__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  justify-content: flex-end;
+}
+
+/* Radio group (draft / published). */
+.radio-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.radio-row__option {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  background: var(--bg-elevated);
+  cursor: pointer;
+  font-size: var(--text-sm);
+}
+
+.radio-row__option:has(input:checked) {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--text);
+}
+
+.radio-row__option input {
+  accent-color: var(--accent);
+}
+
+/* "(optional)" marker next to a field label. */
+.field__optional {
+  color: var(--text-faint);
+  font-weight: 400;
+}
+
+/* Media pair: inputs + live preview. */
+.media-field {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.media-field__inputs {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.media-field__preview {
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-sm);
+  padding: var(--space-2);
+  background: var(--bg-elevated);
+}
+
+/* Thumbnail preview: a small square-ish card cover. */
+.media-field__image {
+  display: block;
+  width: 180px;
+  max-width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: calc(var(--radius-sm) - 2px);
+}
+
+/* Banner preview: full-width letterbox. */
+.media-field__image--wide {
+  width: 100%;
+  max-height: 180px;
+  aspect-ratio: auto;
+}
+
+@media (min-width: 720px) {
+  .media-field {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: start;
+  }
+}
+
+/* Fieldset reset so <fieldset class="field"> matches plain fields. */
+fieldset.field {
+  border: 0;
+  padding: 0;
+  margin: 0;
+}

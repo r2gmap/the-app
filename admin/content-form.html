@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Add content — Admin — The App</title>
+    <meta name="description" content="Create or edit platform content: games, apps, websites and offers." />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="theme-color" content="#080a14" />
+
+    <!-- Sets language and direction before first paint (see index.html). -->
+    <script>
+      (function () {
+        try {
+          var supported = ["en", "ar"];
+          var stored = null;
+          try { stored = localStorage.getItem("theapp.locale"); } catch (e) {}
+          var locale = supported.indexOf(stored) > -1 ? stored : null;
+          if (!locale) {
+            var tags =
+              navigator.languages && navigator.languages.length
+                ? navigator.languages
+                : [navigator.language];
+            for (var i = 0; i < tags.length; i++) {
+              var base = String(tags[i] || "").toLowerCase().split("-")[0];
+              if (supported.indexOf(base) > -1) { locale = base; break; }
+            }
+          }
+          locale = locale || "en";
+          var root = document.documentElement;
+          root.lang = locale;
+          root.dir = locale === "ar" ? "rtl" : "ltr";
+          if (locale !== "en") root.classList.add("i18n-pending");
+        } catch (e) {}
+      })();
+    </script>
+
+    <link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://www.gstatic.com" />
+    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="stylesheet" href="../css/components.css" />
+    <link rel="stylesheet" href="../css/admin.css" />
+    <link rel="stylesheet" href="../css/responsive.css" />
+    <script type="module" src="../js/admin/admin.js"></script>
+  </head>
+
+  <body class="admin-page" data-admin-page="content-form">
+    <a class="skip-link" href="#main" data-i18n="common.skipToContent">Skip to content</a>
+
+    <div class="admin-shell">
+      <!-- ================================================ admin sidebar -->
+      <aside class="admin-sidebar" id="admin-sidebar">
+        <a class="brand" href="dashboard.html">
+          <span class="brand__mark" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <rect x="3.5" y="14" width="4" height="6.5" rx="1.6" fill="#fff" fill-opacity=".62" />
+                  <rect x="10" y="9.5" width="4" height="11" rx="1.6" fill="#fff" fill-opacity=".82" />
+                  <rect x="16.5" y="4" width="4" height="16.5" rx="1.6" fill="#fff" />
+                </svg>
+          </span>
+          <span class="brand__name">The App</span>
+        </a>
+
+        <div>
+          <p class="admin-sidebar__heading" data-i18n="admin.shell.title">Admin panel</p>
+          <nav class="admin-nav" aria-label="Admin" data-i18n-aria-label="admin.shell.title">
+          <a class="admin-nav__link" href="dashboard.html" data-admin-nav-link="overview" data-i18n="admin.nav.overview">
+            <svg viewBox="0 0 20 20" fill="none"><rect x="2.5" y="2.5" width="6" height="6" rx="1.6" stroke="currentColor" stroke-width="1.6"/><rect x="11.5" y="2.5" width="6" height="6" rx="1.6" stroke="currentColor" stroke-width="1.6"/><rect x="2.5" y="11.5" width="6" height="6" rx="1.6" stroke="currentColor" stroke-width="1.6"/><rect x="11.5" y="11.5" width="6" height="6" rx="1.6" stroke="currentColor" stroke-width="1.6"/></svg>
+            <span>Overview</span>
+          </a>
+          <a class="admin-nav__link" href="content.html" data-admin-nav-link="content" data-i18n="admin.nav.content">
+            <svg viewBox="0 0 20 20" fill="none"><rect x="3" y="3" width="14" height="14" rx="2.4" stroke="currentColor" stroke-width="1.6"/><path d="M3 7h14" stroke="currentColor" stroke-width="1.6"/></svg>
+            <span>Content</span>
+          </a>
+          <a class="admin-nav__link" href="submissions.html" data-admin-nav-link="submissions" data-i18n="admin.nav.submissions">
+            <svg viewBox="0 0 20 20" fill="none"><path d="M5 3.5h10a1.5 1.5 0 011.5 1.5v11L15 14.5H5A1.5 1.5 0 013.5 13V5A1.5 1.5 0 015 3.5z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M7 7.5h6M7 10.5h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            <span>Submissions</span>
+          </a>
+          <a class="admin-nav__link" href="users.html" data-admin-nav-link="users" data-i18n="admin.nav.users">
+            <svg viewBox="0 0 20 20" fill="none"><circle cx="8" cy="7" r="3" stroke="currentColor" stroke-width="1.6"/><path d="M2.5 16c1-2.6 3-4 5.5-4s4.5 1.4 5.5 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="15" cy="8.5" r="2.2" stroke="currentColor" stroke-width="1.5"/><path d="M14.5 12.6c2 .2 3.4 1.4 4 3.4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            <span>Users</span>
+          </a>
+          <a class="admin-nav__link" href="wallet.html" data-admin-nav-link="wallet" data-i18n="admin.nav.wallet">
+            <svg viewBox="0 0 20 20" fill="none"><rect x="2.5" y="5" width="15" height="10.5" rx="2.5" stroke="currentColor" stroke-width="1.6"/><path d="M13.5 10.25h3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            <span>Wallet</span>
+          </a>
+          <a class="admin-nav__link" href="withdrawals.html" data-admin-nav-link="withdrawals" data-i18n="admin.nav.withdrawals">
+            <svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="7" stroke="currentColor" stroke-width="1.6"/><path d="M10 6.5V10l2.5 1.8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+            <span>Withdrawals</span>
+          </a>
+          </nav>
+        </div>
+
+        <div class="admin-sidebar__footer">
+          <a class="admin-nav__link" href="../index.html">
+            <svg viewBox="0 0 20 20" fill="none">
+              <path d="M8 3.5L3 10l5 6.5M3.8 10H17" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+            <span data-i18n="admin.nav.viewSite">View website</span>
+          </a>
+          <button class="btn btn--ghost btn--sm" type="button" data-admin-logout data-i18n="admin.nav.logout">
+            Log out
+          </button>
+        </div>
+      </aside>
+
+      <div class="admin-shell-column">
+        <!-- ================================================ admin topbar -->
+        <header class="admin-topbar">
+          <button class="admin-trigger" type="button" data-admin-nav-trigger aria-expanded="false" aria-controls="admin-sidebar" aria-label="Open menu">
+            <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
+              <path d="M3.5 6h13M3.5 10h13M3.5 14h13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+            </svg>
+          </button>
+          <p class="admin-topbar__title" data-cf-page-title data-i18n="admin.content.form.newTitle">Add content</p>
+          <div class="admin-topbar__spacer"></div>
+          <div class="lang-switch" data-lang-switch aria-label="Change language"></div>
+          <div class="admin-topbar__user">
+            <span class="admin-topbar__user-name" data-admin-user-name></span>
+            <button class="btn btn--ghost btn--sm" type="button" data-admin-logout data-i18n="admin.nav.logout">
+              Log out
+            </button>
+          </div>
+        </header>
+
+        <main class="admin-main" id="main">
+          <!-- ============================================ page head -->
+          <div class="page-head">
+            <div>
+              <h1 class="page-head__title" data-cf-head-title data-i18n="admin.content.form.newTitle">Add content</h1>
+              <p class="page-head__subtitle" data-cf-head-subtitle data-i18n="admin.content.form.newSubtitle">
+                Publish a game, app, website or offer — it appears on the site instantly.
+              </p>
+            </div>
+            <a class="btn btn--ghost btn--sm" href="content.html" data-i18n="admin.content.backToList">
+              ← Back to content
+            </a>
+          </div>
+
+          <!-- Loading / not-found states render here (edit mode). -->
+          <div data-cf-status-area></div>
+
+          <!-- ============================================ content form -->
+          <form class="form admin-content-form" novalidate hidden data-content-form>
+            <!-- ============== section: basics ============== -->
+            <section class="card form__section">
+              <h2 class="form__section-title" data-i18n="admin.offers.form.contentTitle">Content</h2>
+
+              <div class="field">
+                <label class="field__label" for="cf-category" data-i18n="admin.offers.form.category">Category</label>
+                <select class="field__control" id="cf-category" data-cf-category>
+                  <option value="game" data-i18n="categories.game">Game</option>
+                  <option value="app" data-i18n="categories.app">App</option>
+                  <option value="website" data-i18n="categories.website">Website</option>
+                  <option value="offer" data-i18n="categories.offer">Offer</option>
+                </select>
+                <p class="field__hint" data-i18n="admin.content.form.categoryHint">
+                  Where the content appears: Games, Apps, Websites or Offers.
+                </p>
+              </div>
+
+              <div class="field">
+                <label class="field__label" for="cf-title" data-i18n="admin.offers.form.title">Title</label>
+                <input class="field__control" id="cf-title" type="text" data-cf-title />
+              </div>
+
+              <div class="field">
+                <label class="field__label" for="cf-desc" data-i18n="admin.offers.form.description">Short description</label>
+                <textarea class="field__control" id="cf-desc" rows="2" data-cf-description></textarea>
+                <p class="field__hint" data-i18n="admin.content.form.shortDescriptionHint">
+                  One or two lines shown on content cards.
+                </p>
+              </div>
+
+              <div class="field">
+                <label class="field__label" for="cf-full-desc" data-i18n="admin.content.form.fullDescription">Full description</label>
+                <textarea class="field__control" id="cf-full-desc" rows="5" data-cf-full-description></textarea>
+                <p class="field__hint" data-i18n="admin.content.form.fullDescriptionHint">
+                  Shown on the details page. The short description is used when empty.
+                </p>
+              </div>
+            </section>
+
+            <!-- ============== section: task details ============== -->
+            <section class="card form__section">
+              <h2 class="form__section-title" data-i18n="admin.content.form.detailsTitle">Task details</h2>
+
+              <div class="field-grid-2">
+                <div class="field">
+                  <label class="field__label" for="cf-reward" data-i18n="admin.offers.form.reward">Reward (USD)</label>
+                  <input class="field__control" id="cf-reward" type="number" step="0.01" min="0" dir="ltr" data-cf-reward />
+                  <p class="field__hint" data-i18n="admin.offers.form.rewardHint">
+                    Amount credited to the user's wallet after approval, e.g. 0.50
+                  </p>
+                </div>
+                <div class="field">
+                  <label class="field__label" for="cf-difficulty" data-i18n="admin.offers.form.difficulty">Difficulty</label>
+                  <select class="field__control" id="cf-difficulty" data-cf-difficulty>
+                    <option value="easy" data-i18n="difficulty.easy">Easy</option>
+                    <option value="medium" data-i18n="difficulty.medium">Medium</option>
+                    <option value="hard" data-i18n="difficulty.hard">Hard</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="field">
+                <label class="field__label" for="cf-time" data-i18n="admin.offers.form.time">Estimated time</label>
+                <input class="field__control" id="cf-time" type="text" dir="ltr" data-cf-time
+                  placeholder="e.g. 10–15 minutes" data-i18n-placeholder="admin.offers.form.timePlaceholder" />
+              </div>
+
+              <div class="field">
+                <label class="field__label" for="cf-requirements" data-i18n="admin.offers.form.requirements">Requirements</label>
+                <textarea class="field__control" id="cf-requirements" rows="3" data-cf-requirements
+                  placeholder="One requirement per line" data-i18n-placeholder="admin.offers.form.requirementsPlaceholder"></textarea>
+              </div>
+
+              <div class="field">
+                <label class="field__label" for="cf-instructions" data-i18n="admin.offers.form.instructions">Instructions</label>
+                <textarea class="field__control" id="cf-instructions" rows="4" data-cf-instructions></textarea>
+                <p class="field__hint" data-i18n="admin.content.form.instructionsHint">
+                  Step-by-step guide shown on the details page.
+                </p>
+              </div>
+            </section>
+
+            <!-- ============== section: media ============== -->
+            <section class="card form__section">
+              <h2 class="form__section-title" data-i18n="admin.content.form.mediaTitle">Media</h2>
+
+              <!-- Thumbnail (cards + lists) -->
+              <div class="media-field">
+                <div class="media-field__inputs">
+                  <div class="field">
+                    <label class="field__label" for="cf-thumb-file" data-i18n="admin.content.form.thumbnailUpload">Thumbnail image</label>
+                    <input class="field__control" id="cf-thumb-file" type="file" accept="image/jpeg,image/png,image/webp" data-cf-thumb-file />
+                    <p class="field__hint" data-i18n="admin.content.form.imageHint">
+                      JPG, PNG or WebP up to 5 MB, or paste a hosted URL. A generated cover is used when empty.
+                    </p>
+                  </div>
+                  <div class="field">
+                    <label class="field__label" for="cf-thumb-url" data-i18n="admin.offers.form.imageUrl">Image URL</label>
+                    <input class="field__control" id="cf-thumb-url" type="url" dir="ltr" data-cf-thumb-url />
+                  </div>
+                </div>
+                <div class="media-field__preview" data-cf-thumb-preview hidden></div>
+              </div>
+
+              <!-- Banner (details page, optional) -->
+              <div class="media-field">
+                <div class="media-field__inputs">
+                  <div class="field">
+                    <label class="field__label" for="cf-banner-file" data-i18n="admin.content.form.bannerUpload">
+                      Banner image <span class="field__optional">(<span data-i18n="common.optional">optional</span>)</span>
+                    </label>
+                    <input class="field__control" id="cf-banner-file" type="file" accept="image/jpeg,image/png,image/webp" data-cf-banner-file />
+                  </div>
+                  <div class="field">
+                    <label class="field__label" for="cf-banner-url" data-i18n="admin.offers.form.imageUrl">Image URL</label>
+                    <input class="field__control" id="cf-banner-url" type="url" dir="ltr" data-cf-banner-url />
+                  </div>
+                </div>
+                <div class="media-field__preview media-field__preview--wide" data-cf-banner-preview hidden></div>
+              </div>
+            </section>
+
+            <!-- ============== section: arabic content ============== -->
+            <section class="card form__section">
+              <h2 class="form__section-title" data-i18n="admin.offers.form.contentArabic">Arabic content</h2>
+              <p class="field__hint" style="margin-bottom: var(--space-4);" data-i18n="admin.offers.form.contentArabicHint">
+                Optional — shown to Arabic visitors. English is used when empty.
+              </p>
+
+              <div class="field">
+                <label class="field__label" for="cf-title-ar" data-i18n="admin.offers.form.titleAr">Title (Arabic)</label>
+                <input class="field__control" id="cf-title-ar" type="text" dir="rtl" data-cf-title-ar />
+              </div>
+              <div class="field">
+                <label class="field__label" for="cf-desc-ar" data-i18n="admin.offers.form.descriptionAr">Short description (Arabic)</label>
+                <textarea class="field__control" id="cf-desc-ar" rows="2" dir="rtl" data-cf-description-ar></textarea>
+              </div>
+              <div class="field">
+                <label class="field__label" for="cf-full-desc-ar" data-i18n="admin.content.form.fullDescriptionAr">Full description (Arabic)</label>
+                <textarea class="field__control" id="cf-full-desc-ar" rows="5" dir="rtl" data-cf-full-description-ar></textarea>
+              </div>
+              <div class="field">
+                <label class="field__label" for="cf-time-ar" data-i18n="admin.offers.form.timeAr">Estimated time (Arabic)</label>
+                <input class="field__control" id="cf-time-ar" type="text" dir="rtl" data-cf-time-ar />
+              </div>
+              <div class="field">
+                <label class="field__label" for="cf-requirements-ar" data-i18n="admin.offers.form.requirementsAr">Requirements (Arabic)</label>
+                <textarea class="field__control" id="cf-requirements-ar" rows="3" dir="rtl" data-cf-requirements-ar></textarea>
+              </div>
+              <div class="field">
+                <label class="field__label" for="cf-instructions-ar" data-i18n="admin.offers.form.instructionsAr">Instructions (Arabic)</label>
+                <textarea class="field__control" id="cf-instructions-ar" rows="4" dir="rtl" data-cf-instructions-ar></textarea>
+              </div>
+            </section>
+
+            <!-- ============== section: publishing ============== -->
+            <section class="card form__section">
+              <h2 class="form__section-title" data-i18n="admin.content.form.publishingTitle">Publishing</h2>
+
+              <fieldset class="field">
+                <legend class="field__label" data-i18n="admin.offers.form.status">Status</legend>
+                <div class="radio-row" role="radiogroup" aria-label="Status">
+                  <label class="radio-row__option">
+                    <input type="radio" name="cf-status" value="published" data-cf-status checked />
+                    <span data-i18n="admin.content.published">Published</span>
+                  </label>
+                  <label class="radio-row__option">
+                    <input type="radio" name="cf-status" value="draft" data-cf-status />
+                    <span data-i18n="admin.content.draft">Draft</span>
+                  </label>
+                </div>
+                <p class="field__hint" data-i18n="admin.content.form.statusHint">
+                  Draft content is hidden from the website until you publish it.
+                </p>
+              </fieldset>
+
+              <label class="checkbox-row">
+                <input type="checkbox" data-cf-featured />
+                <span data-i18n="admin.content.form.featuredLabel">Featured — show in the featured sections</span>
+              </label>
+
+              <div class="field" style="max-width: 220px;">
+                <label class="field__label" for="cf-order" data-i18n="admin.content.order">Display order</label>
+                <input class="field__control" id="cf-order" type="number" step="1" dir="ltr" value="100" data-cf-order />
+                <p class="field__hint" data-i18n="admin.content.form.orderHint">
+                  Lower numbers appear first.
+                </p>
+              </div>
+            </section>
+
+            <!-- ============== actions ============== -->
+            <p class="form__error" role="alert" data-cf-error></p>
+
+            <div class="form__actions">
+              <button class="btn btn--ghost" type="button" data-cf-cancel data-i18n="common.cancel">Cancel</button>
+              <button class="btn btn--primary" type="submit" data-cf-save data-i18n="common.save">Save</button>
+              <button class="btn btn--danger" type="button" data-cf-delete hidden data-i18n="common.delete">Delete</button>
+            </div>
+          </form>
+        </main>
+      </div>
+    </div>
+  </body>
+</html>
