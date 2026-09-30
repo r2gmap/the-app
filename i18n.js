@@ -199,6 +199,7 @@ const CATALOGS = {
     "nav.profile": "Profile",
     "nav.submissions": "My submissions",
     "nav.openMenu": "Open menu",
+    "nav.closeMenu": "Close menu",
 
     // ------------------------------------------------ meta titles
     "meta.title": "The App — Play. Win. Earn.",
@@ -230,7 +231,7 @@ const CATALOGS = {
     "hero.play": "Play.",
     "hero.win": "Win.",
     "hero.earn": "Earn.",
-    "hero.subtitle": "Complete simple activities across games, apps and websites — and receive verified rewards, right to your wallet.",
+    "hero.subtitle": "Choose a simple activity, follow the requirement, and receive a verified reward in your wallet.",
     "hero.primaryCta": "Browse rewards",
     "hero.secondaryCta": "How it works",
     "hero.note": "Free to join. No payment required to start.",
@@ -260,7 +261,7 @@ const CATALOGS = {
 
     // ------------------------------------------------ landing: offers
     "offers.title": "Ways to earn",
-    "offers.subtitle": "Pick what fits you, complete it, and send your proof.",
+    "offers.subtitle": "Choose what fits your time, complete the requirement, and submit clear proof.",
     "offers.browseAll": "Browse all offers",
     "offers.rewardLabel": "Reward",
     "offers.requirementLabel": "Requirement",
@@ -461,7 +462,7 @@ const CATALOGS = {
 
     // ------------------------------------------------ user dashboard
     "dashboard.welcome": "Welcome back",
-    "dashboard.subtitle": "Your rewards, activity and opportunities at a glance.",
+    "dashboard.subtitle": "Your balance, active opportunities and reward progress — all in one place.",
     "dashboard.stats.wallet": "Wallet balance",
     "dashboard.stats.completed": "Completed rewards",
     "dashboard.stats.active": "Active opportunities",
@@ -471,9 +472,10 @@ const CATALOGS = {
     "dashboard.stats.historyCta": "Reward history",
     "dashboard.stats.pending": "Pending reviews",
     "dashboard.featured.title": "Featured opportunities",
-    "dashboard.featured.subtitle": "Active offers you can complete right now.",
+    "dashboard.featured.subtitle": "A focused selection of opportunities ready when you are.",
     "dashboard.featured.viewAll": "View all offers",
     "dashboard.activity.title": "Recent activity",
+    "dashboard.activity.subtitle": "A clear record of your latest submissions and review updates.",
     "dashboard.activity.viewAll": "View all submissions",
     "dashboard.empty.featuredTitle": "No rewards available yet",
     "dashboard.empty.featuredBody": "The team is preparing new opportunities. You will see them here as soon as they go live.",
@@ -608,7 +610,7 @@ const CATALOGS = {
 
     // ------------------------------------------------ profile
     "profile.title": "Your profile",
-    "profile.subtitle": "Your details and account standing.",
+    "profile.subtitle": "Your identity, email and payout details.",
     "profile.name": "Full name",
     "profile.email": "Email",
     "profile.walletBalance": "Wallet balance",
@@ -909,6 +911,7 @@ const CATALOGS = {
     "nav.profile": "الملف الشخصي",
     "nav.submissions": "طلباتي",
     "nav.openMenu": "فتح القائمة",
+    "nav.closeMenu": "إغلاق القائمة",
 
     // ------------------------------------------------ عناوين الصفحات
     "meta.title": "The App — العب. اربح. اكسب.",
@@ -940,7 +943,7 @@ const CATALOGS = {
     "hero.play": "العب.",
     "hero.win": "اربح.",
     "hero.earn": "اكسب.",
-    "hero.subtitle": "أنجز أنشطة بسيطة في الألعاب والتطبيقات والمواقع، واستلم مكافآت موثّقة مباشرة في محفظتك.",
+    "hero.subtitle": "اختر مهمة بسيطة، واتبع متطلباتها، واستلم مكافأة موثّقة في محفظتك.",
     "hero.primaryCta": "تصفّح المكافآت",
     "hero.secondaryCta": "كيف يعمل",
     "hero.note": "الانضمام مجاني. لا حاجة لأي دفعة للبدء.",
@@ -970,7 +973,7 @@ const CATALOGS = {
 
     // ------------------------------------------------ الصفحة الرئيسية: العروض
     "offers.title": "طرق الكسب",
-    "offers.subtitle": "اختر ما يناسبك، أنجزه، وأرسل إثباتك.",
+    "offers.subtitle": "اختر ما يناسب وقتك، أنجز المتطلب، وأرسل إثباتًا واضحًا.",
     "offers.browseAll": "تصفّح جميع العروض",
     "offers.rewardLabel": "المكافأة",
     "offers.requirementLabel": "المتطلب",
@@ -1171,7 +1174,7 @@ const CATALOGS = {
 
     // ------------------------------------------------ لوحة تحكم المستخدم
     "dashboard.welcome": "مرحبًا بعودتك",
-    "dashboard.subtitle": "مكافآتك ونشاطك وفرصك في لمحة واحدة.",
+    "dashboard.subtitle": "رصيدك وفرصك المتاحة وتقدّم مكافآتك — كلها في مكان واحد.",
     "dashboard.stats.wallet": "رصيد المحفظة",
     "dashboard.stats.completed": "المكافآت المكتملة",
     "dashboard.stats.active": "فرص متاحة الآن",
@@ -1181,9 +1184,10 @@ const CATALOGS = {
     "dashboard.stats.historyCta": "سجل المكافآت",
     "dashboard.stats.pending": "الطلبات قيد المراجعة",
     "dashboard.featured.title": "فرص مميزة",
-    "dashboard.featured.subtitle": "عروض نشطة يمكنك إنجازها الآن.",
+    "dashboard.featured.subtitle": "مجموعة مركّزة من الفرص الجاهزة عندما تكون مستعدًا.",
     "dashboard.featured.viewAll": "عرض جميع العروض",
     "dashboard.activity.title": "النشاط الأخير",
+    "dashboard.activity.subtitle": "سجل واضح بآخر طلباتك وتحديثات المراجعة.",
     "dashboard.activity.viewAll": "عرض جميع الطلبات",
     "dashboard.empty.featuredTitle": "لا توجد مكافآت متاحة بعد",
     "dashboard.empty.featuredBody": "الفريق يجهّز فرصًا جديدة. ستظهر هنا فور نشرها.",
@@ -1318,7 +1322,7 @@ const CATALOGS = {
 
     // ------------------------------------------------ الملف الشخصي
     "profile.title": "ملفك الشخصي",
-    "profile.subtitle": "بياناتك وحالة حسابك.",
+    "profile.subtitle": "بيانات هويتك وبريدك وتفاصيل السحب.",
     "profile.name": "الاسم الكامل",
     "profile.email": "البريد الإلكتروني",
     "profile.walletBalance": "رصيد المحفظة",

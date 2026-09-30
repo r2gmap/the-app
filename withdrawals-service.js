@@ -15,9 +15,9 @@
 //   }
 // =====================================================================
 
-import { getFirebase } from "../firebase.js";
+import { getFirebase } from "./firebase.js";
 import { createNotification } from "./notifications-service.js";
-import { sendWithdrawalNotification } from "../telegram/telegram-service.js";
+import { sendWithdrawalNotification } from "./telegram-service.js";
 
 // Platform-wide minimum withdrawal (USD). Change it here — it is shown
 // in the UI hint and enforced by client validation + admin review.

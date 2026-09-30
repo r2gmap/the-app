@@ -10,25 +10,25 @@
 //   4. dynamic import of the current page controller (body[data-admin-page])
 // =====================================================================
 
-import { applyTranslations, t, onLocaleChange } from "../i18n.js";
-import { initNavigation } from "../navigation.js";
-import { getFirebase, waitForAuthState, signOutEverywhere } from "../firebase.js";
-import { qs, qsa, withBusy } from "../ui.js";
-import { isAdminUser, resolveAdminIdentifier } from "../services/admin-service.js";
-import { signInWithEmail } from "../auth.js";
+import { applyTranslations, t, onLocaleChange } from "./i18n.js";
+import { initNavigation } from "./navigation.js";
+import { getFirebase, waitForAuthState, signOutEverywhere } from "./firebase.js";
+import { qs, qsa, withBusy } from "./ui.js";
+import { isAdminUser, resolveAdminIdentifier } from "./admin-service.js";
+import { signInWithEmail } from "./auth.js";
 
 // ---------------------------------------------------------------------
 // Page registry (body[data-admin-page] -> controller module)
 // ---------------------------------------------------------------------
 
 const ADMIN_PAGES = {
-  overview: "./pages/overview.js",
-  content: "./pages/content.js", // content management list
-  "content-form": "./pages/content-form.js", // create / edit content
-  submissions: "./pages/submissions.js",
-  users: "./pages/users.js",
-  wallet: "./pages/wallet.js",
-  withdrawals: "./pages/withdrawals.js",
+  overview: "./overview.js",
+  content: "./content.js", // content management list
+  "content-form": "./content-form.js", // create / edit content
+  submissions: "./admin-submissions.js",
+  users: "./users.js",
+  wallet: "./admin-wallet.js",
+  withdrawals: "./withdrawals.js",
 };
 
 // ---------------------------------------------------------------------

@@ -3,8 +3,8 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Content — Admin — The App</title>
-    <meta name="description" content="Manage every game, app, website and offer on the platform." />
+    <title>Overview — Admin — The App</title>
+    <meta name="description" content="Admin overview: users, offers, pending and approved reviews." />
     <meta name="robots" content="noindex, nofollow" />
     <meta name="theme-color" content="#f5f7fb" />
 
@@ -35,16 +35,16 @@
       })();
     </script>
 
-    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
     <link rel="preconnect" href="https://www.gstatic.com" />
-    <link rel="stylesheet" href="style.css" />
-    <link rel="stylesheet" href="components.css" />
-    <link rel="stylesheet" href="admin.css" />
-    <link rel="stylesheet" href="responsive.css" />
-    <script type="module" src="admin.js"></script>
+    <link rel="stylesheet" href="../style.css" />
+    <link rel="stylesheet" href="../components.css" />
+    <link rel="stylesheet" href="../admin.css" />
+    <link rel="stylesheet" href="../responsive.css" />
+    <script type="module" src="../admin.js"></script>
   </head>
 
-  <body class="admin-page" data-admin-page="content">
+  <body class="admin-page" data-admin-page="submissions">
     <a class="skip-link" href="#main" data-i18n="common.skipToContent">Skip to content</a>
 
     <div class="admin-shell">
@@ -85,7 +85,7 @@
         </div>
 
         <div class="admin-sidebar__footer">
-          <a class="admin-nav__link" href="index.html">
+          <a class="admin-nav__link" href="../index.html">
             <svg viewBox="0 0 20 20" fill="none">
               <path d="M8 3.5L3 10l5 6.5M3.8 10H17" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
             </svg>
@@ -105,7 +105,7 @@
               <path d="M3.5 6h13M3.5 10h13M3.5 14h13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
             </svg>
           </button>
-          <p class="admin-topbar__title" data-i18n="admin.content.title">Content</p>
+          <p class="admin-topbar__title" data-i18n="admin.overview.title">Overview</p>
           <div class="admin-topbar__spacer"></div>
           <div class="lang-switch" data-lang-switch aria-label="Change language"></div>
           <div class="admin-topbar__user">
@@ -117,92 +117,70 @@
         </header>
 
         <main class="admin-main" id="main">
-          <!-- ============================================ page head -->
+          <!-- ================================================= review queue -->
+          <!-- The queue is intentionally operational: filter the work,
+               inspect proof, then approve or reject without leaving the
+               admin panel. Data and write actions stay in Firebase services. -->
           <div class="page-head">
             <div>
-              <h1 class="page-head__title" data-i18n="admin.content.title">Content management</h1>
-              <p class="page-head__subtitle" data-i18n="admin.content.subtitle">
-                Every game, app, website and offer on the platform — no code required.
-              </p>
+              <h1 class="page-head__title" data-i18n="admin.submissions.title">Submission review</h1>
+              <p class="page-head__subtitle" data-i18n="admin.submissions.subtitle">Check proof, then approve to credit the reward — or reject with a reason.</p>
             </div>
           </div>
-
-          <!-- ============================================ toolbar -->
-          <div class="admin-toolbar">
-            <div class="admin-toolbar__search">
-              <input class="field__control" type="search" data-admin-content-search
-                placeholder="Search content…" data-i18n-placeholder="admin.content.searchPlaceholder" />
-            </div>
-            <a class="btn btn--primary" href="content-form.html" data-i18n="admin.content.new">
-              New content
-            </a>
+          <div class="tabs" role="group" aria-label="Submission status">
+            <button class="tab__btn" type="button" data-admin-submission-filter="pending" data-i18n="status.pending">Pending</button>
+            <button class="tab__btn" type="button" data-admin-submission-filter="approved" data-i18n="status.approved">Approved</button>
+            <button class="tab__btn" type="button" data-admin-submission-filter="rejected" data-i18n="status.rejected">Rejected</button>
+            <button class="tab__btn" type="button" data-admin-submission-filter="all" data-i18n="admin.submissions.filter.all">All</button>
           </div>
-
-          <!-- ============================================ filters -->
-          <div class="tabs admin-filter-tabs" role="group" aria-label="Categories" data-admin-content-category-filters>
-            <button class="tab__btn tab__btn--active" type="button" data-category-filter="all" data-i18n="categories.all">All</button>
-            <button class="tab__btn" type="button" data-category-filter="game" data-i18n="nav.games">Games</button>
-            <button class="tab__btn" type="button" data-category-filter="app" data-i18n="nav.apps">Apps</button>
-            <button class="tab__btn" type="button" data-category-filter="website" data-i18n="nav.websites">Websites</button>
-            <button class="tab__btn" type="button" data-category-filter="offer" data-i18n="nav.offers">Offers</button>
-          </div>
-          <div class="tabs admin-filter-tabs" role="group" aria-label="Status" data-admin-content-status-filters>
-            <button class="tab__btn tab__btn--active" type="button" data-status-filter="all" data-i18n="admin.content.filter.all">All</button>
-            <button class="tab__btn" type="button" data-status-filter="published" data-i18n="admin.content.published">Published</button>
-            <button class="tab__btn" type="button" data-status-filter="draft" data-i18n="admin.content.draft">Draft</button>
-          </div>
-
-          <!-- ============================================ content list -->
-          <div data-admin-content-status></div>
-          <div class="admin-list" data-admin-content-list></div>
+          <div data-admin-submissions-status></div>
+          <div class="admin-list" data-admin-submissions-list></div>
         </main>
+
       </div>
     </div>
 
-    <!-- ============================================ content row template -->
-    <!-- One row per content item: cover, title + badges, reward,
-         display order (reorder arrows), status, row actions. -->
-    <template id="admin-content-row-template">
+    <!-- Shared proof card template used by admin review actions. -->
+    <template id="submission-card-template">
+      <article class="card submission-card">
+        <div class="submission-card__head">
+          <div><p class="submission-card__offer" data-sub-offer></p><p class="submission-card__task" data-sub-task></p></div>
+          <span class="badge" data-sub-status></span>
+        </div>
+        <div class="submission-card__meta">
+          <span><span data-i18n="submissions.rewardLabel">Reward</span>: <span data-sub-reward></span></span>
+          <span><span data-i18n="submissions.submittedLabel">Submitted</span>: <span data-sub-date></span></span>
+        </div>
+        <p class="submission-card__reason" data-sub-reason-block hidden><span data-i18n="submissions.reasonLabel">Reason</span>: <span data-sub-reason></span></p>
+        <div class="submission-card__proof" data-sub-proof></div>
+      </article>
+    </template>
+
+    <!-- Pending submission quick row (overview) -->
+    <template id="admin-pending-row-template">
       <div class="admin-row">
-        <div class="admin-thumb" data-cr-thumb></div>
+        <div class="admin-row__cell" style="flex:1; min-width:180px;">
+          <span class="admin-row__label" data-i18n="admin.submissions.user">User</span>
+          <span class="admin-row__value" data-pr-user></span>
+        </div>
+        <div class="admin-row__cell" style="flex:1.2; min-width:180px;">
+          <span class="admin-row__label" data-i18n="admin.submissions.offer">Offer</span>
+          <span class="admin-row__value" data-pr-offer></span>
+        </div>
         <div class="admin-row__cell" style="flex:1.4; min-width:200px;">
-          <span class="admin-row__value" data-cr-title style="font-size: var(--text-md);"></span>
-          <span class="admin-row__badges">
-            <span class="badge badge--primary" data-cr-category></span>
-            <span class="badge badge--featured" data-cr-featured hidden data-i18n="common.featuredLabel">Featured</span>
-          </span>
+          <span class="admin-row__label" data-i18n="admin.submissions.taskTitle">Task title</span>
+          <span class="admin-row__value" data-pr-task></span>
         </div>
         <div class="admin-row__cell">
-          <span class="admin-row__label" data-i18n="offers.rewardLabel">Reward</span>
-          <span class="admin-row__value amount--credit" data-cr-reward></span>
+          <span class="admin-row__label" data-i18n="submissions.rewardLabel">Reward</span>
+          <span class="admin-row__value amount--credit" data-pr-reward></span>
         </div>
         <div class="admin-row__cell">
-          <span class="admin-row__label" data-i18n="admin.content.order">Order</span>
-          <span class="admin-row__value admin-row__order">
-            <button class="icon-btn" type="button" data-cr-up data-i18n-title="admin.content.moveUp" title="Move up">
-              <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 15V5m0 0l-4.5 4.5M10 5l4.5 4.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </button>
-            <span data-cr-order></span>
-            <button class="icon-btn" type="button" data-cr-down data-i18n-title="admin.content.moveDown" title="Move down">
-              <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 5v10m0 0l4.5-4.5M10 15l-4.5-4.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </button>
-          </span>
-        </div>
-        <div class="admin-row__cell">
-          <span class="badge" data-cr-status></span>
+          <span class="admin-row__label" data-i18n="admin.submissions.submittedAt">Submitted</span>
+          <span class="admin-row__value" data-pr-date></span>
         </div>
         <div class="admin-row__actions">
-          <button class="btn btn--secondary btn--sm" type="button" data-cr-toggle-publish></button>
-          <button class="icon-btn" type="button" data-cr-toggle-featured data-i18n-title="admin.content.toggleFeatured" title="Toggle featured">
-            <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 2.5l1.9 4 4.4.5-3.3 3 1 4.3-4-2.3-4 2.3 1-4.3-3.3-3 4.4-.5 1.9-4z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
-          </button>
-          <!-- Duplicate: copies every field into a NEW draft that can
-               never appear publicly until reviewed and published. -->
-          <button class="icon-btn" type="button" data-cr-duplicate data-i18n-title="admin.content.duplicate" title="Duplicate">
-            <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><rect x="7" y="7" width="10" height="10" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M13 4.5H6A1.5 1.5 0 004.5 6v7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
-          </button>
-          <a class="btn btn--ghost btn--sm" href="content-form.html" data-cr-edit data-i18n="common.edit">Edit</a>
-          <button class="btn btn--danger btn--sm" type="button" data-cr-delete data-i18n="common.delete">Delete</button>
+          <a class="btn btn--primary btn--sm" href="submissions.html" data-i18n="admin.submissions.approve">Review</a>
         </div>
       </div>
     </template>

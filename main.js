@@ -21,20 +21,20 @@ import { initAuthUI, redirectIfAuthenticated } from "./auth.js";
 // ---------------------------------------------------------------------
 
 const PAGE_MODULES = {
-  home: "./pages/home.js",
-  dashboard: "./pages/dashboard.js",
-  profile: "./pages/profile.js",
-  offers: "./pages/offers.js",
-  offer: "./pages/offer.js",
+  home: "./home.js",
+  dashboard: "./dashboard.js",
+  profile: "./profile.js",
+  offers: "./offers-page.js",
+  offer: "./offer.js",
   // The three dedicated category pages share ONE controller, which
   // reads its category from body[data-category] (see pages/category.js).
-  games: "./pages/category.js",
-  apps: "./pages/category.js",
-  websites: "./pages/category.js",
-  wallet: "./pages/wallet.js",
-  withdraw: "./pages/withdraw.js",
-  notifications: "./pages/notifications.js",
-  submissions: "./pages/submissions.js",
+  games: "./category.js",
+  apps: "./category.js",
+  websites: "./category.js",
+  wallet: "./wallet.js",
+  withdraw: "./withdraw.js",
+  notifications: "./notifications.js",
+  submissions: "./submissions.js",
 };
 
 /** Loads and boots the current page's controller, when it has one. */

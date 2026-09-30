@@ -6,13 +6,13 @@
     <title>My submissions — The App</title>
     <meta name="i18n-title" content="meta.submissionsTitle" />
     <meta name="description" content="Discover games and apps, complete simple tasks, and earn rewards once your proof is reviewed and approved." />
-    <meta name="theme-color" content="#080a14" />
+    <meta name="theme-color" content="#f5f7fb" />
 
     <!--
       Sets language and direction before first paint, so an Arabic
       visitor never sees the page flip from LTR. The cloak class is only
       added for a non-English locale, and is removed once the strings
-      are applied by js/i18n.js.
+      are applied by i18n.js.
     -->
     <script>
       (function () {
@@ -40,12 +40,12 @@
       })();
     </script>
 
-    <link rel="icon" href="assets/icons/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
     <link rel="preconnect" href="https://www.gstatic.com" />
-    <link rel="stylesheet" href="css/style.css" />
-    <link rel="stylesheet" href="css/components.css" />
-    <link rel="stylesheet" href="css/responsive.css" />
-    <script type="module" src="js/main.js"></script>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="components.css" />
+    <link rel="stylesheet" href="responsive.css" />
+    <script type="module" src="main.js"></script>
   </head>
 
   <body data-page="submissions">
@@ -54,29 +54,14 @@
     <header class="site-header">
       <div class="container site-header__bar">
         <a class="brand" href="index.html">
-          <svg class="brand__mark" viewBox="0 0 157 40" fill="none" role="img" aria-label="The App">
-              <!-- Custom monoline wordmark: drawn letterforms on one
-                   grid — "The" muted, "App" bright, accent full stop.
-                   Colours/size live in the .brand__mark CSS rules. -->
-              <g class="brand__mark-the" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M5 9H25M15 9V31" />
-                <path d="M31 9V31M31 19C31 15.8 33.2 14.5 36 14.5C38.8 14.5 41 15.8 41 19V31" />
-                <path d="M51 23.25H65M65 23.25A7 7 0 1 0 62.5 28.6" />
-              </g>
-              <g class="brand__mark-app" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M74 31L87 9L100 31M80 24H94" />
-                <path d="M105 14.5V37M105 14.5C113.5 14.5 121 16.8 121 22.9C121 29 113.5 31.3 105 31.3" />
-                <path d="M127 14.5V37M127 14.5C135.5 14.5 143 16.8 143 22.9C143 29 135.5 31.3 127 31.3" />
-              </g>
-              <circle class="brand__mark-dot" cx="151" cy="27.5" r="3.2" />
-            </svg>
+          <span class="brand__wordmark" aria-label="The App"><span class="brand__wordmark-muted">The</span><span class="brand__wordmark-main">App</span></span>
         </a>
 
         <nav class="site-nav" aria-label="Main" data-i18n-aria-label="nav.primary">
           <ul class="site-nav__list">
             <!-- Primary navigation — identical on every page so visitors
                  always know where things are. Active link is marked by
-                 js/navigation.js via aria-current. -->
+                 navigation.js via aria-current. -->
             <li><a class="site-nav__link" href="index.html" data-nav="home" data-i18n="nav.home">Home</a></li>
             <li><a class="site-nav__link" href="games.html" data-nav="games" data-i18n="nav.games">Games</a></li>
             <li><a class="site-nav__link" href="apps.html" data-nav="apps" data-i18n="nav.apps">Apps</a></li>
@@ -182,22 +167,7 @@
         <div class="site-footer__grid">
           <div class="site-footer__about">
             <div class="brand">
-              <svg class="brand__mark" viewBox="0 0 157 40" fill="none" role="img" aria-label="The App">
-              <!-- Custom monoline wordmark: drawn letterforms on one
-                   grid — "The" muted, "App" bright, accent full stop.
-                   Colours/size live in the .brand__mark CSS rules. -->
-              <g class="brand__mark-the" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M5 9H25M15 9V31" />
-                <path d="M31 9V31M31 19C31 15.8 33.2 14.5 36 14.5C38.8 14.5 41 15.8 41 19V31" />
-                <path d="M51 23.25H65M65 23.25A7 7 0 1 0 62.5 28.6" />
-              </g>
-              <g class="brand__mark-app" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M74 31L87 9L100 31M80 24H94" />
-                <path d="M105 14.5V37M105 14.5C113.5 14.5 121 16.8 121 22.9C121 29 113.5 31.3 105 31.3" />
-                <path d="M127 14.5V37M127 14.5C135.5 14.5 143 16.8 143 22.9C143 29 135.5 31.3 127 31.3" />
-              </g>
-              <circle class="brand__mark-dot" cx="151" cy="27.5" r="3.2" />
-            </svg>
+              <span class="brand__wordmark" aria-label="The App"><span class="brand__wordmark-muted">The</span><span class="brand__wordmark-main">App</span></span>
             </div>
             <p class="site-footer__tagline" data-i18n="footer.description">
               Complete simple tasks in games and apps, and earn rewards after review.

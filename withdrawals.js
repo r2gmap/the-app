@@ -10,12 +10,12 @@
 // Telegram pings fire best-effort after both decisions.
 // =====================================================================
 
-import { t, onLocaleChange } from "../../i18n.js";
-import { qs, qsa, renderState, toast, withBusy, confirmDialog } from "../../ui.js";
-import { formatMoney, formatDateTime } from "../../format.js";
-import { fetchWithdrawals, approveWithdrawal, rejectWithdrawal } from "../../services/withdrawals-service.js";
-import { computeUserBalance } from "../../services/wallet-service.js";
-import { statusMeta } from "../../components/submission-card.js";
+import { t, onLocaleChange } from "./i18n.js";
+import { qs, qsa, renderState, toast, withBusy, confirmDialog } from "./ui.js";
+import { formatMoney, formatDateTime } from "./format.js";
+import { fetchWithdrawals, approveWithdrawal, rejectWithdrawal } from "./withdrawals-service.js";
+import { computeUserBalance } from "./wallet-service.js";
+import { statusMeta } from "./submission-card.js";
 
 let activeFilter = "pending";
 let adminUser = null;

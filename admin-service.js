@@ -12,7 +12,7 @@
 // the identifier; creating aliases is done from the console.
 // =====================================================================
 
-import { getFirebase } from "../firebase.js";
+import { getFirebase } from "./firebase.js";
 import { getUserRole } from "./users-service.js";
 
 // ---------------------------------------------------------------------

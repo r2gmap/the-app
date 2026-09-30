@@ -44,11 +44,11 @@
 .btn--primary {
   background: var(--gradient-brand);
   color: #fff;
-  box-shadow: 0 8px 24px -10px rgba(124, 92, 255, 0.65);
+  box-shadow: 0 8px 24px -10px rgba(21, 94, 239, 0.65);
 }
 
 .btn--primary:hover {
-  box-shadow: 0 12px 30px -10px rgba(124, 92, 255, 0.8);
+  box-shadow: 0 12px 30px -10px rgba(21, 94, 239, 0.8);
 }
 
 .btn--secondary {
@@ -75,12 +75,12 @@
 
 .btn--danger {
   background: var(--danger-soft);
-  border-color: rgba(248, 113, 113, 0.4);
+  border-color: rgba(194, 65, 76, 0.4);
   color: var(--danger);
 }
 
 .btn--danger:hover {
-  background: rgba(248, 113, 113, 0.22);
+  background: rgba(194, 65, 76, 0.22);
 }
 
 .btn--sm {
@@ -150,25 +150,25 @@
 .badge--primary {
   background: var(--accent-soft);
   color: var(--accent-strong);
-  border-color: rgba(124, 92, 255, 0.35);
+  border-color: rgba(21, 94, 239, 0.35);
 }
 
 .badge--pending {
   background: var(--warning-soft);
   color: var(--warning);
-  border-color: rgba(251, 191, 36, 0.3);
+  border-color: rgba(173, 116, 23, 0.3);
 }
 
 .badge--approved {
   background: var(--success-soft);
   color: var(--success);
-  border-color: rgba(52, 211, 153, 0.3);
+  border-color: rgba(22, 129, 91, 0.3);
 }
 
 .badge--rejected {
   background: var(--danger-soft);
   color: var(--danger);
-  border-color: rgba(248, 113, 113, 0.3);
+  border-color: rgba(194, 65, 76, 0.3);
 }
 
 .badge--muted {
@@ -195,7 +195,7 @@
 
 .card--interactive:hover {
   transform: translateY(-3px);
-  border-color: rgba(124, 92, 255, 0.45);
+  border-color: rgba(21, 94, 239, 0.45);
   box-shadow: var(--glow);
 }
 
@@ -233,30 +233,8 @@
   text-decoration: none;
 }
 
-/* --- brand: custom monoline wordmark ---------------------------------
-   "The App." drawn as hand-crafted strokes on a single grid (see the
-   inline SVG in each page's header/footer). "The" is muted, "App" is
-   bright, the full stop carries the accent — a real wordmark, not
-   styled text. To restyle: these rules only (markup is identical
-   everywhere — site header, footer, mobile header, admin topbar). */
-.brand__mark {
-  display: block;
-  height: 26px;
-  width: auto;
-}
-
-.brand__mark-the {
-  color: var(--text-muted);
-}
-
-.brand__mark-app {
-  color: var(--text);
-}
-
-.brand__mark-dot {
-  fill: var(--accent-strong);
-}
-
+/* The typography wordmark rules live in the production chrome section
+   at the end of this file so its treatment is easy to find and update. */
 .site-nav__list {
   list-style: none;
   display: flex;
@@ -464,7 +442,7 @@
 .field__control:focus {
   outline: none;
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(124, 92, 255, 0.18);
+  box-shadow: 0 0 0 3px rgba(21, 94, 239, 0.18);
 }
 
 textarea.field__control {
@@ -639,12 +617,12 @@ select.field__control {
 }
 
 .state--error {
-  border-color: rgba(248, 113, 113, 0.4);
-  background: rgba(248, 113, 113, 0.05);
+  border-color: rgba(194, 65, 76, 0.4);
+  background: rgba(194, 65, 76, 0.05);
 }
 
 .state--success {
-  border-color: rgba(52, 211, 153, 0.4);
+  border-color: rgba(22, 129, 91, 0.4);
   background: var(--success-soft);
 }
 
@@ -1112,7 +1090,7 @@ select.field__control {
 }
 
 .stat-card__icon--offers {
-  background: rgba(56, 209, 191, 0.14);
+  background: rgba(19, 138, 125, 0.14);
   color: var(--accent-2);
 }
 
@@ -1378,7 +1356,7 @@ select.field__control {
   padding: var(--space-3) var(--space-4);
   border-radius: var(--radius-sm);
   background: var(--danger-soft);
-  border: 1px solid rgba(248, 113, 113, 0.3);
+  border: 1px solid rgba(194, 65, 76, 0.3);
   color: var(--danger);
   font-size: var(--text-sm);
   margin: 0;
@@ -1474,8 +1452,8 @@ select.field__control {
 }
 
 .notification--unread {
-  border-color: rgba(124, 92, 255, 0.5);
-  background: linear-gradient(180deg, rgba(124, 92, 255, 0.08), var(--bg-elevated));
+  border-color: rgba(21, 94, 239, 0.5);
+  background: linear-gradient(180deg, rgba(21, 94, 239, 0.08), var(--bg-elevated));
 }
 
 .notification__body {
@@ -1760,7 +1738,7 @@ select.field__control {
 .badge--featured {
   background: var(--warning-soft);
   color: var(--warning);
-  border-color: rgba(251, 191, 36, 0.35);
+  border-color: rgba(173, 116, 23, 0.35);
 }
 
 /* Ribbon pinned to the media block's top-inline-end corner (mirrors
@@ -1919,7 +1897,7 @@ select.field__control {
   justify-items: center;
   gap: var(--space-4);
   background:
-    radial-gradient(420px 160px at 50% -20%, rgba(124, 92, 255, 0.18), transparent 70%),
+    radial-gradient(420px 160px at 50% -20%, rgba(21, 94, 239, 0.18), transparent 70%),
     var(--surface);
 }
 
@@ -2095,4 +2073,114 @@ button:hover > .btn__arrow {
 /* Category tabs sit a hand-tuned step under the page head. */
 .tabs[data-offers-tabs] {
   margin-bottom: var(--space-6);
+}
+
+/* =====================================================================
+   Production chrome — typography wordmark, navigation and surfaces
+   =====================================================================
+   The wordmark is deliberately type-led: "The App" is the product name,
+   not an icon. It stays recognizable in the public header, footer and
+   admin shell without suggesting a chat or messaging product.
+*/
+
+.brand__wordmark {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.22em;
+  color: var(--text);
+  font-size: 1.12rem;
+  line-height: 1;
+  letter-spacing: -0.055em;
+  white-space: nowrap;
+}
+
+.brand__wordmark-muted {
+  color: var(--text-muted);
+  font-weight: 520;
+}
+
+.brand__wordmark-main {
+  color: var(--text);
+  font-weight: 800;
+}
+
+.site-header {
+  background: rgba(255, 255, 255, 0.88);
+  box-shadow: 0 1px 0 rgba(14, 32, 53, 0.04);
+}
+
+.site-nav__link[aria-current="page"]::after {
+  background: var(--accent);
+}
+
+.site-nav__link[aria-current="page"] {
+  color: var(--accent-strong);
+  background: var(--accent-soft);
+}
+
+.card {
+  background: var(--surface);
+  box-shadow: var(--shadow-card);
+}
+
+.card--interactive:hover {
+  border-color: rgba(21, 94, 239, 0.34);
+  box-shadow: var(--glow);
+}
+
+.btn--primary {
+  color: #fff;
+}
+
+.hero-demo,
+.final-cta__panel {
+  border-color: rgba(21, 94, 239, 0.16);
+}
+
+.offer-card {
+  min-height: 100%;
+}
+
+.offer-card__body {
+  min-height: 238px;
+}
+
+.offer-card__reward {
+  color: var(--accent-strong);
+}
+
+.stat-card--linked {
+  color: inherit;
+  text-decoration: none;
+}
+
+.stat-card--linked:hover {
+  text-decoration: none;
+}
+
+.stat-card--linked .stat-card__action {
+  display: inline-block;
+}
+
+.mobile-nav {
+  background: rgba(255, 255, 255, 0.98);
+  box-shadow: 0 18px 24px -24px rgba(14, 32, 53, 0.35);
+}
+
+@media (max-width: 767px) {
+  .hero__grid {
+    gap: var(--space-7);
+  }
+
+  .hero__title {
+    --hero-indent: 0.20em;
+  }
+
+  .hero__actions .btn {
+    flex: 1 1 180px;
+  }
+
+  .offer-card__body {
+    min-height: 0;
+  }
 }

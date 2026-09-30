@@ -21,9 +21,9 @@
 // completion right after creating the document.
 // =====================================================================
 
-import { getFirebase } from "../firebase.js";
+import { getFirebase } from "./firebase.js";
 import { createNotification } from "./notifications-service.js";
-import { sendSubmissionNotification } from "../telegram/telegram-service.js";
+import { sendSubmissionNotification } from "./telegram-service.js";
 
 // Proof image limits (validated client-side AND in storage.rules).
 const MAX_PROOF_IMAGES = 5;

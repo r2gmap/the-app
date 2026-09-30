@@ -16,7 +16,7 @@
 import { getFirebase, waitForAuthState, signOutEverywhere } from "./firebase.js";
 import { t } from "./i18n.js";
 import { qs, qsa, el, toast, withBusy } from "./ui.js";
-import { ensureUserProfile } from "./services/users-service.js";
+import { ensureUserProfile } from "./users-service.js";
 
 // Destinations used by the post-login flow.
 const ROUTES = {

@@ -20,8 +20,8 @@
 //   in README "Future expansion" to fire those server-side.
 // =====================================================================
 
-import { getFirebase } from "../firebase.js";
-import { formatMoney } from "../format.js";
+import { getFirebase } from "./firebase.js";
+import { formatMoney } from "./format.js";
 
 let cachedConfig = null; // one read per session is enough
 

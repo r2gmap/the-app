@@ -88,24 +88,17 @@ The homepage is built from your content — nothing is hardcoded:
 
 ### How do I change the logo?
 
-The logo is a hand-drawn **SVG wordmark** (inline in each page, so it
-stays crisp at any size). To swap it for your own:
-
-1. Open any page (start with `index.html`) and find the
-   `<svg class="brand__mark" …>` block in the header.
-2. Replace it with your own inline SVG (keep the class
-   `brand__mark`).
-3. Repeat for the footer block on the same page, then the other pages —
-   or ask a developer to script it once.
-   Sizing/colours live in one place: the `.brand__mark` rules in
-   `css/components.css`. Details in section 21.
+The logo is a live typography-only **The App** wordmark, repeated in the
+public header/footer and admin shell. Update the `.brand__wordmark*` rules in
+`components.css` for sizing and color, and keep the `aria-label="The App"`
+markup intact. The compact browser-tab monogram lives in `favicon.svg`.
 
 ### Where will future content be managed?
 
 In the same Content page. The upload system is already prepared for
 future file types — **APK, ZIP and PDF** — with storage rules and
 validation waiting (see the `ASSET_KINDS` registry in
-`js/services/offers-service.js`). When the day comes, attaching a
+`offers-service.js`). When the day comes, attaching a
 downloadable file to an offer is a one-line change.
 
 ---
@@ -134,6 +127,7 @@ downloadable file to an offer is a one-line change.
 19. [Future expansion guide](#19-future-expansion-guide)
 20. [Known limitations](#20-known-limitations)
 21. [UI/UX design system — where to make visual edits](#21-uiux-design-system--where-to-make-visual-edits)
+22. [Production UI/UX refresh — September 2026](#22-production-uiux-refresh--september-2026)
 
 ---
 
@@ -157,105 +151,48 @@ and navigate, but sign-in and data features show their
 
 ## 2. Project structure
 
+This repository is intentionally a no-build static app: HTML, CSS and ES
+modules live at the repository root so it can be deployed directly by
+Firebase Hosting or served with any static HTTP server.
+
 ```
-├── index.html                 landing page (hero, featured strip, category groups)
-├── login.html                 user log-in (email + Google + forgot password)
-├── register.html              user sign-up (email + Google)
-├── verify-email.html          email verification status and actions
-├── 404.html                   branded, localized not-found page
-├── games.html                 GAMES category page (fed by Firestore)
-├── apps.html                  APPS category page (fed by Firestore)
-├── websites.html              WEBSITES category page (fed by Firestore)
-├── offers.html                browse ALL content (tabs incl. an Offers tab)
-├── offer.html                 content details + banner + proof submission form
-├── dashboard.html             USER dashboard (stats, featured, activity)
-├── wallet.html                balance + transaction history
-├── withdraw.html              withdrawal request form + request history
-├── submissions.html           the user's submission history
-├── notifications.html         the user's in-app notifications
-├── profile.html               profile summary + edit-profile dialog
-├── about.html                 company page: mission + values
-├── support.html               help topics, FAQ accordions, contact
-├── privacy.html               privacy policy (bilingual)
-├── terms.html                 terms of service (bilingual)
-├── admin/                     ── ADMIN PANEL (separate area) ──
-│   ├── login.html             admin-only sign-in (email/username + password)
-│   ├── dashboard.html         9 overview cards + latest pending submissions
-│   ├── content.html           CONTENT LIST: search, filters, publish,
-│   │                          feature, reorder, delete
-│   ├── content-form.html      ADD / EDIT CONTENT (the full CMS form)
-│   ├── submissions.html       review queue (approve / reject with reason)
-│   ├── users.html             user search + per-user activity dialog
-│   ├── wallet.html            platform ledger + manual adjustments
-│   └── withdrawals.html       withdrawal approve / reject
-├── css/
-│   ├── style.css              design tokens, reset, base type, page sections
-│   ├── components.css         buttons, cards, forms, badges, modals, toasts…
-│   ├── admin.css              admin shell, list rows, CMS form styles
-│   └── responsive.css         ALL breakpoint rules, in one place
-├── js/
-│   ├── main.js                entry point; every user page loads this module
-│   ├── firebase-config.js     browser-safe Firebase config (project the-app-01)
-│   ├── firebase.js            loads the SDK; the ONLY module touching Firebase directly
-│   ├── i18n.js                EN + AR translation catalogues and DOM application
-│   ├── navigation.js          language switcher, mobile menu, footer year
-│   ├── auth.js                login/register/Google/verify flows + route guards
-│   ├── ui.js                  toasts, loading/empty/error states, dialogs, avatars
-│   ├── format.js              money / date / number formatting (locale-aware)
-│   ├── offers.js              offer-card renderer + demo fallback catalogue
-│   ├── components/            shared renderers (submission card, transaction row)
-│   ├── pages/                 one controller per user page
-│   │   ├── home.js  dashboard.js  profile.js  offers.js  offer.js
-│   │   ├── category.js        ONE shared controller for games/apps/websites pages
-│   │   └── wallet.js  withdraw.js  notifications.js  submissions.js
-│   ├── services/              ── BUSINESS LOGIC (no UI) ──
-│   │   ├── users-service.js         profiles, admin user listing
-│   │   ├── offers-service.js        CONTENT CRUD: publish/draft, featured,
-│   │   │                             display order, media uploads
-│   │   ├── submissions-service.js   create submission, upload proofs,
-│   │   │                             approve/reject (atomic batches)
-│   │   ├── wallet-service.js        balance computation, ledger, adjustments
-│   │   ├── withdrawals-service.js   request + approve/reject withdrawals
-│   │   ├── notifications-service.js user inbox (create, read, mark-read)
-│   │   └── admin-service.js         role checks, username alias, 9 overview counts
-│   ├── telegram/
-│   │   └── telegram-service.js      Telegram notifications (standalone)
-│   └── admin/
-│       ├── admin.js            admin entry point + role guard + admin login
-│       └── pages/              one controller per admin page
-│           ├── overview.js  content.js  content-form.js  submissions.js
-│           └── users.js  wallet.js  withdrawals.js
-├── firestore.rules            database security rules (who may read/write what)
-├── storage.rules              file-storage security rules
-├── firestore.indexes.json     composite indexes the queries need
-├── firebase.json / .firebaserc  Firebase deploy configuration
-├── assets/icons/favicon.svg   the site icon
-└── README.md
+├── index.html, about.html, support.html, privacy.html, terms.html
+│                              public marketing and legal pages
+├── games.html, apps.html,
+│   websites.html, offers.html, offer.html
+│                              opportunity discovery and detail flows
+├── dashboard.html, profile.html, wallet.html, withdraw.html
+│   submissions.html, notifications.html
+│                              authenticated member area
+├── admin/                     admin-only HTML shell and routes
+│   ├── login.html             admin sign-in
+│   ├── dashboard.html         overview and pending work
+│   ├── content.html           searchable CMS list
+│   ├── content-form.html      add/edit, image upload, category, publish
+│   ├── submissions.html       proof review and approve/reject actions
+│   ├── users.html             user search and activity
+│   ├── wallet.html             platform ledger and adjustments
+│   └── withdrawals.html       withdrawal review
+├── style.css                  tokens, page sections and global layout
+├── components.css             shared controls, cards, forms and states
+├── admin.css                  admin shell, lists and CMS styles
+├── responsive.css             mobile, tablet and desktop breakpoints
+├── main.js / admin.js         public/admin entry points and route guards
+├── i18n.js                    English + Arabic catalogues and RTL support
+├── offers.js                  shared opportunity-card renderer + demo data
+├── *-service.js               Firebase-backed business logic modules
+├── *-page.js / category.js    page controllers loaded on demand
+├── firebase*.js               Firebase configuration and lazy SDK loading
+├── firestore.rules             database security rules
+├── storage.rules               upload security rules
+└── README.md                  setup, CMS and design-system documentation
 ```
 
-**Purpose of each important folder:**
-
-| Folder | Purpose |
-|---|---|
-| `admin/` | The entire admin panel: its own login, role guard and CMS pages. Kept separate from the public site both for security clarity and so it can be locked down (e.g. basic-auth at the host level) independently. |
-| `css/` | All styling, split into four layers (tokens → components → responsive → admin). Themes are changed by editing the `:root` token block in `style.css` only. |
-| `js/pages/` | One controller per public page. A page's behaviour is loaded dynamically from `body[data-page]`, so visitors only download the code for the page they're on. |
-| `js/admin/pages/` | Same idea for the admin panel (`body[data-admin-page]`), guarded by the role check. |
-| `js/services/` | All business logic and every Firestore/Storage call. No DOM code lives here; no page calls Firestore directly. This is the layer you extend or replace when the platform grows. |
-| `js/components/` | Shared renderers used by multiple pages (submission cards, transaction rows). |
-| `js/telegram/` | The Telegram notification module — fully standalone, optional. |
-| `assets/` | Static assets (currently the favicon). |
-
-**Separation of concerns** (important if you hire a developer later):
-
-- **UI** — `*.html`, `css/*`, `js/pages/*`, `js/admin/pages/*`
-- **Firebase access** — `js/firebase.js` (the only file that loads the
-  Firebase SDK) + `js/services/*` (the only files that talk to it)
-- **Business logic** — `js/services/*` (wallet math, approvals,
-  content lifecycle) and `js/telegram/*`
-
-A page never calls Firestore directly; a service never touches the
-DOM. This keeps every feature testable and replaceable.
+Presentation stays separate from business logic: page controllers render
+HTML; the service modules own Firestore, Storage and wallet operations; and
+`i18n.js` owns all reusable English/Arabic interface copy. The product has no
+build step or bundler, so future modules should keep using relative imports
+from this root-level structure.
 
 ---
 
@@ -264,7 +201,7 @@ DOM. This keeps every feature testable and replaceable.
 Firebase Authentication is the **only** source of truth for who is
 signed in. Nothing writes a "logged in" flag into storage — every
 "am I logged in?" question is answered by Firebase's
-`onAuthStateChanged`, wrapped once in `js/firebase.js` and reused
+`onAuthStateChanged`, wrapped once in `firebase.js` and reused
 everywhere.
 
 ### For users
@@ -620,7 +557,7 @@ Storage (harmless; delete them from the Firebase console if you want).
   translated too: `data-i18n-placeholder`,
   `data-i18n-aria-label`, `data-i18n-title`, and
   `<meta name="i18n-title">` for the browser tab title.
-- **`js/i18n.js`** holds both catalogues (English and Arabic — kept
+- **`i18n.js`** holds both catalogues (English and Arabic — kept
   in exact 1:1 parity, 635 keys each) and applies them to the whole
   page.
 - **Admin-authored content** (titles, descriptions, requirements…)
@@ -631,12 +568,12 @@ Storage (harmless; delete them from the Firebase console if you want).
   re-applied on every visit. The page's `dir` switches to `rtl` for
   Arabic before first paint, so the layout never flips visibly. All
   layout uses CSS logical properties, so RTL mirrors automatically.
-- Money and dates are formatted per locale (`js/format.js`); Arabic
+- Money and dates are formatted per locale (`format.js`); Arabic
   uses Latin digits so amounts stay readable (`$0.50`-style).
 
 ### How to edit English text
 
-Find the key in the `en:` block of `js/i18n.js` and change the value.
+Find the key in the `en:` block of `i18n.js` and change the value.
 
 ### How to edit Arabic text
 
@@ -669,22 +606,22 @@ Things that *are* in code (rarely changed):
 
 | I want to change… | File(s) to edit |
 |---|---|
-| Any button/label/heading text | `js/i18n.js` (EN + AR blocks) |
-| Colors, fonts, radius, spacing | `css/style.css` (the `:root` token block at the top) |
-| Layout at phone/tablet/desktop sizes | `css/responsive.css` |
-| Minimum withdrawal amount | `MIN_WITHDRAWAL` in `js/services/withdrawals-service.js` |
-| Proof-image limits (count/size) | `js/services/submissions-service.js` + `storage.rules` |
-| The demo content (shown before real content exists) | `demoOffers()` in `js/offers.js` |
-| Firebase project | `js/firebase-config.js` |
+| Any button/label/heading text | `i18n.js` (EN + AR blocks) |
+| Colors, fonts, radius, spacing | `style.css` (the `:root` token block at the top) |
+| Layout at phone/tablet/desktop sizes | `responsive.css` |
+| Minimum withdrawal amount | `MIN_WITHDRAWAL` in `withdrawals-service.js` |
+| Proof-image limits (count/size) | `submissions-service.js` + `storage.rules` |
+| The demo content (shown before real content exists) | `demoOffers()` in `offers.js` |
+| Firebase project | `firebase-config.js` |
 | Who may do what | `firestore.rules` / `storage.rules` |
-| Telegram message wording | `js/telegram/telegram-service.js` |
+| Telegram message wording | `telegram-service.js` |
 
 ---
 
 ## 15. How to configure Firebase
 
 The site is already wired to project **`the-app-01`**. All
-browser-safe credentials live in **`js/firebase-config.js`** — an API
+browser-safe credentials live in **`firebase-config.js`** — an API
 key, project id, and similar identifiers. These are public by design
 (every Firebase web app ships them); access is controlled by the
 security rules, not by hiding keys. **Never** put a service-account
@@ -694,7 +631,7 @@ To point the site at a **different** Firebase project:
 
 1. Firebase console → Project settings → **Your apps** → Web app →
    copy the `firebaseConfig` values.
-2. Paste them into `js/firebase-config.js`.
+2. Paste them into `firebase-config.js`.
 3. In the console for that project, enable:
    - **Authentication** → Sign-in method → **Email/Password** and
      **Google**.
@@ -734,7 +671,7 @@ withdrawal decisions (approvals/rejections) to a private admin group.
 
 **How it works / security notes:**
 
-- The code lives in **`js/telegram/telegram-service.js`** — fully
+- The code lives in **`telegram-service.js`** — fully
   separated from UI. It exposes reusable functions:
   `sendMessage()`, `sendSubmissionNotification()`,
   `sendWithdrawalNotification()`.
@@ -816,27 +753,27 @@ cached files.
 The architecture intentionally leaves clean seams for growth:
 
 - **Adding a new category** (e.g. "Surveys") is a three-step change:
-  1. add the value to `CATEGORIES` in `js/offers.js` (and a
+  1. add the value to `CATEGORIES` in `offers.js` (and a
      `categories.<value>` label in both i18n blocks),
   2. allow it in the `offers` rules in `firestore.rules`
      (the `category in [...]` lists),
   3. add an `<option>` to the category select in
      `admin/content-form.html` — and, if you want a dedicated page,
      copy `games.html` and point `data-category` at the new value
-     (the shared controller `js/pages/category.js` does the rest).
+     (the shared controller `category.js` does the rest).
 - **New content types beyond the four categories** (e.g. articles,
-  videos): add a new collection + service in `js/services/`, a page
-  controller in `js/pages/`, and matching rules. The CMS pattern
+  videos): add a new collection + service in the root-level service modules, a page
+  controller in ``, and matching rules. The CMS pattern
   (list page + form page + service) is designed to be copied.
 - **New admin tools**: add a page under `admin/`, register it in
-  `ADMIN_PAGES` in `js/admin/admin.js`, and add its sidebar link —
+  `ADMIN_PAGES` in `admin.js`, and add its sidebar link —
   the role guard applies automatically.
 - **Server-side Telegram pings on submission** — add a Cloud Function
   on `taskSubmissions` creation that calls the same Telegram API.
 - **Materialized balances** — for very large ledgers, add a Cloud
   Function maintaining `users/{uid}.balance` on transaction writes;
   the UI already isolates balance math in
-  `wallet-service.js/computeUserBalance`, so it's a one-file change.
+  `wallet-service.js` → `computeUserBalance`, so it's a one-file change.
 - **Full-text user search** — user search currently filters the
   fetched list client-side (fine to a few thousand users). Beyond
   that, plug in Algolia/Typesense via an extension.
@@ -888,100 +825,137 @@ The architecture intentionally leaves clean seams for growth:
 
 ## 21. UI/UX design system — where to make visual edits
 
-This section maps every visual element of the platform to the exact
-file that owns it, so future design changes land in one place.
+This section maps the visual system to its source of truth. Content owners
+should use **Admin → Content** for opportunities; visual edits belong in the
+files below.
 
-### Brand identity (the logo)
+### Brand identity
 
-The logo is a **pure typography wordmark**: “The” in a light weight,
-“App” in a heavy weight, followed by a gradient full stop
-(`The App.`). There is no icon mark by design — nothing that could
-read as a chat or messaging app.
+The logo is a typography-only **The App** wordmark. “The” uses a quieter
+weight and “App” carries the stronger weight. There is no icon mark, so the
+identity cannot be mistaken for a chat or messaging app.
 
-| What | Where to edit |
-| --- | --- |
-| Logo markup (header, footer, admin topbar — identical everywhere) | The inline `<svg class="brand__mark">` block in each page — a hand-drawn monoline wordmark (“The” muted, “App” bright, accent full stop), no image assets |
-| Logo size + colours | `.brand__mark`, `.brand__mark-the`, `.brand__mark-app`, `.brand__mark-dot` rules in `css/components.css` |
-| Favicon (the monoline “A” + dot) | `assets/icons/favicon.svg` |
+- Markup: the `.brand__wordmark` span in the public and admin HTML headers
+  and footers.
+- Size, weight and color: `.brand__wordmark*` in `components.css`.
+- Favicon: `favicon.svg`.
 
-### Hero (landing page)
+### Hero and navigation
 
-- The staggered headline **Play. / Win. / Earn.** lives in
-  `index.html` (`hero__title`), with copy in the `hero.play`,
-  `hero.win`, `hero.earn` keys.
-- The stagger amount is one variable: `--hero-indent` in the
-  `.hero__title` rule (`css/style.css`). It uses a logical margin, so
-  Arabic mirrors automatically.
-- The entrance animation and its reduced-motion guard are directly
-  below that rule.
+- `index.html` owns the hero structure: the title uses the translation keys
+  `hero.play`, `hero.win` and `hero.earn`.
+- `style.css` owns the stagger amount (`--hero-indent`), hero spacing and
+  section backgrounds. Logical properties keep the stagger correct in Arabic.
+- Every public page carries the same desktop navigation. `navigation.js`
+  marks the current item with `aria-current`; authenticated actions are
+  populated by `auth.js`.
 
-### Navigation
+### Opportunity cards
 
-- **Desktop**: Home / Games / Apps / Websites / Offers on every page,
-  generated by the same markup in each page’s header. The current
-  section is marked by `js/navigation.js` (`aria-current="page"`) and
-  styled under `.site-nav__link[aria-current]`.
-- **Signed-in visitors** additionally see Dashboard / Profile /
-  Log out in the header actions, and the full set (including Wallet,
-  My submissions, Notifications) in the mobile menu.
-- To add a nav item, add one `<li>` to `site-nav__list` **and** the
-  matching `<li>` in the mobile nav, on every page — the markup is
-  intentionally duplicated per page with no build step.
+The `<template id="offer-card-template">` in the pages that display cards
+owns the editable card anatomy. `offers.js` fills that template with the CMS
+thumbnail, category, requirement, reward, estimated time, difficulty and CTA.
+Generated cover art is only a fallback when no thumbnail is published.
 
-### Content cards
+### Member dashboard and profile
 
-The card anatomy (thumbnail, reward, estimated time, difficulty,
-CTA) is defined once in the `<template id="offer-card-template">`
-at the bottom of each page that shows cards, cloned and filled by
-`js/offers.js → renderOfferCard()`.
+- `dashboard.html` owns the member layout; `dashboard.js` owns the Firebase
+  reads and loading/error/empty states.
+- `profile.html` owns the simple identity/account layout; `profile.js` keeps
+  the existing name and cash-wallet edit flow intact.
 
-- Add a card element → edit the template (all six pages) **and** the
-  matching fill logic in `renderOfferCard()`.
-- Chip colours → `.offer-card__chip--easy|medium|hard` in
-  `css/components.css`.
-- Hover behaviour → `.card--interactive` + `.offer-card:hover
-  .offer-card__image` (reduced-motion guard in `css/style.css`).
+### Responsive and admin UI
 
-### Dashboard
+- `responsive.css` is the only place for public phone/tablet/desktop
+  breakpoint rules.
+- `admin.css` owns the admin sidebar, topbar, queue rows and responsive drawer.
+- `admin/` keeps admin route markup separate from the member-facing pages.
+  The CMS form remains the source of truth for add content, image upload,
+  category choice and publish behavior.
 
-Four stat cards — Wallet balance, Active opportunities, Pending
-reviews, Completed rewards — each with a quiet action link, rendered
-by `js/pages/dashboard.js → renderStats()`. Markup lives in
-`dashboard.html` (`stat-grid--four`).
+### Translations and content
 
-### Profile
+- Edit visible product copy in the matching `en` and `ar` keys in `i18n.js`.
+  Keep Arabic idiomatic and update both catalogues together.
+- Edit live opportunity content, thumbnails and Arabic content variants in
+  **Admin → Content**. Do not hardcode new offers in `index.html`.
 
-A calm identity card plus one “Account details” list (wallet
-balance, **cash wallet number**, completed rewards, pending
-reviews). The cash wallet number is stored on the Firestore profile
-(`users/{uid}.walletNumber`), edited via the profile dialog, and
-used to prefill withdrawal and submission forms.
+---
 
-### Footer
+## 22. Production UI/UX refresh — September 2026
 
-The company footer (Product / Company / Legal columns) is identical
-on every public page: description + `footer.*` keys in `js/i18n.js`.
-It links to four real pages — `about.html`, `support.html`
-(includes the contact section), `privacy.html`, `terms.html`.
-Change the support address by editing the `mailto:` link in
-`support.html` and `privacy.html`.
+The MVP experience has been refined into a calmer, more trustworthy rewards
+product without changing the Firebase, Firestore, Storage, authentication,
+translation or CMS data flows.
 
-### Company pages
+### What changed
 
-`about.html`, `support.html`, `privacy.html`, `terms.html` are
-static (no page controller), fully bilingual, and styled by the
-`.prose`, `.cta-band`, `.support-topic` and `.faq-item` components
-at the end of `css/components.css`. FAQ accordions are native
-`<details>` elements — no JavaScript involved.
+- Replaced the illustrated/monoline logo with a typography-only **The App**
+  wordmark. It is shared by the public header, mobile navigation, footer and
+  admin shell and does not use a chat or messaging symbol.
+- Reworked the homepage hero around the staggered three-line message:
+  **Play. / Win. / Earn.** The second and third lines step inward in both LTR
+  and RTL layouts.
+- Refined the visual system to use an editorial ink, white, blue and teal
+  palette. Cards, buttons, borders and shadows now feel premium and composed
+  rather than neon, crypto-like or gambling-oriented.
+- Improved opportunity cards so their thumbnail, category, reward, requirement,
+  estimated completion time, difficulty and call to action share a consistent
+  rhythm and height. CMS thumbnails still win over generated cover art.
+- Restored a dedicated member dashboard route at `dashboard.html` with only
+  useful account signals: wallet balance, active opportunities, pending
+  reviews and completed rewards, followed by live opportunities and recent
+  activity.
+- Simplified the profile summary to name, email, wallet balance, cash wallet
+  number and logout, while keeping the existing edit flow for the name and
+  payout destination.
+- Kept the desktop navigation focused on Home, Games, Apps, Websites and
+  Offers. Authenticated members also have Dashboard and Profile access; the
+  mobile drawer keeps account actions reachable without overcrowding the
+  primary menu.
+- Restored the admin entry point under `admin/`, including the admin sign-in,
+  overview, content list, content form, submission review, wallet ledger,
+  users and withdrawal routes. Existing publish, upload, category, featured and ordering behavior
+  remains service-backed.
+- Audited the static module and stylesheet references so this no-build app can
+  be served directly from the repository root. Firebase remains lazy-loaded
+  and the app still presents useful loading, empty and offline states when the
+  SDK is unavailable.
+- Refreshed English and Arabic marketing copy for a human, transparent tone.
+  Arabic remains native in wording and RTL behavior rather than being a
+  word-for-word mirror of the English.
 
-### Responsive rules
+### Where to make future visual edits
 
-All breakpoint rules live in `css/responsive.css` (mobile-first;
-the base styles in `style.css`/`components.css` target small
-screens). Admin breakpoints live in `css/admin.css`.
+- **Global palette, type scale, spacing and radii:** edit the `:root` tokens at
+  the top of `style.css`.
+- **Public page sections:** edit the clearly labelled section blocks in
+  `style.css` (hero, trust, CTA, footer) and the reusable component blocks in
+  `components.css`.
+- **Responsive behavior:** keep breakpoint changes in `responsive.css` so
+  mobile, tablet and desktop fixes stay auditable in one place.
+- **Admin shell and CMS layout:** edit `admin.css` and the HTML files in
+  `admin/`. The content form remains the place to add fields, upload images,
+  choose a category and publish content.
+- **Opportunity cards:** edit the `<template id="offer-card-template">` in
+  `index.html`, `offers.html`, the category templates, or the member
+  `dashboard.html`; shared data mapping lives in `offers.js` so the cards stay
+  consistent.
+- **Logo:** edit the `.brand__wordmark` styles in `components.css` and the
+  small typography-only wordmark markup in each page header/footer. Keep the
+  accessible `aria-label="The App"`.
+- **English and Arabic copy:** edit the matching keys in `i18n.js` — update
+  both the `en` and `ar` catalogues together. Admin-authored opportunity copy
+  belongs in the CMS and is localized through the `titleAr`, `descriptionAr`
+  and related fields when present.
+- **Dashboard and profile presentation:** edit the main markup in
+  `dashboard.html` and `profile.html`; keep Firebase reads and write logic in
+  `dashboard.js` and `profile.js`.
+- **Data and business rules:** continue using the existing service modules
+  (`offers-service.js`, `submissions-service.js`, `wallet-service.js`,
+  `withdrawals-service.js` and `users-service.js`). Do not place credentials,
+  Firestore writes or Storage rules in presentation files.
 
-### Design tokens
-
-Every colour, radius, shadow, spacing step and font size is a CSS
-custom property on `:root` in `css/style.css`. **Themes are changed
-by editing that block only** — nothing else hard-codes a colour.
+The platform remains content-managed: adding or publishing a game, app,
+website or offer should be done in **Admin → Content**, not by editing the
+homepage or card templates.

@@ -12,11 +12,11 @@
 // The hero "demo" card art is generated locally (no network).
 // =====================================================================
 
-import { waitForAuthState } from "../firebase.js";
-import { t, onLocaleChange } from "../i18n.js";
-import { qs, qsa, renderState } from "../ui.js";
-import { renderOfferCard, demoOffers, generatedCoverStyle, CATEGORIES } from "../offers.js";
-import { fetchActiveOffers, fetchFeaturedOffers } from "../services/offers-service.js";
+import { waitForAuthState } from "./firebase.js";
+import { t, onLocaleChange } from "./i18n.js";
+import { qs, qsa, renderState } from "./ui.js";
+import { renderOfferCard, demoOffers, generatedCoverStyle, CATEGORIES } from "./offers.js";
+import { fetchActiveOffers, fetchFeaturedOffers } from "./offers-service.js";
 
 // ---------------------------------------------------------------------
 // Hero demo thumbnail (pure decoration, generated cover art)
