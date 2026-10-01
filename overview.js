@@ -8,11 +8,11 @@
 // one-click review.
 // =====================================================================
 
-import { t, onLocaleChange } from "../../i18n.js";
-import { qs, renderState, el } from "../../ui.js";
-import { formatMoney, formatDateTime } from "../../format.js";
-import { fetchOverviewCounts } from "../../services/admin-service.js";
-import { fetchSubmissions } from "../../services/submissions-service.js";
+import { t, onLocaleChange } from "./i18n.js";
+import { qs, renderState, el } from "./ui.js";
+import { formatMoney, formatDateTime } from "./format.js";
+import { fetchOverviewCounts } from "./admin-service.js";
+import { fetchSubmissions } from "./submissions-service.js";
 
 // ---------------------------------------------------------------------
 // Stat cards (nine: users, content, 4 categories, 3 review states)

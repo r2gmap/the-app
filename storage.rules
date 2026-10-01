@@ -28,7 +28,7 @@ service firebase.storage {
     }
 
     function isImageUnder(maxBytes) {
-      return request.resource.contentType.matches('image/.*')
+      return request.resource.contentType.matches('image/(jpeg|png|webp)')
         && request.resource.size > 0
         && request.resource.size < maxBytes;
     }
@@ -96,6 +96,19 @@ service firebase.storage {
         && request.resource.contentType == 'application/pdf'
         && request.resource.size < 20 * 1024 * 1024;
       allow delete: if isAdmin();
+    }
+
+    // ----------------------------------------------------------------
+    // Private support attachments
+    // ----------------------------------------------------------------
+    match /support-attachments/{userId}/{allPaths=**} {
+      // Attachments are not public. Admins review them from the queue;
+      // the owner may read their own upload if a future ticket view needs it.
+      allow read: if isSignedIn() && (request.auth.uid == userId || isAdmin());
+      allow create, update: if isSignedIn()
+        && request.auth.uid == userId
+        && isImageUnder(5 * 1024 * 1024);
+      allow delete: if false;
     }
 
     // ----------------------------------------------------------------

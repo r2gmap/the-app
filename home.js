@@ -12,11 +12,11 @@
 // The hero "demo" card art is generated locally (no network).
 // =====================================================================
 
-import { waitForAuthState } from "../firebase.js";
-import { t, onLocaleChange } from "../i18n.js";
-import { qs, qsa, renderState } from "../ui.js";
-import { renderOfferCard, demoOffers, generatedCoverStyle, CATEGORIES } from "../offers.js";
-import { fetchActiveOffers, fetchFeaturedOffers } from "../services/offers-service.js";
+import { waitForAuthState } from "./firebase.js";
+import { t, onLocaleChange } from "./i18n.js";
+import { qs, qsa, renderState } from "./ui.js";
+import { renderOfferCard, demoOffers, generatedCoverStyle, CATEGORIES } from "./offers.js";
+import { fetchActiveOffers, fetchFeaturedOffers } from "./offers-service.js";
 
 // ---------------------------------------------------------------------
 // Hero demo thumbnail (pure decoration, generated cover art)
@@ -26,6 +26,31 @@ function paintHeroThumb() {
   const thumb = qs("[data-hero-thumb]");
   if (!thumb) return;
   thumb.setAttribute("style", generatedCoverStyle("game"));
+}
+
+// The poster is a first-class fallback: blocked media, a missing asset, and
+// reduced-motion preferences all resolve to the same calm static treatment.
+function initHeroVideo() {
+  const video = qs("[data-hero-video]");
+  const fallback = qs("[data-hero-video-fallback]");
+  if (!video || !fallback) return;
+
+  const showFallback = (show) => {
+    fallback.hidden = !show;
+    video.classList.toggle("hero__video--unavailable", show);
+  };
+  const reduced = Boolean(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  if (reduced) {
+    video.pause();
+    video.hidden = true;
+    showFallback(true);
+    return;
+  }
+
+  video.addEventListener("loadeddata", () => showFallback(false), { once: true });
+  video.addEventListener("error", () => showFallback(true), { once: true });
+  showFallback(video.readyState < 2);
+  video.play().catch(() => showFallback(true));
 }
 
 // ---------------------------------------------------------------------
@@ -142,6 +167,7 @@ async function loadOffersSection() {
 
 async function init() {
   paintHeroThumb();
+  initHeroVideo();
 
   // Wait for the real session so card CTAs point to the right place
   // (offer details for signed-in visitors, register for guests).

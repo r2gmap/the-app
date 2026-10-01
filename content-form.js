@@ -20,15 +20,15 @@
 // chosen status) and returns to the content list.
 // =====================================================================
 
-import { t } from "../../i18n.js";
-import { qs, el, renderState, toast, withBusy, confirmDialog } from "../../ui.js";
+import { t } from "./i18n.js";
+import { qs, el, renderState, toast, withBusy, confirmDialog } from "./ui.js";
 import {
   fetchOfferById,
   createOffer,
   updateOffer,
   deleteOffer,
   uploadContentImage,
-} from "../../services/offers-service.js";
+} from "./offers-service.js";
 
 let currentAdminUid = null; // written into createdBy
 let editingContentId = null; // null = creating new content

@@ -3,7 +3,7 @@
 // =====================================================================
 // Users request payouts; admins approve (recording a negative wallet
 // transaction) or reject (with a reason). Both decisions notify the
-// user in-app and ping the admin Telegram group.
+// user in-app and remain visible in the protected admin queue.
 //
 //   withdrawals/{id}: {
 //     userId, userName, email,
@@ -15,9 +15,8 @@
 //   }
 // =====================================================================
 
-import { getFirebase } from "../firebase.js";
+import { getFirebase } from "./firebase.js";
 import { createNotification } from "./notifications-service.js";
-import { sendWithdrawalNotification } from "../telegram/telegram-service.js";
 
 // Platform-wide minimum withdrawal (USD). Change it here — it is shown
 // in the UI hint and enforced by client validation + admin review.
@@ -92,7 +91,7 @@ async function fetchWithdrawals(status = null, maxCount = 100) {
  *   1. the request flips to "approved"
  *   2. a NEGATIVE transaction records the payout (wallet decreases)
  *   3. the user receives an in-app notification
- * Telegram ping follows best-effort.
+ * The protected admin queue is the operational record.
  */
 async function approveWithdrawal(withdrawal, adminUser) {
   const fb = await getFirebase();
@@ -126,7 +125,6 @@ async function approveWithdrawal(withdrawal, adminUser) {
   });
   await batch.commit();
 
-  sendWithdrawalNotification({ ...withdrawal, amount }, "approved").catch(() => {});
 }
 
 /**
@@ -155,7 +153,6 @@ async function rejectWithdrawal(withdrawal, reason, adminUser) {
   });
   await batch.commit();
 
-  sendWithdrawalNotification(withdrawal, "rejected").catch(() => {});
 }
 
 export {

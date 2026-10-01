@@ -44,11 +44,11 @@
 .btn--primary {
   background: var(--gradient-brand);
   color: #fff;
-  box-shadow: 0 8px 24px -10px rgba(124, 92, 255, 0.65);
+  box-shadow: 0 8px 24px -10px rgba(124, 92, 255, 0.72);
 }
 
 .btn--primary:hover {
-  box-shadow: 0 12px 30px -10px rgba(124, 92, 255, 0.8);
+  box-shadow: 0 12px 30px -10px rgba(124, 92, 255, 0.9);
 }
 
 .btn--secondary {
@@ -75,12 +75,12 @@
 
 .btn--danger {
   background: var(--danger-soft);
-  border-color: rgba(248, 113, 113, 0.4);
+  border-color: rgba(194, 65, 76, 0.4);
   color: var(--danger);
 }
 
 .btn--danger:hover {
-  background: rgba(248, 113, 113, 0.22);
+  background: rgba(194, 65, 76, 0.22);
 }
 
 .btn--sm {
@@ -156,19 +156,19 @@
 .badge--pending {
   background: var(--warning-soft);
   color: var(--warning);
-  border-color: rgba(251, 191, 36, 0.3);
+  border-color: rgba(173, 116, 23, 0.3);
 }
 
 .badge--approved {
   background: var(--success-soft);
   color: var(--success);
-  border-color: rgba(52, 211, 153, 0.3);
+  border-color: rgba(22, 129, 91, 0.3);
 }
 
 .badge--rejected {
   background: var(--danger-soft);
   color: var(--danger);
-  border-color: rgba(248, 113, 113, 0.3);
+  border-color: rgba(194, 65, 76, 0.3);
 }
 
 .badge--muted {
@@ -233,30 +233,8 @@
   text-decoration: none;
 }
 
-/* --- brand: custom monoline wordmark ---------------------------------
-   "The App." drawn as hand-crafted strokes on a single grid (see the
-   inline SVG in each page's header/footer). "The" is muted, "App" is
-   bright, the full stop carries the accent — a real wordmark, not
-   styled text. To restyle: these rules only (markup is identical
-   everywhere — site header, footer, mobile header, admin topbar). */
-.brand__mark {
-  display: block;
-  height: 26px;
-  width: auto;
-}
-
-.brand__mark-the {
-  color: var(--text-muted);
-}
-
-.brand__mark-app {
-  color: var(--text);
-}
-
-.brand__mark-dot {
-  fill: var(--accent-strong);
-}
-
+/* The typography wordmark rules live in the production chrome section
+   at the end of this file so its treatment is easy to find and update. */
 .site-nav__list {
   list-style: none;
   display: flex;
@@ -639,12 +617,12 @@ select.field__control {
 }
 
 .state--error {
-  border-color: rgba(248, 113, 113, 0.4);
-  background: rgba(248, 113, 113, 0.05);
+  border-color: rgba(194, 65, 76, 0.4);
+  background: rgba(194, 65, 76, 0.05);
 }
 
 .state--success {
-  border-color: rgba(52, 211, 153, 0.4);
+  border-color: rgba(22, 129, 91, 0.4);
   background: var(--success-soft);
 }
 
@@ -1112,7 +1090,7 @@ select.field__control {
 }
 
 .stat-card__icon--offers {
-  background: rgba(56, 209, 191, 0.14);
+  background: rgba(19, 138, 125, 0.14);
   color: var(--accent-2);
 }
 
@@ -1378,7 +1356,7 @@ select.field__control {
   padding: var(--space-3) var(--space-4);
   border-radius: var(--radius-sm);
   background: var(--danger-soft);
-  border: 1px solid rgba(248, 113, 113, 0.3);
+  border: 1px solid rgba(194, 65, 76, 0.3);
   color: var(--danger);
   font-size: var(--text-sm);
   margin: 0;
@@ -1760,7 +1738,7 @@ select.field__control {
 .badge--featured {
   background: var(--warning-soft);
   color: var(--warning);
-  border-color: rgba(251, 191, 36, 0.35);
+  border-color: rgba(173, 116, 23, 0.35);
 }
 
 /* Ribbon pinned to the media block's top-inline-end corner (mirrors
@@ -2095,4 +2073,418 @@ button:hover > .btn__arrow {
 /* Category tabs sit a hand-tuned step under the page head. */
 .tabs[data-offers-tabs] {
   margin-bottom: var(--space-6);
+}
+
+/* =====================================================================
+   Production chrome — typography wordmark, navigation and surfaces
+   =====================================================================
+   The wordmark is deliberately type-led: "The App" is the product name,
+   not an icon. It stays recognizable in the public header, footer and
+   admin shell without suggesting a chat or messaging product.
+*/
+
+.site-header {
+  background: rgba(8, 10, 20, 0.82);
+  box-shadow: 0 14px 34px -28px rgba(2, 4, 16, 0.95);
+}
+
+.site-nav__link[aria-current="page"]::after {
+  background: var(--accent);
+}
+
+.site-nav__link[aria-current="page"] {
+  color: var(--accent-strong);
+  background: var(--accent-soft);
+}
+
+.card {
+  background: var(--surface);
+  box-shadow: var(--shadow-card);
+}
+
+.card--interactive:hover {
+  border-color: rgba(124, 92, 255, 0.34);
+  box-shadow: var(--glow);
+}
+
+.btn--primary {
+  color: #fff;
+}
+
+.hero-demo,
+.final-cta__panel {
+  border-color: rgba(124, 92, 255, 0.16);
+}
+
+.offer-card {
+  min-height: 100%;
+}
+
+.offer-card__body {
+  min-height: 238px;
+}
+
+.offer-card__reward {
+  color: var(--accent-strong);
+}
+
+.stat-card--linked {
+  color: inherit;
+  text-decoration: none;
+}
+
+.stat-card--linked:hover {
+  text-decoration: none;
+}
+
+.stat-card--linked .stat-card__action {
+  display: inline-block;
+}
+
+.mobile-nav {
+  background: rgba(8, 10, 20, 0.97);
+  box-shadow: 0 18px 30px -24px rgba(2, 4, 16, 0.95);
+}
+
+@media (max-width: 767px) {
+  .hero__grid {
+    gap: var(--space-7);
+  }
+
+  .hero__title {
+    --hero-indent: 0.20em;
+  }
+
+  .hero__actions .btn {
+    flex: 1 1 180px;
+  }
+
+  .offer-card__body {
+    min-height: 0;
+  }
+}
+
+/* =====================================================================
+   Final dark product chrome — shared public shell and hero media
+   =====================================================================
+   This section intentionally comes last so legacy light-surface rules
+   cannot flatten the restored dark identity.
+*/
+
+html,
+body {
+  overflow-x: hidden;
+}
+
+.site-header {
+  background: rgba(8, 10, 20, 0.82);
+  border-bottom: 1px solid var(--border);
+  box-shadow: 0 14px 34px -28px rgba(2, 4, 16, 0.95);
+  backdrop-filter: blur(18px);
+}
+
+.brand__lockup {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  direction: ltr;
+  text-align: left;
+  color: var(--text);
+  line-height: 0.86;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.brand__lockup-kicker {
+  margin-inline-start: 0.12em;
+  color: var(--text-muted);
+  font-size: 0.52rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: lowercase;
+}
+
+.brand__lockup-name {
+  color: var(--text);
+  font-size: 1.55rem;
+  font-weight: 850;
+  letter-spacing: -0.09em;
+}
+
+.site-header__admin-link,
+.site-header__admin-mobile {
+  border-color: rgba(124, 92, 255, 0.34);
+  color: var(--accent-strong);
+}
+
+.site-header__admin-link:hover,
+.site-header__admin-mobile:hover {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.site-nav__link:hover,
+.mobile-nav__link:hover {
+  color: var(--text);
+}
+
+.mobile-nav {
+  background: rgba(8, 10, 20, 0.97);
+  border-top: 1px solid var(--border);
+  box-shadow: 0 18px 30px -24px rgba(2, 4, 16, 0.95);
+  backdrop-filter: blur(18px);
+}
+
+.card--interactive:hover {
+  border-color: rgba(124, 92, 255, 0.44);
+}
+
+.btn--primary {
+  box-shadow: 0 10px 28px -12px rgba(124, 92, 255, 0.72);
+}
+
+.btn--primary:hover {
+  box-shadow: 0 14px 34px -12px rgba(124, 92, 255, 0.9);
+}
+
+.hero {
+  overflow: clip;
+  isolation: isolate;
+}
+
+.hero__media {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  overflow: hidden;
+  background: var(--bg) url("assets/hero-poster.png") center / cover no-repeat;
+}
+
+.hero__media::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(8, 10, 20, 0.94) 0%, rgba(8, 10, 20, 0.72) 42%, rgba(8, 10, 20, 0.82) 100%),
+    linear-gradient(180deg, rgba(8, 10, 20, 0.24), rgba(8, 10, 20, 0.92));
+  pointer-events: none;
+}
+
+.hero__video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  opacity: 0.54;
+  filter: saturate(0.78) contrast(1.08);
+}
+
+.hero__video--unavailable {
+  opacity: 0;
+}
+
+.hero__media-fallback {
+  position: absolute;
+  inset-inline-end: clamp(18px, 5vw, 80px);
+  inset-block-end: clamp(18px, 5vw, 64px);
+  z-index: 1;
+  max-width: 24ch;
+  color: var(--text-faint);
+  font-size: var(--text-xs);
+  letter-spacing: 0.04em;
+  text-align: end;
+}
+
+.hero__grid {
+  position: relative;
+  z-index: 1;
+}
+
+.hero__title,
+.hero__title-line {
+  max-inline-size: 100%;
+  overflow-wrap: anywhere;
+}
+
+.hero__title-line {
+  white-space: nowrap;
+}
+
+.hero-demo,
+.final-cta__panel {
+  border-color: rgba(124, 92, 255, 0.2);
+  background: rgba(16, 20, 38, 0.78);
+  backdrop-filter: blur(12px);
+}
+
+/* =====================================================================
+   Floating support panel — logical positioning keeps Arabic natural
+   =====================================================================
+*/
+
+.support-widget {
+  position: fixed;
+  inset-inline-end: clamp(14px, 3vw, 32px);
+  inset-block-end: clamp(14px, 3vw, 32px);
+  z-index: 100;
+  direction: inherit;
+}
+
+.support-widget__launcher {
+  min-height: 46px;
+  padding: 0.72em 1.05em;
+  border: 1px solid rgba(124, 92, 255, 0.46);
+  border-radius: var(--radius-pill);
+  background: rgba(16, 20, 38, 0.94);
+  color: var(--text);
+  box-shadow: 0 14px 34px -16px rgba(2, 4, 16, 0.95), 0 0 0 1px rgba(124, 92, 255, 0.08);
+  cursor: pointer;
+  font: inherit;
+  font-size: var(--text-sm);
+  font-weight: 700;
+  transition: background var(--speed) var(--ease), border-color var(--speed) var(--ease), transform var(--speed) var(--ease);
+}
+
+.support-widget__launcher:hover {
+  border-color: var(--accent);
+  background: var(--surface-2);
+  transform: translateY(-2px);
+}
+
+.support-widget__panel {
+  position: absolute;
+  inset-inline-end: 0;
+  inset-block-end: calc(100% + var(--space-3));
+  width: min(92vw, 390px);
+  max-height: min(78vh, 680px);
+  overflow-y: auto;
+  padding: var(--space-5);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-lg);
+  background: rgba(13, 16, 32, 0.98);
+  box-shadow: 0 24px 70px -28px rgba(2, 4, 16, 0.98), var(--glow);
+  color: var(--text);
+}
+
+.support-widget__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.support-widget__eyebrow {
+  margin: 0 0 var(--space-1);
+  color: var(--accent-strong);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.support-widget__title {
+  margin: 0;
+  font-size: var(--text-xl);
+}
+
+.support-widget__intro {
+  margin: var(--space-3) 0 var(--space-5);
+  color: var(--text-muted);
+  font-size: var(--text-sm);
+  line-height: 1.65;
+}
+
+.support-widget__close {
+  inline-size: 34px;
+  block-size: 34px;
+  flex: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  font: inherit;
+}
+
+.support-widget__close:hover {
+  border-color: var(--border-strong);
+  color: var(--text);
+}
+
+.support-widget__form {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.support-widget__form .field__control {
+  width: 100%;
+}
+
+.support-widget__identity {
+  margin: 0;
+  color: var(--text-faint);
+  font-size: var(--text-xs);
+  line-height: 1.5;
+}
+
+.support-widget__identity a {
+  color: var(--accent-strong);
+}
+
+.support-widget__submit {
+  width: 100%;
+}
+
+.support-widget .form-message {
+  margin: 0;
+}
+
+@media (max-width: 560px) {
+  .support-widget__panel {
+    inset-inline-end: -6px;
+    width: min(calc(100vw - 28px), 390px);
+  }
+
+  .hero__media-fallback {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__video {
+    display: none;
+  }
+
+  .hero__media-fallback {
+    display: block;
+  }
+
+  .support-widget__launcher,
+  .support-widget__launcher:hover {
+    transform: none;
+    transition: none;
+  }
+}
+
+.support-widget .form-message {
+  min-height: 1.2em;
+  font-size: var(--text-sm);
+}
+
+.support-widget .form-message--error {
+  color: var(--danger);
+}
+
+.support-widget .form-message--success {
+  color: var(--success);
+}
+
+/* The focal light stays in frame on narrow crops without horizontal
+   overflow; desktop keeps the balanced center composition. */
+@media (max-width: 767px) {
+  .hero__video {
+    object-position: 62% center;
+  }
 }

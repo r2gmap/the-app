@@ -8,7 +8,7 @@
 // Nothing here talks to Firebase — pure presentation.
 // =====================================================================
 
-import { getLocale, setLocale, onLocaleChange } from "./i18n.js";
+import { getLocale, setLocale, onLocaleChange, t } from "./i18n.js";
 import { qs, qsa, el } from "./ui.js";
 
 // ---------------------------------------------------------------------
@@ -48,6 +48,13 @@ onLocaleChange(() => {
   for (const btn of qsa(".lang-switch__btn")) {
     btn.setAttribute("aria-pressed", String(btn.dataset.locale === getLocale()));
   }
+  const menuTrigger = qs("[data-menu-trigger]");
+  if (menuTrigger) {
+    menuTrigger.setAttribute(
+      "aria-label",
+      menuTrigger.getAttribute("aria-expanded") === "true" ? t("nav.closeMenu") : t("nav.openMenu"),
+    );
+  }
 });
 
 // ---------------------------------------------------------------------
@@ -67,10 +74,11 @@ function initMobileMenu() {
   const setOpen = (open) => {
     panel.hidden = !open;
     trigger.setAttribute("aria-expanded", String(open));
-    trigger.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+    trigger.setAttribute("aria-label", open ? t("nav.closeMenu") : t("nav.openMenu"));
     document.body.classList.toggle("menu-open", open);
   };
 
+  trigger.setAttribute("aria-label", t("nav.openMenu"));
   trigger.addEventListener("click", () => setOpen(panel.hidden));
   panel.addEventListener("click", (event) => {
     if (event.target.closest("a")) setOpen(false);
@@ -83,12 +91,6 @@ function initMobileMenu() {
 // ---------------------------------------------------------------------
 // Misc chrome
 // ---------------------------------------------------------------------
-
-/** Fills every [data-current-year] span with the current year. */
-function initCurrentYear() {
-  const year = String(new Date().getFullYear());
-  for (const node of qsa("[data-current-year]")) node.textContent = year;
-}
 
 /** Entry point called once from main.js on every page. */
 /**
@@ -109,7 +111,6 @@ function markActiveNavLink() {
 function initNavigation() {
   buildLanguageSwitchers();
   initMobileMenu();
-  initCurrentYear();
   markActiveNavLink();
 }
 

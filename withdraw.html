@@ -12,7 +12,7 @@
       Sets language and direction before first paint, so an Arabic
       visitor never sees the page flip from LTR. The cloak class is only
       added for a non-English locale, and is removed once the strings
-      are applied by js/i18n.js.
+      are applied by i18n.js.
     -->
     <script>
       (function () {
@@ -40,12 +40,12 @@
       })();
     </script>
 
-    <link rel="icon" href="assets/icons/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
     <link rel="preconnect" href="https://www.gstatic.com" />
-    <link rel="stylesheet" href="css/style.css" />
-    <link rel="stylesheet" href="css/components.css" />
-    <link rel="stylesheet" href="css/responsive.css" />
-    <script type="module" src="js/main.js"></script>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="components.css" />
+    <link rel="stylesheet" href="responsive.css" />
+    <script type="module" src="main.js"></script>
   </head>
 
   <body data-page="withdraw">
@@ -54,29 +54,14 @@
     <header class="site-header">
       <div class="container site-header__bar">
         <a class="brand" href="index.html">
-          <svg class="brand__mark" viewBox="0 0 157 40" fill="none" role="img" aria-label="The App">
-              <!-- Custom monoline wordmark: drawn letterforms on one
-                   grid — "The" muted, "App" bright, accent full stop.
-                   Colours/size live in the .brand__mark CSS rules. -->
-              <g class="brand__mark-the" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M5 9H25M15 9V31" />
-                <path d="M31 9V31M31 19C31 15.8 33.2 14.5 36 14.5C38.8 14.5 41 15.8 41 19V31" />
-                <path d="M51 23.25H65M65 23.25A7 7 0 1 0 62.5 28.6" />
-              </g>
-              <g class="brand__mark-app" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M74 31L87 9L100 31M80 24H94" />
-                <path d="M105 14.5V37M105 14.5C113.5 14.5 121 16.8 121 22.9C121 29 113.5 31.3 105 31.3" />
-                <path d="M127 14.5V37M127 14.5C135.5 14.5 143 16.8 143 22.9C143 29 135.5 31.3 127 31.3" />
-              </g>
-              <circle class="brand__mark-dot" cx="151" cy="27.5" r="3.2" />
-            </svg>
+          <span class="brand__lockup" aria-label="The App"><span class="brand__lockup-kicker">the</span><span class="brand__lockup-name">APP</span></span>
         </a>
 
         <nav class="site-nav" aria-label="Main" data-i18n-aria-label="nav.primary">
           <ul class="site-nav__list">
             <!-- Primary navigation — identical on every page so visitors
                  always know where things are. Active link is marked by
-                 js/navigation.js via aria-current. -->
+                 navigation.js via aria-current. -->
             <li><a class="site-nav__link" href="index.html" data-nav="home" data-i18n="nav.home">Home</a></li>
             <li><a class="site-nav__link" href="games.html" data-nav="games" data-i18n="nav.games">Games</a></li>
             <li><a class="site-nav__link" href="apps.html" data-nav="apps" data-i18n="nav.apps">Apps</a></li>
@@ -91,6 +76,7 @@
           <div class="site-header__auth">
             <!-- Both states start hidden until Firebase reports the real session. -->
             <div data-auth-guest hidden>
+              <a class="btn btn--ghost btn--sm site-header__admin-link" href="admin/login.html" data-i18n="nav.admin">Admin</a>
               <a class="btn btn--ghost btn--sm" href="login.html" data-i18n="nav.login">Log in</a>
               <a class="btn btn--primary btn--sm" href="register.html" data-i18n="nav.signUp">
                 Sign up
@@ -98,6 +84,7 @@
             </div>
             <div class="site-header__user" data-auth-user hidden>
               <a class="site-header__user-name" href="profile.html" data-auth-user-name></a>
+              <a class="btn btn--ghost btn--sm site-header__admin-link" href="admin/dashboard.html" data-admin-only hidden data-i18n="nav.adminPanel">Admin Panel</a>
               <a class="btn btn--ghost btn--sm" href="dashboard.html" data-i18n="nav.dashboard">
                 Dashboard
               </a>
@@ -144,11 +131,13 @@
             </ul>
           </nav>
           <div class="mobile-nav__actions" data-auth-guest hidden>
+            <a class="btn btn--secondary site-header__admin-mobile" href="admin/login.html" data-i18n="nav.admin">Admin</a>
             <a class="btn btn--secondary" href="login.html" data-i18n="nav.login">Log in</a>
             <a class="btn btn--primary" href="register.html" data-i18n="nav.signUp">Sign up</a>
           </div>
           <div class="mobile-nav__actions" data-auth-user hidden>
             <span class="site-header__user-name site-header__user-name--mobile" data-auth-user-name></span>
+            <a class="btn btn--secondary site-header__admin-mobile" href="admin/dashboard.html" data-admin-only hidden data-i18n="nav.adminPanel">Admin Panel</a>
             <a class="btn btn--secondary" href="dashboard.html" data-i18n="nav.dashboard">Dashboard</a>
             <button class="btn btn--secondary" type="button" data-auth-logout data-i18n="nav.logout">
               Log out
@@ -247,22 +236,7 @@
         <div class="site-footer__grid">
           <div class="site-footer__about">
             <div class="brand">
-              <svg class="brand__mark" viewBox="0 0 157 40" fill="none" role="img" aria-label="The App">
-              <!-- Custom monoline wordmark: drawn letterforms on one
-                   grid — "The" muted, "App" bright, accent full stop.
-                   Colours/size live in the .brand__mark CSS rules. -->
-              <g class="brand__mark-the" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M5 9H25M15 9V31" />
-                <path d="M31 9V31M31 19C31 15.8 33.2 14.5 36 14.5C38.8 14.5 41 15.8 41 19V31" />
-                <path d="M51 23.25H65M65 23.25A7 7 0 1 0 62.5 28.6" />
-              </g>
-              <g class="brand__mark-app" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M74 31L87 9L100 31M80 24H94" />
-                <path d="M105 14.5V37M105 14.5C113.5 14.5 121 16.8 121 22.9C121 29 113.5 31.3 105 31.3" />
-                <path d="M127 14.5V37M127 14.5C135.5 14.5 143 16.8 143 22.9C143 29 135.5 31.3 127 31.3" />
-              </g>
-              <circle class="brand__mark-dot" cx="151" cy="27.5" r="3.2" />
-            </svg>
+              <span class="brand__lockup" aria-label="The App"><span class="brand__lockup-kicker">the</span><span class="brand__lockup-name">APP</span></span>
             </div>
             <p class="site-footer__tagline" data-i18n="footer.description">
               Complete simple tasks in games and apps, and earn rewards after review.
@@ -309,10 +283,7 @@
         </div>
 
         <div class="site-footer__bottom">
-          <p class="site-footer__copyright">
-            © <span data-current-year>2026</span> The App.
-            <span data-i18n="footer.rights">All rights reserved.</span>
-          </p>
+          <p class="site-footer__copyright">© The App</p>
           <div class="lang-switch" data-lang-switch aria-label="Change language"></div>
         </div>
       </div>

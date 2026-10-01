@@ -14,9 +14,9 @@
 // write admin-only.
 // =====================================================================
 
-import { t, onLocaleChange } from "../../i18n.js";
-import { qs, qsa, el, renderState, toast, withBusy, confirmDialog } from "../../ui.js";
-import { formatMoney } from "../../format.js";
+import { t, onLocaleChange } from "./i18n.js";
+import { qs, qsa, el, renderState, toast, withBusy, confirmDialog } from "./ui.js";
+import { formatMoney } from "./format.js";
 import {
   fetchAllOffers,
   setContentStatus,
@@ -24,8 +24,8 @@ import {
   updateContentOrder,
   deleteOffer,
   duplicateOffer,
-} from "../../services/offers-service.js";
-import { categoryLabel, difficultyLabel, generatedCoverStyle, CATEGORIES } from "../../offers.js";
+} from "./offers-service.js";
+import { categoryLabel, difficultyLabel, generatedCoverStyle, CATEGORIES } from "./offers.js";
 
 let allContent = []; // full catalogue, client-side filter source
 let categoryFilter = "all"; // "all" | "game" | "app" | "website" | "offer"
