@@ -7,9 +7,9 @@
 // rows: type, description, date, signed colored amount.
 // =====================================================================
 
-import { t } from "../i18n.js";
-import { formatSignedMoney, formatDateTime } from "../format.js";
-import { qs } from "../ui.js";
+import { t } from "./i18n.js";
+import { formatSignedMoney, formatDateTime } from "./format.js";
+import { qs } from "./ui.js";
 
 /** Renders one transaction row into `container`. */
 function renderTransactionRow(container, transaction) {

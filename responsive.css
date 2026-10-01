@@ -38,7 +38,24 @@
 
 @media (min-width: 768px) {
   .steps {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .step {
+    padding-inline: var(--space-6);
+  }
+
+  .step:first-child {
+    padding-inline-start: 0;
+  }
+
+  .step:last-child {
+    padding-inline-end: 0;
+  }
+
+  .step + .step {
+    border-inline-start: 1px solid var(--border);
+    border-block-start: 1px solid var(--border-strong);
   }
 
   .site-footer__grid {
@@ -74,9 +91,13 @@
 
   .hero__grid {
     display: grid;
-    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+    grid-template-columns: minmax(0, 1.22fr) minmax(320px, 0.78fr);
     align-items: center;
-    gap: var(--space-8);
+    gap: clamp(48px, 7vw, 104px);
+  }
+
+  .hero__grid > div:first-child {
+    max-width: 680px;
   }
 
   .offer-hero {

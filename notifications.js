@@ -7,15 +7,15 @@
 // header shows the unread count.
 // =====================================================================
 
-import { requireAuth } from "../auth.js";
-import { t, onLocaleChange } from "../i18n.js";
-import { qs, renderState, el, withBusy } from "../ui.js";
-import { formatMoney, formatRelativeTime } from "../format.js";
+import { requireAuth } from "./auth.js";
+import { t, onLocaleChange } from "./i18n.js";
+import { qs, renderState, el, withBusy } from "./ui.js";
+import { formatMoney, formatRelativeTime } from "./format.js";
 import {
   fetchUserNotifications,
   markNotificationRead,
   markAllNotificationsRead,
-} from "../services/notifications-service.js";
+} from "./notifications-service.js";
 
 // ---------------------------------------------------------------------
 // Rendering

@@ -15,26 +15,27 @@
 import { applyTranslations, onLocaleChange } from "./i18n.js";
 import { initNavigation } from "./navigation.js";
 import { initAuthUI, redirectIfAuthenticated } from "./auth.js";
+import { initSupportWidget } from "./support-widget.js";
 
 // ---------------------------------------------------------------------
 // Page registry: body[data-page] -> controller module
 // ---------------------------------------------------------------------
 
 const PAGE_MODULES = {
-  home: "./pages/home.js",
-  dashboard: "./pages/dashboard.js",
-  profile: "./pages/profile.js",
-  offers: "./pages/offers.js",
-  offer: "./pages/offer.js",
+  home: "./home.js",
+  dashboard: "./dashboard.js",
+  profile: "./profile.js",
+  offers: "./offers-page.js",
+  offer: "./offer.js",
   // The three dedicated category pages share ONE controller, which
   // reads its category from body[data-category] (see pages/category.js).
-  games: "./pages/category.js",
-  apps: "./pages/category.js",
-  websites: "./pages/category.js",
-  wallet: "./pages/wallet.js",
-  withdraw: "./pages/withdraw.js",
-  notifications: "./pages/notifications.js",
-  submissions: "./pages/submissions.js",
+  games: "./category.js",
+  apps: "./category.js",
+  websites: "./category.js",
+  wallet: "./wallet.js",
+  withdraw: "./withdraw.js",
+  notifications: "./notifications.js",
+  submissions: "./submissions.js",
 };
 
 /** Loads and boots the current page's controller, when it has one. */
@@ -66,7 +67,8 @@ function boot() {
   applyTranslations(); // 1 — strings + RTL direction
   initNavigation(); // 2 — chrome
   void initAuthUI(); // 3 — nav auth state, forms, guards
-  void initCurrentPage(); // 4 — page-specific behaviour
+  void initSupportWidget(); // 4 — private floating support ticket panel
+  void initCurrentPage(); // 5 — page-specific behaviour
 }
 
 // Static markup (already translated once above) is re-applied when the

@@ -21,9 +21,8 @@
 // completion right after creating the document.
 // =====================================================================
 
-import { getFirebase } from "../firebase.js";
+import { getFirebase } from "./firebase.js";
 import { createNotification } from "./notifications-service.js";
-import { sendSubmissionNotification } from "../telegram/telegram-service.js";
 
 // Proof image limits (validated client-side AND in storage.rules).
 const MAX_PROOF_IMAGES = 5;
@@ -100,11 +99,8 @@ async function createSubmission({ offer, user, taskTitle, message, walletNumber,
     throw error;
   }
 
-  // 3) Notify the admin team via Telegram. Best-effort and never part
-  //    of the critical path (see telegram-service.js for the security
-  //    model — sending happens from the admin client).
-  fireAdminPing(() => sendSubmissionNotification({ ...payload, id: submissionRef.id }, "received"));
-
+  // 3) The completed submission is now visible to authorized reviewers
+  //    through Firestore; no browser-side messaging credential is used.
   return submissionRef.id;
 }
 
@@ -120,13 +116,6 @@ async function uploadProofImages(userId, submissionId, files) {
     return getDownloadURL(storageRef);
   });
   return Promise.all(uploads);
-}
-
-/** Runs an admin ping, swallowing every error (notifications must never fail a flow). */
-function fireAdminPing(task) {
-  Promise.resolve()
-    .then(task)
-    .catch((error) => console.warn("[telegram] notification skipped:", error?.message || error));
 }
 
 // ---------------------------------------------------------------------
@@ -204,7 +193,7 @@ async function fetchSubmissions(status = null, maxCount = 100) {
  *   2. a wallet transaction credits the offer's CURRENT reward
  *      (re-read from the live offer — never a client-supplied amount)
  *   3. the user receives an in-app notification
- * Then a Telegram ping is sent best-effort.
+ * The protected admin queue remains the operational record.
  */
 async function approveSubmission(submission, adminUser) {
   const fb = await getFirebase();
@@ -250,12 +239,11 @@ async function approveSubmission(submission, adminUser) {
   });
   await batch.commit();
 
-  fireAdminPing(() => sendSubmissionNotification({ ...submission, offerTitle, reward }, "approved"));
 }
 
 /**
  * Rejects a pending submission with a reason. Atomic batch: status
- * update + user notification; then the Telegram ping.
+ * update + user notification.
  */
 async function rejectSubmission(submission, reason, adminUser) {
   const fb = await getFirebase();
@@ -279,7 +267,6 @@ async function rejectSubmission(submission, reason, adminUser) {
   });
   await batch.commit();
 
-  fireAdminPing(() => sendSubmissionNotification(submission, "rejected"));
 }
 
 export {

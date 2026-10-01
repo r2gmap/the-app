@@ -6,13 +6,8 @@
 // Firebase console / Admin SDK (never writable from the browser —
 // enforced by firestore.rules).
 //
-// Optional username aliases: documents in `adminUsernames/{username}`
-// ({ email }) let an admin sign in with a username instead of the
-// email. Reads are unauthenticated-get so the login page can resolve
-// the identifier; creating aliases is done from the console.
 // =====================================================================
 
-import { getFirebase } from "../firebase.js";
 import { getUserRole } from "./users-service.js";
 
 // ---------------------------------------------------------------------
@@ -26,21 +21,12 @@ async function isAdminUser(uid) {
 }
 
 /**
- * Resolves the admin-login identifier to an email. Accepts either an
- * email address directly or a username registered in `adminUsernames`.
- * Returns null when a username has no alias document.
+ * Admin login resolves to an email only. Keeping identity input private
+ * avoids exposing an email-alias collection before authentication.
  */
-async function resolveAdminIdentifier(identifier) {
-  const text = String(identifier || "").trim();
-  if (!text) return null;
-  if (text.includes("@")) return text.toLowerCase();
-
-  const fb = await getFirebase();
-  if (!fb) return null;
-  const { doc, getDoc } = fb.sdk.db;
-  const username = text.toLowerCase();
-  const snapshot = await getDoc(doc(fb.db, "adminUsernames", username)).catch(() => null);
-  return snapshot?.exists() ? snapshot.data().email || null : null;
+function resolveAdminIdentifier(identifier) {
+  const text = String(identifier || "").trim().toLowerCase();
+  return text.includes("@") ? text : null;
 }
 
 // ---------------------------------------------------------------------

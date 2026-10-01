@@ -13,14 +13,14 @@
 // Firestore `taskSubmissions`, then the visitor sees the success panel.
 // =====================================================================
 
-import { waitForAuthState } from "../firebase.js";
-import { t, localizedText, onLocaleChange } from "../i18n.js";
-import { qs, qsa, el, renderState, toast, withBusy } from "../ui.js";
-import { formatMoney } from "../format.js";
-import { categoryLabel, difficultyLabel, localizedRequirements, generatedCoverStyle } from "../offers.js";
-import { fetchOfferById } from "../services/offers-service.js";
-import { createSubmission, validateProofFiles, fetchUserSubmissionForOffer } from "../services/submissions-service.js";
-import { getUserProfile } from "../services/users-service.js";
+import { waitForAuthState } from "./firebase.js";
+import { t, localizedText, onLocaleChange } from "./i18n.js";
+import { qs, qsa, el, renderState, toast, withBusy } from "./ui.js";
+import { formatMoney } from "./format.js";
+import { categoryLabel, difficultyLabel, localizedRequirements, generatedCoverStyle } from "./offers.js";
+import { fetchOfferById } from "./offers-service.js";
+import { createSubmission, validateProofFiles, fetchUserSubmissionForOffer } from "./submissions-service.js";
+import { getUserProfile } from "./users-service.js";
 
 let offer = null;
 let selectedFiles = [];

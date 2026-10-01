@@ -261,7 +261,7 @@
   padding: var(--space-3) var(--space-4);
   border-radius: var(--radius-sm);
   background: var(--danger-soft);
-  border: 1px solid rgba(248, 113, 113, 0.3);
+  border: 1px solid rgba(194, 65, 76, 0.3);
   color: var(--danger);
   font-size: var(--text-sm);
 }
@@ -408,7 +408,7 @@
 
 /* Featured star: gold when the content is featured. */
 .icon-btn--active {
-  border-color: rgba(251, 191, 36, 0.45);
+  border-color: rgba(173, 116, 23, 0.45);
   background: var(--warning-soft);
   color: var(--warning);
 }
@@ -550,4 +550,126 @@ fieldset.field {
   justify-self: start;
   margin-top: var(--space-2);
   font-size: var(--text-sm);
+}
+
+/* =====================================================================
+   Production admin polish
+   =====================================================================
+   Admin shares the public design tokens so content operations feel like
+   the same product. CMS actions remain unchanged; only hierarchy,
+   contrast and responsive chrome are refined here.
+*/
+
+.admin-topbar {
+  background: rgba(8, 10, 20, 0.88);
+  box-shadow: 0 14px 34px -28px rgba(2, 4, 16, 0.95);
+}
+
+.admin-sidebar {
+  background: var(--bg-elevated);
+}
+
+
+.admin-main {
+  background: transparent;
+}
+
+/* Review actions stay attached to the proof card and wrap cleanly on
+   narrow screens; this is intentionally additive so existing CMS rows
+   keep their current behavior. */
+.admin-review-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--border);
+}
+
+/* Ledger rows become a compact responsive stack instead of a wide table,
+   which keeps admin wallet review usable on a phone. */
+.admin-ledger-row {
+  display: grid;
+  grid-template-columns: 1.25fr 0.7fr 0.8fr 1.6fr 1fr;
+  gap: var(--space-4);
+  align-items: center;
+}
+
+.admin-ledger-row__cell {
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+}
+
+.admin-ledger-row__cell > :last-child {
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 760px) {
+  .admin-ledger-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .admin-ledger-row__description {
+    grid-column: 1 / -1;
+  }
+}
+
+/* Final dark admin chrome: keep CMS surfaces inside the same product
+   language instead of falling back to the old white shell. */
+.admin-topbar {
+  background: rgba(8, 10, 20, 0.88);
+  box-shadow: 0 14px 34px -28px rgba(2, 4, 16, 0.95);
+}
+
+.admin-sidebar {
+  background: var(--bg-elevated);
+}
+
+
+/* Support queue cards */
+.admin-support-list {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.admin-support-ticket {
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-5);
+}
+
+.admin-support-ticket__heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.admin-support-ticket__category {
+  margin: 0;
+  font-size: var(--text-lg);
+}
+
+.admin-support-ticket__time,
+.admin-support-ticket__identity {
+  color: var(--text-faint);
+  font-size: var(--text-sm);
+}
+
+.admin-support-ticket__identity,
+.admin-support-ticket__message {
+  margin: 0;
+}
+
+.admin-support-ticket__message {
+  color: var(--text-muted);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  line-height: 1.7;
+}
+
+.admin-support-ticket__attachment {
+  justify-self: start;
 }

@@ -20,7 +20,7 @@
 // admin role, can append, and approvals re-read the live offer reward.
 // =====================================================================
 
-import { getFirebase } from "../firebase.js";
+import { getFirebase } from "./firebase.js";
 
 // ---------------------------------------------------------------------
 // User reads

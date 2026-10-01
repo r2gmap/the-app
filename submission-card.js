@@ -7,9 +7,9 @@
 // reasons and proof thumbnails appear only when relevant.
 // =====================================================================
 
-import { t, getLocale } from "../i18n.js";
-import { formatMoney, formatDateTime } from "../format.js";
-import { qs, el } from "../ui.js";
+import { t, getLocale } from "./i18n.js";
+import { formatMoney, formatDateTime } from "./format.js";
+import { qs, el } from "./ui.js";
 
 // ---------------------------------------------------------------------
 // Status badge
@@ -40,6 +40,13 @@ function renderSubmissionCard(container, submission) {
 
   const card = template.content.firstElementChild.cloneNode(true);
   const locale = getLocale();
+
+  // Template content lives in a DocumentFragment, so the global
+  // translation pass cannot see it before cloning. Apply its small set of
+  // interface labels here so the same card is correct in English and Arabic.
+  card.querySelectorAll("[data-i18n]").forEach((node) => {
+    node.textContent = t(node.getAttribute("data-i18n"));
+  });
 
   // --- status badge
   const badge = qs("[data-sub-status]", card);

@@ -36,7 +36,7 @@
 // the query and firestore.rules. Writes are admin-only (rules).
 // =====================================================================
 
-import { getFirebase } from "../firebase.js";
+import { getFirebase } from "./firebase.js";
 
 // Every category the platform supports. Adding a category here (plus a
 // label key + page) is all it takes to introduce a new content type.
