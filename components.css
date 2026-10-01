@@ -150,7 +150,7 @@
 .badge--primary {
   background: var(--accent-soft);
   color: var(--accent-strong);
-  border-color: rgba(124, 92, 255, 0.35);
+  border-color: rgba(21, 94, 239, 0.35);
 }
 
 .badge--pending {
@@ -195,7 +195,7 @@
 
 .card--interactive:hover {
   transform: translateY(-3px);
-  border-color: rgba(124, 92, 255, 0.45);
+  border-color: rgba(21, 94, 239, 0.45);
   box-shadow: var(--glow);
 }
 
@@ -442,7 +442,7 @@
 .field__control:focus {
   outline: none;
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(124, 92, 255, 0.18);
+  box-shadow: 0 0 0 3px rgba(21, 94, 239, 0.18);
 }
 
 textarea.field__control {
@@ -1452,8 +1452,8 @@ select.field__control {
 }
 
 .notification--unread {
-  border-color: rgba(124, 92, 255, 0.5);
-  background: linear-gradient(180deg, rgba(124, 92, 255, 0.08), var(--bg-elevated));
+  border-color: rgba(21, 94, 239, 0.5);
+  background: linear-gradient(180deg, rgba(21, 94, 239, 0.08), var(--bg-elevated));
 }
 
 .notification__body {
@@ -1897,7 +1897,7 @@ select.field__control {
   justify-items: center;
   gap: var(--space-4);
   background:
-    radial-gradient(420px 160px at 50% -20%, rgba(124, 92, 255, 0.18), transparent 70%),
+    radial-gradient(420px 160px at 50% -20%, rgba(21, 94, 239, 0.18), transparent 70%),
     var(--surface);
 }
 

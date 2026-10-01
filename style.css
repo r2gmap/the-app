@@ -25,9 +25,9 @@
   --border-strong: rgba(148, 163, 202, 0.26);
 
   /* --- text --- */
-  --text: #eef1f9;
-  --text-muted: #9aa3bc;
-  --text-faint: #6b7490;
+  --text: #0e2035;
+  --text-muted: #5d6c7d;
+  --text-faint: #8793a3;
 
   /* --- brand + feedback --- */
   --accent: #7c5cff; /* restrained violet */
@@ -171,7 +171,7 @@ html.i18n-pending body {
 }
 
 ::selection {
-  background: rgba(124, 92, 255, 0.35);
+  background: rgba(21, 94, 239, 0.35);
 }
 
 :focus-visible {
