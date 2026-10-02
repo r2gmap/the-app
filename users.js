@@ -7,14 +7,14 @@
 // counts, recent submissions and recent transactions.
 // =====================================================================
 
-import { t, onLocaleChange } from "../../i18n.js";
-import { qs, el, renderState, renderAvatar, withBusy } from "../../ui.js";
-import { formatMoney, formatDate, formatDateTime } from "../../format.js";
-import { fetchUsers } from "../../services/users-service.js";
-import { computeUserBalance, fetchUserTransactions } from "../../services/wallet-service.js";
-import { countUserSubmissions, fetchUserSubmissions } from "../../services/submissions-service.js";
-import { statusMeta } from "../../components/submission-card.js";
-import { renderTransactionRow } from "../../components/transaction-row.js";
+import { t, onLocaleChange } from "./i18n.js";
+import { qs, el, renderState, renderAvatar, withBusy } from "./ui.js";
+import { formatMoney, formatDate, formatDateTime } from "./format.js";
+import { fetchUsers } from "./users-service.js";
+import { computeUserBalance, fetchUserTransactions } from "./wallet-service.js";
+import { countUserSubmissions, fetchUserSubmissions } from "./submissions-service.js";
+import { statusMeta } from "./submission-card.js";
+import { renderTransactionRow } from "./transaction-row.js";
 
 let allUsers = [];
 

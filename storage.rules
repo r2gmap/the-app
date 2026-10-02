@@ -28,9 +28,9 @@ service firebase.storage {
     }
 
     function isImageUnder(maxBytes) {
-      return request.resource.contentType.matches('image/.*')
+      return request.resource.contentType.matches('image/(jpeg|png|webp)')
         && request.resource.size > 0
-        && request.resource.size < maxBytes;
+        && request.resource.size <= maxBytes;
     }
 
     // ----------------------------------------------------------------
@@ -66,7 +66,7 @@ service firebase.storage {
     // ----------------------------------------------------------------
     // Offer files — PREPARED for future downloads (APK / ZIP / PDF).
     // ----------------------------------------------------------------
-    // The upload registry lives in js/services/offers-service.js
+    // The upload registry lives in offers-service.js
     // (ASSET_KINDS). When a feature starts attaching real files to
     // content (an APK for an app offer, a ZIP pack, a PDF rulebook),
     // the folder is already open: admins upload, signed-in members
@@ -76,8 +76,9 @@ service firebase.storage {
     match /offer-files/apk/{allPaths=**} {
       allow read: if isSignedIn();
       allow create, update: if isAdmin()
-        && request.resource.contentType == 'application/vnd.android.package-archive'
-        && request.resource.size < 100 * 1024 * 1024;
+        && (request.resource.contentType == 'application/vnd.android.package-archive'
+            || request.resource.contentType == 'application/octet-stream')
+        && request.resource.size <= 100 * 1024 * 1024;
       allow delete: if isAdmin();
     }
 
@@ -86,7 +87,7 @@ service firebase.storage {
       allow create, update: if isAdmin()
         && (request.resource.contentType == 'application/zip'
             || request.resource.contentType == 'application/x-zip-compressed')
-        && request.resource.size < 100 * 1024 * 1024;
+        && request.resource.size <= 100 * 1024 * 1024;
       allow delete: if isAdmin();
     }
 
@@ -94,8 +95,21 @@ service firebase.storage {
       allow read: if isSignedIn();
       allow create, update: if isAdmin()
         && request.resource.contentType == 'application/pdf'
-        && request.resource.size < 20 * 1024 * 1024;
+        && request.resource.size <= 20 * 1024 * 1024;
       allow delete: if isAdmin();
+    }
+
+    // ----------------------------------------------------------------
+    // Private support attachments
+    // ----------------------------------------------------------------
+    match /support-attachments/{userId}/{allPaths=**} {
+      // Attachments are not public. Admins review them from the queue;
+      // the owner may read their own upload if a future ticket view needs it.
+      allow read: if isSignedIn() && (request.auth.uid == userId || isAdmin());
+      allow create, update: if isSignedIn()
+        && request.auth.uid == userId
+        && isImageUnder(5 * 1024 * 1024);
+      allow delete: if false;
     }
 
     // ----------------------------------------------------------------

@@ -35,13 +35,13 @@
       })();
     </script>
 
-    <link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
     <link rel="preconnect" href="https://www.gstatic.com" />
-    <link rel="stylesheet" href="../css/style.css" />
-    <link rel="stylesheet" href="../css/components.css" />
-    <link rel="stylesheet" href="../css/admin.css" />
-    <link rel="stylesheet" href="../css/responsive.css" />
-    <script type="module" src="../js/admin/admin.js"></script>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="components.css" />
+    <link rel="stylesheet" href="admin.css" />
+    <link rel="stylesheet" href="responsive.css" />
+    <script type="module" src="admin.js"></script>
   </head>
 
   <body class="admin-page" data-admin-page="content-form">
@@ -51,22 +51,7 @@
       <!-- ================================================ admin sidebar -->
       <aside class="admin-sidebar" id="admin-sidebar">
         <a class="brand" href="dashboard.html">
-          <svg class="brand__mark" viewBox="0 0 157 40" fill="none" role="img" aria-label="The App">
-              <!-- Custom monoline wordmark: drawn letterforms on one
-                   grid — "The" muted, "App" bright, accent full stop.
-                   Colours/size live in the .brand__mark CSS rules. -->
-              <g class="brand__mark-the" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M5 9H25M15 9V31" />
-                <path d="M31 9V31M31 19C31 15.8 33.2 14.5 36 14.5C38.8 14.5 41 15.8 41 19V31" />
-                <path d="M51 23.25H65M65 23.25A7 7 0 1 0 62.5 28.6" />
-              </g>
-              <g class="brand__mark-app" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M74 31L87 9L100 31M80 24H94" />
-                <path d="M105 14.5V37M105 14.5C113.5 14.5 121 16.8 121 22.9C121 29 113.5 31.3 105 31.3" />
-                <path d="M127 14.5V37M127 14.5C135.5 14.5 143 16.8 143 22.9C143 29 135.5 31.3 127 31.3" />
-              </g>
-              <circle class="brand__mark-dot" cx="151" cy="27.5" r="3.2" />
-            </svg>
+          <span class="brand__lockup" aria-label="The App"><span class="brand__lockup-kicker">the</span><span class="brand__lockup-name">APP</span></span>
         </a>
 
         <div>
@@ -100,7 +85,7 @@
         </div>
 
         <div class="admin-sidebar__footer">
-          <a class="admin-nav__link" href="../index.html">
+          <a class="admin-nav__link" href="index.html">
             <svg viewBox="0 0 20 20" fill="none">
               <path d="M8 3.5L3 10l5 6.5M3.8 10H17" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
             </svg>
@@ -278,6 +263,34 @@
               </div>
             </section>
 
+            <!-- ============== section: optional downloadable asset ============== -->
+            <section class="card form__section">
+              <h2 class="form__section-title" data-i18n="admin.content.form.downloadTitle">Optional download</h2>
+              <p class="field__hint" data-i18n="admin.content.form.downloadHint">
+                Add an external URL or upload an APK, ZIP or PDF. Leave empty when the content has no download.
+              </p>
+              <div class="field-grid-2">
+                <div class="field">
+                  <label class="field__label" for="cf-file-kind" data-i18n="admin.content.form.downloadType">File type</label>
+                  <select class="field__control" id="cf-file-kind" data-cf-file-kind>
+                    <option value="" data-i18n="admin.content.form.downloadTypeNone">Not applicable</option>
+                    <option value="apk">APK</option>
+                    <option value="zip">ZIP</option>
+                    <option value="pdf">PDF</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label class="field__label" for="cf-file-url" data-i18n="admin.content.form.downloadUrl">External URL</label>
+                  <input class="field__control" id="cf-file-url" type="url" dir="ltr" data-cf-file-url placeholder="https://example.com/file" />
+                </div>
+              </div>
+              <div class="field">
+                <label class="field__label" for="cf-file-upload" data-i18n="admin.content.form.downloadUpload">Upload file</label>
+                <input class="field__control" id="cf-file-upload" type="file" accept=".apk,.zip,.pdf,application/vnd.android.package-archive,application/zip,application/pdf" data-cf-file-upload />
+                <p class="field__hint" data-i18n="admin.content.form.downloadUploadHint">An uploaded file replaces the external URL. These files remain optional.</p>
+              </div>
+            </section>
+
             <!-- ============== section: arabic content ============== -->
             <section class="card form__section">
               <h2 class="form__section-title" data-i18n="admin.offers.form.contentArabic">Arabic content</h2>
@@ -347,6 +360,10 @@
             </section>
 
             <!-- ============== actions ============== -->
+            <div class="media-upload-status" data-cf-upload-status hidden role="status" aria-live="polite">
+              <progress class="media-upload-status__bar" data-cf-upload-progress max="100" value="0"></progress>
+              <span data-cf-upload-label>Uploading media…</span>
+            </div>
             <p class="form__error" role="alert" data-cf-error></p>
 
             <div class="form__actions">

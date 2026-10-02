@@ -7,7 +7,7 @@
     <meta name="i18n-title" content="meta.loginTitle" />
     <meta
       name="description"
-      content="Discover games and apps, complete simple tasks, and earn rewards once your proof is reviewed and approved."
+      content="Browse clear opportunities across games, apps, websites, and offers. Submit proof and receive approved rewards."
     />
     <meta name="theme-color" content="#080a14" />
 
@@ -38,12 +38,12 @@
       })();
     </script>
 
-    <link rel="icon" href="assets/icons/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
     <link rel="preconnect" href="https://www.gstatic.com" />
-    <link rel="stylesheet" href="css/style.css" />
-    <link rel="stylesheet" href="css/components.css" />
-    <link rel="stylesheet" href="css/responsive.css" />
-    <script type="module" src="js/main.js"></script>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="components.css" />
+    <link rel="stylesheet" href="responsive.css" />
+    <script type="module" src="main.js"></script>
   </head>
 
   <body class="auth-page" data-page="login">
@@ -52,22 +52,7 @@
     <header>
       <div class="container auth-page__bar">
         <a class="brand" href="index.html">
-          <svg class="brand__mark" viewBox="0 0 157 40" fill="none" role="img" aria-label="The App">
-              <!-- Custom monoline wordmark: drawn letterforms on one
-                   grid — "The" muted, "App" bright, accent full stop.
-                   Colours/size live in the .brand__mark CSS rules. -->
-              <g class="brand__mark-the" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M5 9H25M15 9V31" />
-                <path d="M31 9V31M31 19C31 15.8 33.2 14.5 36 14.5C38.8 14.5 41 15.8 41 19V31" />
-                <path d="M51 23.25H65M65 23.25A7 7 0 1 0 62.5 28.6" />
-              </g>
-              <g class="brand__mark-app" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M74 31L87 9L100 31M80 24H94" />
-                <path d="M105 14.5V37M105 14.5C113.5 14.5 121 16.8 121 22.9C121 29 113.5 31.3 105 31.3" />
-                <path d="M127 14.5V37M127 14.5C135.5 14.5 143 16.8 143 22.9C143 29 135.5 31.3 127 31.3" />
-              </g>
-              <circle class="brand__mark-dot" cx="151" cy="27.5" r="3.2" />
-            </svg>
+          <span class="brand__lockup" aria-label="The App"><span class="brand__lockup-kicker">the</span><span class="brand__lockup-name">APP</span></span>
         </a>
         <div class="lang-switch" data-lang-switch aria-label="Change language"></div>
       </div>
@@ -93,7 +78,7 @@
           <div data-login-view>
             <h1 class="auth-card__title" data-i18n="auth.loginTitle">Welcome back</h1>
             <p class="auth-card__subtitle" data-i18n="auth.loginSubtitle">
-              Log in to continue where you left off.
+              Sign in to continue where you left off.
             </p>
 
             <form class="form" data-auth-form="login" novalidate>
@@ -135,7 +120,7 @@
                 data-auth-submit
                 data-i18n="auth.loginSubmit"
               >
-                Log in
+                Sign in
               </button>
             </form>
 

@@ -13,14 +13,14 @@
 // Firestore `taskSubmissions`, then the visitor sees the success panel.
 // =====================================================================
 
-import { waitForAuthState } from "../firebase.js";
-import { t, localizedText, onLocaleChange } from "../i18n.js";
-import { qs, qsa, el, renderState, toast, withBusy } from "../ui.js";
-import { formatMoney } from "../format.js";
-import { categoryLabel, difficultyLabel, localizedRequirements, generatedCoverStyle } from "../offers.js";
-import { fetchOfferById } from "../services/offers-service.js";
-import { createSubmission, validateProofFiles, fetchUserSubmissionForOffer } from "../services/submissions-service.js";
-import { getUserProfile } from "../services/users-service.js";
+import { waitForAuthState } from "./firebase.js";
+import { t, localizedText, onLocaleChange } from "./i18n.js";
+import { qs, qsa, el, renderState, toast, withBusy } from "./ui.js";
+import { formatMoney } from "./format.js";
+import { categoryLabel, difficultyLabel, localizedRequirements, generatedCoverStyle } from "./offers.js";
+import { fetchOfferById } from "./offers-service.js";
+import { createSubmission, validateProofFiles, fetchUserSubmissionForOffer } from "./submissions-service.js";
+import { getUserProfile } from "./users-service.js";
 
 let offer = null;
 let selectedFiles = [];
@@ -41,7 +41,7 @@ async function renderOfferShell() {
   content.hidden = true;
 
   const id = offerIdFromUrl();
-  if (!id || id.startsWith("demo-")) return showNotFound(statusArea, content);
+  if (!id) return showNotFound(statusArea, content);
 
   try {
     offer = await fetchOfferById(id);
@@ -112,6 +112,27 @@ function renderOfferDetails() {
     requirementsList.append(el("li", { class: "check-list__item" }, requirement));
   }
   qs("[data-offer-instructions]").textContent = localizedText(offer, "instructions") || "—";
+
+  // Optional downloads support either a CMS-provided external URL or a
+  // Firebase Storage URL. Reject unsafe schemes before creating a link.
+  const downloadPanel = qs("[data-offer-download]");
+  const downloadLink = qs("[data-offer-download-link]");
+  const downloadUrl = safeDownloadUrl(offer.downloadUrl);
+  if (downloadPanel && downloadLink) {
+    downloadPanel.hidden = !downloadUrl;
+    if (downloadUrl) downloadLink.href = downloadUrl;
+    else downloadLink.removeAttribute("href");
+  }
+}
+
+/** Allows only web URLs for optional content downloads. */
+function safeDownloadUrl(value) {
+  try {
+    const url = new URL(String(value || ""));
+    return url.protocol === "https:" || url.protocol === "http:" ? url.href : null;
+  } catch (error) {
+    return null;
+  }
 }
 
 /** Paints the optional banner image; the block stays hidden without one. */

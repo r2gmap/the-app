@@ -16,7 +16,7 @@
 import { getFirebase, waitForAuthState, signOutEverywhere } from "./firebase.js";
 import { t } from "./i18n.js";
 import { qs, qsa, el, toast, withBusy } from "./ui.js";
-import { ensureUserProfile } from "./services/users-service.js";
+import { ensureUserProfile, getUserRole } from "./users-service.js";
 
 // Destinations used by the post-login flow.
 const ROUTES = {
@@ -158,10 +158,19 @@ async function sendVerificationEmail() {
   await fb.sdk.auth.sendEmailVerification(fb.auth.currentUser);
 }
 
-/** Sends a password reset email. */
+/**
+ * Sends Firebase's hosted password-reset email. The action URL follows the
+ * current deployed origin, so production and approved preview domains can
+ * be configured in Firebase Auth without a custom reset implementation.
+ */
 async function sendPasswordReset(email) {
   const fb = await getFirebase();
-  await fb.sdk.auth.sendPasswordResetEmail(fb.auth, email);
+  if (!fb) throw new Error("firebase-unavailable");
+  const actionCodeSettings = {
+    url: new URL("login.html", window.location.origin).href,
+    handleCodeInApp: false,
+  };
+  await fb.sdk.auth.sendPasswordResetEmail(fb.auth, email, actionCodeSettings);
 }
 
 /** Reloads the current user so emailVerified reflects the latest state. */
@@ -179,13 +188,31 @@ async function reloadCurrentUser() {
  * Fills the header's guest/user blocks once Firebase reports the real
  * session. Both blocks start hidden in markup so nothing flickers.
  */
-function applyNavAuthState(user) {
+// Privileged links are resolved from the Firestore profile, not from a
+// query string, local storage flag, or the Firebase Auth object alone.
+let latestNavUserUid = null;
+
+async function applyNavAuthState(user) {
   for (const guestBlock of qsa("[data-auth-guest]")) guestBlock.hidden = Boolean(user);
   for (const userBlock of qsa("[data-auth-user]")) userBlock.hidden = !user;
+  for (const link of qsa("[data-admin-only]")) link.hidden = true;
   if (user) {
     const name = user.displayName || user.email?.split("@")[0] || "";
     for (const nameNode of qsa("[data-auth-user-name]")) nameNode.textContent = name;
   }
+
+  if (!user) return;
+
+  // Read the role once for this auth-state event. Do not cache a failed
+  // read as "user": a transient Firestore/CDN failure must not permanently
+  // hide Admin Panel for an administrator on this page.
+  const role = await getUserRole(user.uid).catch(() => null);
+
+  // Do not reveal a stale admin link if Firebase changed accounts while the
+  // profile request was in flight.
+  if (latestNavUserUid !== user.uid) return;
+  const isAdmin = role === "admin";
+  for (const link of qsa("[data-admin-only]")) link.hidden = !isAdmin;
 }
 
 // ---------------------------------------------------------------------
@@ -465,7 +492,10 @@ function initLogoutButtons() {
  */
 async function initAuthUI() {
   // Nav auth state resolves once Firebase reports the real session.
-  void waitForAuthState().then(({ user }) => applyNavAuthState(user));
+  void waitForAuthState().then(({ user }) => {
+    latestNavUserUid = user?.uid || null;
+    return applyNavAuthState(user);
+  });
 
   initLogoutButtons();
   initLoginForm();
