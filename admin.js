@@ -3,32 +3,33 @@
 // =====================================================================
 // Responsibilities:
 //   1. translations + shared chrome (language switcher, mobile menu)
-//   2. the ADMIN LOGIN page (email/username + password — never Google)
+//   2. the ADMIN LOGIN page (admin email + password — never Google)
 //   3. role-based route guard: every admin page except login requires
 //      users/{uid}.role == "admin", otherwise the visitor is signed
 //      out and redirected to admin/login.html
 //   4. dynamic import of the current page controller (body[data-admin-page])
 // =====================================================================
 
-import { applyTranslations, t, onLocaleChange } from "../i18n.js";
-import { initNavigation } from "../navigation.js";
-import { getFirebase, waitForAuthState, signOutEverywhere } from "../firebase.js";
-import { qs, qsa, withBusy } from "../ui.js";
-import { isAdminUser, resolveAdminIdentifier } from "../services/admin-service.js";
-import { signInWithEmail } from "../auth.js";
+import { applyTranslations, t, onLocaleChange } from "./i18n.js";
+import { initNavigation } from "./navigation.js";
+import { getFirebase, waitForAuthState, signOutEverywhere } from "./firebase.js";
+import { qs, qsa, withBusy } from "./ui.js";
+import { isAdminUser, resolveAdminIdentifier } from "./admin-service.js";
+import { signInWithEmail } from "./auth.js";
 
 // ---------------------------------------------------------------------
 // Page registry (body[data-admin-page] -> controller module)
 // ---------------------------------------------------------------------
 
 const ADMIN_PAGES = {
-  overview: "./pages/overview.js",
-  content: "./pages/content.js", // content management list
-  "content-form": "./pages/content-form.js", // create / edit content
-  submissions: "./pages/submissions.js",
-  users: "./pages/users.js",
-  wallet: "./pages/wallet.js",
-  withdrawals: "./pages/withdrawals.js",
+  overview: "./overview.js",
+  content: "./content.js", // content management list
+  "content-form": "./content-form.js", // create / edit content
+  submissions: "./admin-submissions.js",
+  users: "./users.js",
+  wallet: "./admin-wallet.js",
+  withdrawals: "./withdrawals.js",
+  support: "./admin-support.js",
 };
 
 // ---------------------------------------------------------------------
@@ -66,31 +67,58 @@ async function submitAdminLogin(form) {
     }
 
     try {
-      // Username -> email resolution via `adminUsernames` aliases.
+      // The dedicated admin door accepts email only; role is checked
+      // after Firebase authentication, never inferred from the identifier.
       const email = await resolveAdminIdentifier(identifier);
       if (!email) {
         errorNode.textContent = t("admin.login.notAdmin");
         return;
       }
 
-      const { user } = await signInWithEmail(email, password);
+      await signInWithEmail(email, password);
+
+      // Do not trust the object returned by signIn alone. Re-read the
+      // Firebase auth state, then use that UID for the Firestore role read.
+      const authState = await waitForAuthState();
+      if (authState.error || !authState.user) {
+        throw new Error("admin-auth-state-unavailable");
+      }
 
       // The role check is the real gate: a normal user who somehow
-      // knows admin credentials is signed straight back out.
-      const admin = await isAdminUser(user.uid);
+      // knows admin credentials is signed straight back out. A missing
+      // profile and a non-admin profile intentionally share one message.
+      const admin = await isAdminUser(authState.user.uid);
       if (!admin) {
-        await signOutEverywhere();
+        await signOutEverywhere().catch(() => {});
         errorNode.textContent = t("admin.login.notAdmin");
         return;
       }
-
       window.location.assign("dashboard.html");
     } catch (error) {
-      // Wrong password / unknown account share one message (no probing).
-      const key = error?.code === "auth/user-not-found" || error?.code === "auth/wrong-password"
-        ? "admin.login.notAdmin"
-        : null;
-      errorNode.textContent = key ? t(key) : t("auth.errors.generic");
+      // If Auth succeeded but the state/profile check failed, do not leave
+      // a session behind on the login page. Signing out is harmless when
+      // Firebase rejected the credentials before creating a session.
+      await signOutEverywhere().catch(() => {});
+      // Wrong password / unknown account / invalid credentials share one
+      // message so the login page cannot be used for account enumeration.
+      const nonEnumeratingCodes = new Set([
+        "auth/invalid-credential",
+        "auth/invalid-email",
+        "auth/user-disabled",
+        "auth/user-not-found",
+        "auth/wrong-password",
+      ]);
+      if (nonEnumeratingCodes.has(error?.code)) {
+        errorNode.textContent = t("admin.login.notAdmin");
+      } else if (error?.code === "auth/operation-not-allowed") {
+        errorNode.textContent = t("admin.login.providerFailed");
+      } else if (error?.code === "auth/network-request-failed") {
+        errorNode.textContent = t("admin.login.networkFailed");
+      } else if (error?.code === "permission-denied" || error?.message === "admin-auth-state-unavailable") {
+        errorNode.textContent = t("admin.login.profileCheckFailed");
+      } else {
+        errorNode.textContent = t("auth.errors.generic");
+      }
     }
   });
 }
@@ -104,18 +132,28 @@ async function submitAdminLogin(form) {
  * null after redirecting unauthorized visitors to the login page.
  */
 async function requireAdmin() {
-  const { user } = await waitForAuthState();
-  if (!user) {
+  try {
+    const authState = await waitForAuthState();
+    if (authState.error || !authState.user) {
+      window.location.replace("login.html");
+      return null;
+    }
+
+    const admin = await isAdminUser(authState.user.uid);
+    if (!admin) {
+      await signOutEverywhere().catch(() => {});
+      window.location.replace("login.html");
+      return null;
+    }
+    return authState.user;
+  } catch (error) {
+    // A denied/failed profile read must never leave the protected shell
+    // running without a decision. Redirect with the same safe outcome as
+    // a signed-out or non-admin visitor.
+    await signOutEverywhere().catch(() => {});
     window.location.replace("login.html");
     return null;
   }
-  const admin = await isAdminUser(user.uid);
-  if (!admin) {
-    await signOutEverywhere();
-    window.location.replace("login.html");
-    return null;
-  }
-  return user;
 }
 
 /** Fills the shell's user chip and wires logout + active nav link. */

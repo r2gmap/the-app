@@ -15,7 +15,9 @@
    ===================================================================== */
 
 :root {
-  /* --- surfaces (dark, premium, gaming-inspired but trustworthy) --- */
+  color-scheme: dark;
+
+  /* --- surfaces (deep, cinematic and restrained) --- */
   --bg: #080a14;
   --bg-elevated: #0d1020;
   --surface: #101426;
@@ -30,26 +32,24 @@
   --text-faint: #6b7490;
 
   /* --- brand + feedback --- */
-  --accent: #7c5cff; /* primary violet */
-  --accent-strong: #9d85ff;
+  --accent: #7c5cff; /* restrained violet */
+  --accent-strong: #a99bff;
   --accent-soft: rgba(124, 92, 255, 0.16);
-  --accent-2: #38d1bf; /* supporting teal */
-  --success: #34d399;
-  --success-soft: rgba(52, 211, 153, 0.14);
-  --warning: #fbbf24;
-  --warning-soft: rgba(251, 191, 36, 0.14);
-  --danger: #f87171;
-  --danger-soft: rgba(248, 113, 113, 0.14);
+  --accent-2: #5c9dff; /* supporting blue */
+  --success: #45c7a5;
+  --success-soft: rgba(69, 199, 165, 0.14);
+  --warning: #f2c76e;
+  --warning-soft: rgba(242, 199, 110, 0.14);
+  --danger: #ff7f8f;
+  --danger-soft: rgba(255, 127, 143, 0.14);
 
   /* --- glow + gradients (soft, subtle — never neon) --- */
-  --glow: 0 0 0 1px rgba(124, 92, 255, 0.22), 0 10px 40px -12px rgba(124, 92, 255, 0.45);
-  --shadow-card: 0 1px 0 rgba(255, 255, 255, 0.03) inset, 0 18px 40px -24px rgba(2, 4, 16, 0.9);
-  --gradient-brand: linear-gradient(135deg, #7c5cff 0%, #38d1bf 130%);
-  --gradient-hero: radial-gradient(900px 480px at 85% -10%, rgba(124, 92, 255, 0.16), transparent 60%),
-    radial-gradient(700px 420px at -10% 30%, rgba(56, 209, 191, 0.10), transparent 55%);
+  --glow: 0 0 0 1px rgba(124, 92, 255, 0.28), 0 18px 44px -20px rgba(74, 61, 170, 0.55);
+  --shadow-card: 0 1px 0 rgba(255, 255, 255, 0.035) inset, 0 18px 40px -24px rgba(2, 4, 16, 0.90);
+  --gradient-brand: linear-gradient(135deg, #7c5cff 0%, #5c9dff 130%);
 
   /* --- geometry --- */
-  --radius-sm: 10px;
+  --radius-sm: 8px;
   --radius-md: 14px;
   --radius-lg: 20px;
   --radius-pill: 999px;
@@ -66,8 +66,8 @@
   --space-9: 80px;
 
   /* --- type --- */
-  --font-sans: "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue",
-    Tahoma, "Noto Sans Arabic", "Segoe UI Arabic", Arial, sans-serif;
+  --font-sans: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Noto Sans Arabic", "Segoe UI Arabic", Arial, sans-serif;
   --text-xs: 0.75rem;
   --text-sm: 0.86rem;
   --text-md: 0.95rem;
@@ -105,10 +105,10 @@ body {
   font-size: var(--text-md);
   line-height: 1.65;
   color: var(--text);
-  background:
-    var(--gradient-hero),
-    var(--bg);
-  background-attachment: fixed;
+  /* Keep the global shell calm; cinematic lighting belongs to the hero,
+     not every page surface. */
+  background: var(--bg);
+  overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   min-height: 100vh;
   display: flex;
@@ -170,7 +170,8 @@ html.i18n-pending body {
 }
 
 ::selection {
-  background: rgba(124, 92, 255, 0.35);
+  background: rgba(124, 92, 255, 0.32);
+  color: var(--text);
 }
 
 :focus-visible {
@@ -184,7 +185,7 @@ html.i18n-pending body {
    ===================================================================== */
 
 .container {
-  width: min(100% - 2 * var(--space-4), var(--container));
+  width: min(calc(100% - var(--space-4) - var(--space-4)), var(--container));
   margin-inline: auto;
 }
 
@@ -288,7 +289,7 @@ html.i18n-pending body {
 .hero__title {
   --hero-indent: 0.42em;
   font-size: clamp(2.9rem, 2.1rem + 4.6vw, 5.6rem);
-  font-weight: 800;
+  font-weight: 700;
   letter-spacing: -0.03em;
   line-height: 1.02;
   margin-bottom: var(--space-5);
@@ -354,53 +355,59 @@ html.i18n-pending body {
 }
 
 /* =====================================================================
-   Landing: how it works
-   ===================================================================== */
+   Landing: how it works — editorial sequence
+   =====================================================================
+   Three quiet columns, large numerals and rules instead of generic cards.
+*/
 
 .steps {
   list-style: none;
   margin: 0;
   padding: 0;
   display: grid;
-  gap: var(--space-4);
+  gap: 0;
   counter-reset: step;
 }
 
 .step {
   position: relative;
-  padding: var(--space-5);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  background: linear-gradient(180deg, var(--surface), var(--bg-elevated));
-  box-shadow: var(--shadow-card);
+  min-width: 0;
+  padding: var(--space-5) 0 0;
+  border-top: 1px solid var(--border-strong);
+  background: transparent;
 }
 
 .step__number {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 34px;
-  height: 34px;
-  border-radius: var(--radius-pill);
-  background: var(--accent-soft);
+  display: block;
+  width: auto;
+  height: auto;
+  margin: 0 0 var(--space-5);
   color: var(--accent-strong);
-  font-weight: 700;
-  margin-bottom: var(--space-3);
+  font-size: clamp(2rem, 2.2vw, 2.75rem);
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+  letter-spacing: -0.06em;
+  line-height: 1;
 }
 
 .step__title {
+  max-width: 18ch;
   font-size: var(--text-lg);
+  font-weight: 650;
+  letter-spacing: -0.015em;
   margin-bottom: var(--space-2);
 }
 
 .step__body {
+  max-width: 31ch;
   color: var(--text-muted);
   margin: 0;
 }
 
 /* =====================================================================
    Landing: offers section
-   ===================================================================== */
+   =====================================================================
+*/
 
 .offer-group:not(:first-child) {
   margin-top: var(--space-8);
@@ -447,22 +454,10 @@ html.i18n-pending body {
   text-decoration: underline;
 }
 
-.notice {
-  padding: var(--space-3) var(--space-4);
-  border-radius: var(--radius-sm);
-  border: 1px dashed var(--border-strong);
-  color: var(--text-muted);
-  font-size: var(--text-sm);
-}
-
-.notice--demo {
-  margin-bottom: var(--space-5);
-  background: rgba(251, 191, 36, 0.05);
-}
-
 /* =====================================================================
-   Landing: trust
-   ===================================================================== */
+   Landing: trust — concise product proof
+   =====================================================================
+*/
 
 .trust__grid {
   display: grid;
@@ -474,38 +469,40 @@ html.i18n-pending body {
   margin: 0;
   padding: 0;
   display: grid;
-  gap: var(--space-4);
+  gap: 0;
+  border-top: 1px solid var(--border);
 }
 
 .trust__item {
   display: flex;
+  align-items: flex-start;
   gap: var(--space-4);
-  padding: var(--space-5);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  background: var(--surface);
+  padding-block: var(--space-4);
+  border-bottom: 1px solid var(--border);
+  background: transparent;
 }
 
 .trust__icon {
   flex: none;
-  width: 34px;
-  height: 34px;
-  border-radius: var(--radius-pill);
+  width: 28px;
+  height: 28px;
+  border: 1px solid rgba(124, 92, 255, 0.32);
+  border-radius: 50%;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: var(--success-soft);
-  color: var(--success);
+  background: transparent;
+  color: var(--accent-strong);
 }
 
 .trust__icon svg {
-  width: 18px;
-  height: 18px;
+  width: 14px;
+  height: 14px;
 }
 
 .trust__title {
   font-size: var(--text-md);
-  font-weight: 600;
+  font-weight: 650;
   margin-bottom: var(--space-1);
 }
 
@@ -523,7 +520,7 @@ html.i18n-pending body {
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   background:
-    radial-gradient(600px 200px at 50% -40%, rgba(124, 92, 255, 0.25), transparent 70%),
+    radial-gradient(600px 200px at 50% -40%, rgba(124, 92, 255, 0.18), transparent 70%),
     var(--surface);
   box-shadow: var(--shadow-card);
   padding: var(--space-8) var(--space-5);
@@ -641,6 +638,19 @@ html.i18n-pending body {
 /* Visitors who ask for less motion get no decorative movement — the
    hero lines appear instantly and card thumbnails never zoom. */
 @media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.001ms !important;
+  }
+
   .hero__title-line {
     animation: none;
   }
@@ -652,4 +662,71 @@ html.i18n-pending body {
   .offer-card:hover .offer-card__image {
     transform: none;
   }
+}
+
+/* =====================================================================
+   Production polish — layout surfaces and editorial hierarchy
+   =====================================================================
+   The interface uses deep navy surfaces with restrained violet and blue
+   accents. It keeps the energy of rewards without the visual language of
+   crypto, gambling or fake-currency dashboards.
+*/
+
+.hero {
+  position: relative;
+  isolation: isolate;
+  min-height: min(720px, calc(100vh - var(--header-height)));
+  display: grid;
+  align-items: center;
+  padding-block: clamp(64px, 9vw, 112px) clamp(56px, 8vw, 96px);
+}
+
+.hero::before {
+  content: "";
+  position: absolute;
+  inset-block: 10%;
+  inset-inline-end: -12%;
+  width: 46%;
+  min-width: 280px;
+  background: radial-gradient(circle, rgba(124, 92, 255, 0.10), transparent 68%);
+  filter: blur(10px);
+  pointer-events: none;
+  z-index: -1;
+}
+
+.hero__lead {
+  max-width: 48ch;
+  font-size: clamp(1rem, 0.92rem + 0.35vw, 1.16rem);
+  line-height: 1.8;
+}
+
+.hero__note::before {
+  content: "✓";
+  display: inline-grid;
+  place-items: center;
+  width: 1.25em;
+  height: 1.25em;
+  margin-inline-end: 0.45em;
+  border-radius: 50%;
+  background: var(--success-soft);
+  color: var(--success);
+  font-weight: 800;
+}
+
+.section-head--compact {
+  margin-bottom: var(--space-5);
+}
+
+.dashboard-block {
+  margin-block-end: clamp(40px, 6vw, 72px);
+}
+
+.dashboard-block:last-child {
+  margin-block-end: 0;
+}
+
+/* A subtle section separator helps long pages scan without adding visual noise. */
+.dashboard-page .section-head__title,
+.page-head__title {
+  letter-spacing: -0.025em;
 }
