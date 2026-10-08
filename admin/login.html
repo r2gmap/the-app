@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Admin sign in — The App</title>
+    <meta name="i18n-title" content="admin.loginTitle" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="theme-color" content="#080a14" />
+    <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="../style.css" />
+    <link rel="stylesheet" href="../components.css" />
+    <link rel="stylesheet" href="../admin.css" />
+    <link rel="stylesheet" href="../responsive.css" />
+    <script type="module" src="../admin.js"></script>
+  </head>
+  <body class="auth-page" data-admin-page="login">
+    <header class="auth-page__bar container">
+      <a class="brand" href="../index.html"><span class="brand__lockup" aria-label="The App"><span class="brand__lockup-kicker">the</span><span class="brand__lockup-name">APP</span></span></a>
+      <a class="btn btn--ghost btn--sm" href="../index.html" data-i18n="admin.login.backToSite">Back to website</a>
+    </header>
+    <main class="auth-page__main" id="main">
+      <section class="card auth-card" aria-labelledby="admin-login-title">
+        <div class="auth-card__eyebrow">The App</div>
+        <h1 class="auth-card__title" id="admin-login-title" data-i18n="admin.loginTitle">Admin sign in</h1>
+        <p class="auth-card__subtitle" data-i18n="admin.loginSubtitle">Administration access only.</p>
+        <form class="form" data-admin-login-form novalidate>
+          <div class="field">
+            <label class="field__label" for="admin-identifier" data-i18n="admin.login.identifier">Admin email</label>
+            <input class="field__control" id="admin-identifier" type="email" autocomplete="username" placeholder="admin@example.com" data-i18n-placeholder="admin.login.identifierPlaceholder" data-admin-identifier required />
+          </div>
+          <div class="field">
+            <label class="field__label" for="admin-password" data-i18n="admin.login.password">Password</label>
+            <input class="field__control" id="admin-password" type="password" autocomplete="current-password" data-admin-password required />
+          </div>
+          <p class="form__error" role="alert" data-admin-login-error></p>
+          <button class="btn btn--primary btn--block" type="submit" data-i18n="admin.login.submit">Sign in</button>
+        </form>
+      </section>
+    </main>
+  </body>
+</html>

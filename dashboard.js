@@ -12,15 +12,15 @@
 // The whole page re-renders on language switch.
 // =====================================================================
 
-import { requireAuth } from "../auth.js";
-import { t, onLocaleChange } from "../i18n.js";
-import { qs, renderState, renderAvatar } from "../ui.js";
-import { formatMoney } from "../format.js";
-import { renderOfferCard } from "../offers.js";
-import { renderSubmissionCard } from "../components/submission-card.js";
-import { fetchActiveOffers, fetchFeaturedOffers } from "../services/offers-service.js";
-import { computeUserBalance } from "../services/wallet-service.js";
-import { countUserSubmissions, fetchUserSubmissions } from "../services/submissions-service.js";
+import { requireAuth } from "./auth.js";
+import { t, onLocaleChange } from "./i18n.js";
+import { qs, renderState, renderAvatar } from "./ui.js";
+import { formatMoney } from "./format.js";
+import { renderOfferCard } from "./offers.js";
+import { renderSubmissionCard } from "./submission-card.js";
+import { fetchActiveOffers, fetchFeaturedOffers } from "./offers-service.js";
+import { computeUserBalance } from "./wallet-service.js";
+import { countUserSubmissions, fetchUserSubmissions } from "./submissions-service.js";
 
 // ---------------------------------------------------------------------
 // Section 1 — Welcome hero

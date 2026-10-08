@@ -2,23 +2,21 @@
 // Profile Page Controller (profile.html)
 // =====================================================================
 // Keeps the page simple on purpose:
-//   1. Identity card — avatar, name, email, member since, Edit / Log out
-//   2. Account details — wallet balance, cash wallet number (the payout
-//      destination, stored on the Firestore profile), completed rewards,
-//      pending reviews
-//   3. "Edit profile" modal — rename, avatar upload/remove (Firebase
-//      Storage `avatars/{uid}/…`), cash wallet number
+//   1. Identity card — name, email, Edit / Log out
+//   2. Account details — wallet balance and cash wallet number (the payout
+//      destination stored on the Firestore profile)
+//   3. "Edit profile" modal — rename, optional avatar upload/remove
+//      (Firebase Storage `avatars/{uid}/…`), and cash wallet number
 // Logout is handled by the shared auth chrome (data-auth-logout).
 // =====================================================================
 
-import { getFirebase } from "../firebase.js";
-import { requireAuth } from "../auth.js";
-import { t } from "../i18n.js";
-import { qs, renderAvatar, toast, withBusy } from "../ui.js";
-import { formatMoney, formatDate } from "../format.js";
-import { computeUserBalance } from "../services/wallet-service.js";
-import { countUserSubmissions } from "../services/submissions-service.js";
-import { getUserProfile, updateUserProfile } from "../services/users-service.js";
+import { getFirebase } from "./firebase.js";
+import { requireAuth } from "./auth.js";
+import { t } from "./i18n.js";
+import { qs, renderAvatar, toast, withBusy } from "./ui.js";
+import { formatMoney } from "./format.js";
+import { computeUserBalance } from "./wallet-service.js";
+import { getUserProfile, updateUserProfile } from "./users-service.js";
 
 const MAX_AVATAR_BYTES = 2 * 1024 * 1024;
 
@@ -27,29 +25,22 @@ const MAX_AVATAR_BYTES = 2 * 1024 * 1024;
 // ---------------------------------------------------------------------
 
 async function renderSummary(user, profile) {
-  renderAvatar(qs("[data-profile-avatar]"), {
-    photoURL: user.photoURL,
-    displayName: user.displayName || user.email,
-    size: "xl",
-  });
+  const avatar = qs("[data-profile-avatar]");
+  if (avatar) {
+    renderAvatar(avatar, {
+      photoURL: user.photoURL,
+      displayName: user.displayName || user.email,
+      size: "xl",
+    });
+  }
   qs("[data-profile-name]").textContent = user.displayName || "—";
   qs("[data-profile-email]").textContent = user.email || "—";
 
-  const [balance, completed, pending] = await Promise.all([
-    computeUserBalance(user.uid).catch(() => null),
-    countUserSubmissions(user.uid, "approved").catch(() => null),
-    countUserSubmissions(user.uid, "pending").catch(() => null),
-  ]);
-
+  const balance = await computeUserBalance(user.uid).catch(() => null);
   qs("[data-profile-balance]").textContent = balance === null ? "—" : formatMoney(balance);
-  qs("[data-profile-completed]").textContent = completed === null ? "—" : String(completed);
-  qs("[data-profile-pending]").textContent = pending === null ? "—" : String(pending);
   // Cash wallet number: the payout destination stored on the profile
   // (set via the edit dialog; withdrawals prefill from it).
   qs("[data-profile-wallet-number]").textContent = profile?.walletNumber?.trim() || "—";
-  qs("[data-profile-joined]").textContent = profile?.createdAt
-    ? formatDate(profile.createdAt)
-    : "—";
 }
 
 // ---------------------------------------------------------------------

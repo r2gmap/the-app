@@ -12,8 +12,8 @@
 //   }
 // =====================================================================
 
-import { getFirebase } from "../firebase.js";
-import { getLocale } from "../i18n.js";
+import { getFirebase } from "./firebase.js";
+import { getLocale } from "./i18n.js";
 
 // ---------------------------------------------------------------------
 // Profile lifecycle (called from the auth flows)

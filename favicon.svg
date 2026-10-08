@@ -1,13 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-  <!-- The App — the wordmark's signature letters reduced to a mark:
-       monoline "A" + accent full stop, drawn on the same grid. -->
-  <defs>
-    <linearGradient id="g" x1="6" y1="19" x2="19" y2="5" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#7c5cff"/>
-      <stop offset="1" stop-color="#38d1bf"/>
-    </linearGradient>
-  </defs>
-  <rect width="24" height="24" rx="5.5" fill="#080a14"/>
-  <path d="M7.4 16.8 11.2 7.2l3.8 9.6M9.1 13.6h4.2" stroke="url(#g)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-  <circle cx="17.6" cy="15.8" r="1.6" fill="url(#g)"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="The App">
+  <rect width="64" height="64" rx="10" fill="#080a14"/>
+  <text x="12" y="20" fill="#9aa3bc" font-family="Arial, sans-serif" font-size="11" font-weight="700" letter-spacing="1">the</text>
+  <text x="10" y="49" fill="#eef1f9" font-family="Arial, sans-serif" font-size="27" font-weight="800" letter-spacing="-2">APP</text>
 </svg>

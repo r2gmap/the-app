@@ -6,41 +6,40 @@
 // Firebase console / Admin SDK (never writable from the browser —
 // enforced by firestore.rules).
 //
-// Optional username aliases: documents in `adminUsernames/{username}`
-// ({ email }) let an admin sign in with a username instead of the
-// email. Reads are unauthenticated-get so the login page can resolve
-// the identifier; creating aliases is done from the console.
 // =====================================================================
 
-import { getFirebase } from "../firebase.js";
-import { getUserRole } from "./users-service.js";
+import { getFirebase } from "./firebase.js";
+import { getUserProfile } from "./users-service.js";
 
 // ---------------------------------------------------------------------
 // Identity helpers
 // ---------------------------------------------------------------------
 
+/**
+ * Reads the one authoritative authorization record for a UID. Returning
+ * only existence, role and the boolean decision keeps UI code from
+ * inventing a second admin policy while making failed role reads visible
+ * to the caller as rejected access.
+ */
+async function getAdminAccess(uid) {
+  if (!uid) return { exists: false, role: null, isAdmin: false };
+  const profile = await getUserProfile(uid);
+  const role = profile?.role || null;
+  return { exists: Boolean(profile), role, isAdmin: role === "admin" };
+}
+
 /** True when the signed-in user holds the admin role. */
 async function isAdminUser(uid) {
-  if (!uid) return false;
-  return (await getUserRole(uid)) === "admin";
+  return (await getAdminAccess(uid)).isAdmin;
 }
 
 /**
- * Resolves the admin-login identifier to an email. Accepts either an
- * email address directly or a username registered in `adminUsernames`.
- * Returns null when a username has no alias document.
+ * Admin login resolves to an email only. Keeping identity input private
+ * avoids exposing an email-alias collection before authentication.
  */
-async function resolveAdminIdentifier(identifier) {
-  const text = String(identifier || "").trim();
-  if (!text) return null;
-  if (text.includes("@")) return text.toLowerCase();
-
-  const fb = await getFirebase();
-  if (!fb) return null;
-  const { doc, getDoc } = fb.sdk.db;
-  const username = text.toLowerCase();
-  const snapshot = await getDoc(doc(fb.db, "adminUsernames", username)).catch(() => null);
-  return snapshot?.exists() ? snapshot.data().email || null : null;
+function resolveAdminIdentifier(identifier) {
+  const text = String(identifier || "").trim().toLowerCase();
+  return text.includes("@") ? text : null;
 }
 
 // ---------------------------------------------------------------------
@@ -90,4 +89,4 @@ async function fetchOverviewCounts() {
   };
 }
 
-export { isAdminUser, resolveAdminIdentifier, fetchOverviewCounts };
+export { getAdminAccess, isAdminUser, resolveAdminIdentifier, fetchOverviewCounts };

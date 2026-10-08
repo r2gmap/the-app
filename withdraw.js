@@ -10,14 +10,14 @@
 //   3. firestore.rules — only the owner can create their own request
 // =====================================================================
 
-import { requireAuth } from "../auth.js";
-import { t, onLocaleChange } from "../i18n.js";
-import { qs, renderState, withBusy } from "../ui.js";
-import { formatMoney, formatDateTime } from "../format.js";
-import { MIN_WITHDRAWAL, createWithdrawalRequest, fetchUserWithdrawals } from "../services/withdrawals-service.js";
-import { computeUserBalance, computePendingWithdrawalsTotal } from "../services/wallet-service.js";
-import { getUserProfile } from "../services/users-service.js";
-import { statusMeta } from "../components/submission-card.js";
+import { requireAuth } from "./auth.js";
+import { t, onLocaleChange } from "./i18n.js";
+import { qs, renderState, withBusy } from "./ui.js";
+import { formatMoney, formatDateTime } from "./format.js";
+import { MIN_WITHDRAWAL, createWithdrawalRequest, fetchUserWithdrawals } from "./withdrawals-service.js";
+import { computeUserBalance, computePendingWithdrawalsTotal } from "./wallet-service.js";
+import { getUserProfile } from "./users-service.js";
+import { statusMeta } from "./submission-card.js";
 
 // ---------------------------------------------------------------------
 // Available balance (wallet minus pending withdrawals)

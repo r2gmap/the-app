@@ -24,16 +24,20 @@ function intlLocale(locale) {
 // ---------------------------------------------------------------------
 
 /** Formats a dollar amount, e.g. 0.5 -> "$0.50" / "٠٫٥٠ US$" style. */
-function formatMoney(amount, locale = "en") {
+function activeLocale() {
+  return typeof document !== "undefined" && document.documentElement.lang === "ar" ? "ar" : "en";
+}
+
+function formatMoney(amount, locale = null) {
   const value = Number(amount) || 0;
-  return new Intl.NumberFormat(intlLocale(locale), {
+  return new Intl.NumberFormat(intlLocale(locale || activeLocale()), {
     style: "currency",
     currency: "USD",
   }).format(value);
 }
 
 /** Signed variant for transactions, e.g. "+$0.50" / "-$2.00". */
-function formatSignedMoney(amount, locale = "en") {
+function formatSignedMoney(amount, locale = null) {
   const value = Number(amount) || 0;
   const sign = value > 0 ? "+" : "";
   return sign + formatMoney(value, locale);
@@ -44,24 +48,24 @@ function formatSignedMoney(amount, locale = "en") {
 // ---------------------------------------------------------------------
 
 /** Medium date + time, e.g. "Sep 24, 2026, 3:12 PM". */
-function formatDateTime(dateValue, locale = "en") {
+function formatDateTime(dateValue, locale = null) {
   const date = toDate(dateValue);
   if (!date) return "—";
-  return new Intl.DateTimeFormat(intlLocale(locale), {
+  return new Intl.DateTimeFormat(intlLocale(locale || activeLocale()), {
     dateStyle: "medium",
     timeStyle: "short",
   }).format(date);
 }
 
 /** Date only, e.g. "Sep 24, 2026". */
-function formatDate(dateValue, locale = "en") {
+function formatDate(dateValue, locale = null) {
   const date = toDate(dateValue);
   if (!date) return "—";
-  return new Intl.DateTimeFormat(intlLocale(locale), { dateStyle: "medium" }).format(date);
+  return new Intl.DateTimeFormat(intlLocale(locale || activeLocale()), { dateStyle: "medium" }).format(date);
 }
 
 /** Compact relative time, e.g. "5 minutes ago" / "قبل ٥ دقائق". */
-function formatRelativeTime(dateValue, locale = "en") {
+function formatRelativeTime(dateValue, locale = null) {
   const date = toDate(dateValue);
   if (!date) return "—";
   const diffSeconds = Math.round((date.getTime() - Date.now()) / 1000);
@@ -75,7 +79,7 @@ function formatRelativeTime(dateValue, locale = "en") {
   ];
   for (const [unit, seconds] of thresholds) {
     if (Math.abs(diffSeconds) >= seconds || unit === "second") {
-      return new Intl.RelativeTimeFormat(intlLocale(locale), { numeric: "auto" }).format(
+      return new Intl.RelativeTimeFormat(intlLocale(locale || activeLocale()), { numeric: "auto" }).format(
         Math.round(diffSeconds / seconds),
         unit,
       );
@@ -89,8 +93,8 @@ function formatRelativeTime(dateValue, locale = "en") {
 // ---------------------------------------------------------------------
 
 /** Plain integer formatting, e.g. 1200 -> "1,200". */
-function formatNumber(value, locale = "en") {
-  return new Intl.NumberFormat(intlLocale(locale)).format(Number(value) || 0);
+function formatNumber(value, locale = null) {
+  return new Intl.NumberFormat(intlLocale(locale || activeLocale())).format(Number(value) || 0);
 }
 
 // ---------------------------------------------------------------------

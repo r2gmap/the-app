@@ -36,7 +36,7 @@
 // the query and firestore.rules. Writes are admin-only (rules).
 // =====================================================================
 
-import { getFirebase } from "../firebase.js";
+import { getFirebase } from "./firebase.js";
 
 // Every category the platform supports. Adding a category here (plus a
 // label key + page) is all it takes to introduce a new content type.
@@ -131,6 +131,13 @@ function offerDocumentData(form, adminUid) {
   const status = form.status === "draft" ? "draft" : "published";
   // Defensive text helper: tolerates undefined optional fields.
   const text = (value) => String(value ?? "").trim();
+  const downloadUrl = text(form.downloadUrl);
+  const downloadType = ["apk", "zip", "pdf"].includes(form.downloadType)
+    ? form.downloadType
+    : null;
+  const downloadSource = ["upload", "external"].includes(form.downloadSource)
+    ? form.downloadSource
+    : null;
   return {
     title: text(form.title),
     titleAr: text(form.titleAr),
@@ -149,6 +156,9 @@ function offerDocumentData(form, adminUid) {
     instructionsAr: text(form.instructionsAr),
     image: form.image || null,
     banner: form.banner || null,
+    downloadUrl: downloadUrl || null,
+    downloadType,
+    downloadSource,
     status,
     active: status === "published",
     featured: Boolean(form.featured),
@@ -269,7 +279,8 @@ const ASSET_KINDS = {
   // --- prepared for future features (not wired to a form yet) ---------
   apk: {
     folder: "offer-files/apk",
-    accept: ["application/vnd.android.package-archive"],
+    // Some browsers report APK files as application/octet-stream.
+    accept: ["application/vnd.android.package-archive", "application/octet-stream"],
     maxBytes: 100 * 1024 * 1024,
   },
   zip: {
@@ -291,7 +302,7 @@ const ASSET_KINDS = {
  * Firestore. All future file uploads (APK / ZIP / PDF / new images)
  * flow through this one function so validation stays consistent.
  */
-async function uploadContentAsset(file, kind = "thumbnail") {
+async function uploadContentAsset(file, kind = "thumbnail", onProgress = null) {
   const spec = ASSET_KINDS[kind];
   if (!spec) throw new Error(`unknown-asset-kind:${kind}`);
 
@@ -305,14 +316,34 @@ async function uploadContentAsset(file, kind = "thumbnail") {
 
   const fb = await getFirebase();
   if (!fb) throw new Error("firebase-unavailable");
-  const { ref, uploadBytes, getDownloadURL } = fb.sdk.storage;
+  const { ref, uploadBytesResumable, getDownloadURL } = fb.sdk.storage;
 
   // Timestamped, sanitized names keep folders tidy and cache-safe.
   const safeName = String(file.name || "asset").replace(/[^\w.\-]+/g, "_");
   const path = `${spec.folder}/${Date.now()}_${safeName}`;
   const storageRef = ref(fb.storage, path);
-  await uploadBytes(storageRef, file, { contentType: file.type });
-  return getDownloadURL(storageRef);
+  const uploadTask = uploadBytesResumable(storageRef, file, { contentType: file.type });
+
+  // The form uses this callback for an accessible loading/progress state.
+  return new Promise((resolve, reject) => {
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        const progress = snapshot.totalBytes
+          ? Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100)
+          : 0;
+        onProgress?.(progress);
+      },
+      reject,
+      async () => {
+        try {
+          resolve(await getDownloadURL(uploadTask.snapshot.ref));
+        } catch (error) {
+          reject(error);
+        }
+      },
+    );
+  });
 }
 
 /**
