@@ -1,46 +1,76 @@
 // =====================================================================
 // Admin Service — identity, role checks, overview statistics
 // =====================================================================
-// Admins are regular Firebase Auth email/password accounts whose
-// users/{uid}.role is "admin". The role is granted ONLY through the
-// Firebase console / Admin SDK (never writable from the browser —
-// enforced by firestore.rules).
+// Admins use a Firebase Auth custom-token session issued by the backend
+// Secret Manager login flow. Their users/{uid}.role is still the trusted
+// authorization record; it is granted only by the backend Admin SDK flow
+// or a trusted operator, never writable from the browser.
 //
-// Optional username aliases: documents in `adminUsernames/{username}`
-// ({ email }) let an admin sign in with a username instead of the
-// email. Reads are unauthenticated-get so the login page can resolve
-// the identifier; creating aliases is done from the console.
 // =====================================================================
 
-import { getFirebase } from "../firebase.js";
-import { getUserRole } from "./users-service.js";
+import { getFirebase } from "./firebase.js";
+import { getUserProfile } from "./users-service.js";
+
+// =====================================================================
+// Backend admin authentication
+// =====================================================================
+// Credentials are posted to the same-origin Cloud Function. The browser
+// never knows the configured password and never compares credentials itself.
+// The function returns a Firebase custom token, which Firebase Auth then
+// persists locally for the protected admin session.
+// =====================================================================
+
+const ADMIN_LOGIN_ENDPOINT = "/api/admin/login";
+
+async function requestAdminSession(email, password) {
+  let response;
+  try {
+    response = await fetch(ADMIN_LOGIN_ENDPOINT, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ email: String(email || "").trim(), password: String(password || "") }),
+    });
+  } catch (error) {
+    const networkError = new Error("admin-network-failed");
+    networkError.code = "admin-network-failed";
+    throw networkError;
+  }
+
+  let payload = {};
+  try {
+    payload = await response.json();
+  } catch (error) {
+    payload = {};
+  }
+  if (!response.ok || !payload.token) {
+    const backendError = new Error(payload.code || "admin-unavailable");
+    backendError.code = payload.code || "admin-unavailable";
+    backendError.status = response.status;
+    throw backendError;
+  }
+  return payload.token;
+}
 
 // ---------------------------------------------------------------------
 // Identity helpers
 // ---------------------------------------------------------------------
 
-/** True when the signed-in user holds the admin role. */
-async function isAdminUser(uid) {
-  if (!uid) return false;
-  return (await getUserRole(uid)) === "admin";
+/**
+ * Reads the one authoritative authorization record for a UID. Returning
+ * only existence, role and the boolean decision keeps UI code from
+ * inventing a second admin policy while making failed role reads visible
+ * to the caller as rejected access.
+ */
+async function getAdminAccess(uid) {
+  if (!uid) return { exists: false, role: null, isAdmin: false };
+  const profile = await getUserProfile(uid);
+  const role = profile?.role || null;
+  return { exists: Boolean(profile), role, isAdmin: role === "admin" };
 }
 
-/**
- * Resolves the admin-login identifier to an email. Accepts either an
- * email address directly or a username registered in `adminUsernames`.
- * Returns null when a username has no alias document.
- */
-async function resolveAdminIdentifier(identifier) {
-  const text = String(identifier || "").trim();
-  if (!text) return null;
-  if (text.includes("@")) return text.toLowerCase();
-
-  const fb = await getFirebase();
-  if (!fb) return null;
-  const { doc, getDoc } = fb.sdk.db;
-  const username = text.toLowerCase();
-  const snapshot = await getDoc(doc(fb.db, "adminUsernames", username)).catch(() => null);
-  return snapshot?.exists() ? snapshot.data().email || null : null;
+/** True when the signed-in user holds the admin role. */
+async function isAdminUser(uid) {
+  return (await getAdminAccess(uid)).isAdmin;
 }
 
 // ---------------------------------------------------------------------
@@ -90,4 +120,9 @@ async function fetchOverviewCounts() {
   };
 }
 
-export { isAdminUser, resolveAdminIdentifier, fetchOverviewCounts };
+export {
+  getAdminAccess,
+  isAdminUser,
+  requestAdminSession,
+  fetchOverviewCounts,
+};

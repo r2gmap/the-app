@@ -16,7 +16,7 @@
 import { getFirebase, waitForAuthState, signOutEverywhere } from "./firebase.js";
 import { t } from "./i18n.js";
 import { qs, qsa, el, toast, withBusy } from "./ui.js";
-import { ensureUserProfile } from "./services/users-service.js";
+import { ensureUserProfile } from "./users-service.js";
 
 // Destinations used by the post-login flow.
 const ROUTES = {
@@ -48,6 +48,10 @@ const AUTH_ERROR_KEYS = {
   "auth/cancelled-popup-request": "auth.errors.cancelled-popup-request",
   "auth/popup-blocked": "auth.errors.popup-blocked",
   "auth/operation-not-allowed": "auth.errors.operation-not-allowed",
+  "auth/invalid-continue-uri": "auth.errors.invalid-continue-uri",
+  "auth/missing-continue-uri": "auth.errors.invalid-continue-uri",
+  "auth/unauthorized-continue-uri": "auth.errors.unauthorized-continue-uri",
+  "auth/quota-exceeded": "auth.errors.quota-exceeded",
 };
 
 /** Maps a Firebase Auth error to a localized, user-safe message. */
@@ -158,10 +162,19 @@ async function sendVerificationEmail() {
   await fb.sdk.auth.sendEmailVerification(fb.auth.currentUser);
 }
 
-/** Sends a password reset email. */
+/**
+ * Sends Firebase's hosted password-reset email. The action URL follows the
+ * current deployed origin, so production and approved preview domains can
+ * be configured in Firebase Auth without a custom reset implementation.
+ */
 async function sendPasswordReset(email) {
   const fb = await getFirebase();
-  await fb.sdk.auth.sendPasswordResetEmail(fb.auth, email);
+  if (!fb) throw new Error("firebase-unavailable");
+  const actionCodeSettings = {
+    url: new URL("login.html", window.location.origin).href,
+    handleCodeInApp: false,
+  };
+  await fb.sdk.auth.sendPasswordResetEmail(fb.auth, email, actionCodeSettings);
 }
 
 /** Reloads the current user so emailVerified reflects the latest state. */
@@ -177,7 +190,8 @@ async function reloadCurrentUser() {
 
 /**
  * Fills the header's guest/user blocks once Firebase reports the real
- * session. Both blocks start hidden in markup so nothing flickers.
+ * session. Admin access is intentionally not part of this chrome; the
+ * only public entry is the quiet footer link to the protected admin door.
  */
 function applyNavAuthState(user) {
   for (const guestBlock of qsa("[data-auth-guest]")) guestBlock.hidden = Boolean(user);
@@ -292,6 +306,12 @@ function initForgotPassword() {
   const showReset = (show) => {
     loginView.hidden = show;
     resetView.hidden = !show;
+    if (show) {
+      const resetForm = qs("[data-reset-form]", resetView);
+      const resetSent = qs("[data-reset-sent]", resetView);
+      if (resetForm) resetForm.hidden = false;
+      if (resetSent) resetSent.hidden = true;
+    }
   };
 
   trigger.addEventListener("click", () => showReset(true));
@@ -465,7 +485,9 @@ function initLogoutButtons() {
  */
 async function initAuthUI() {
   // Nav auth state resolves once Firebase reports the real session.
-  void waitForAuthState().then(({ user }) => applyNavAuthState(user));
+  void waitForAuthState().then(({ user }) => {
+    applyNavAuthState(user);
+  });
 
   initLogoutButtons();
   initLoginForm();

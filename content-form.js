@@ -20,15 +20,16 @@
 // chosen status) and returns to the content list.
 // =====================================================================
 
-import { t } from "../../i18n.js";
-import { qs, el, renderState, toast, withBusy, confirmDialog } from "../../ui.js";
+import { t } from "./i18n.js";
+import { qs, el, renderState, toast, withBusy, confirmDialog } from "./ui.js";
 import {
   fetchOfferById,
   createOffer,
   updateOffer,
   deleteOffer,
+  uploadContentAsset,
   uploadContentImage,
-} from "../../services/offers-service.js";
+} from "./offers-service.js";
 
 let currentAdminUid = null; // written into createdBy
 let editingContentId = null; // null = creating new content
@@ -45,6 +46,24 @@ function setField(name, value) {
 
 /** Reads a form field's trimmed value. */
 const getField = (name) => String(qs(`[data-cf-${name}]`).value ?? "").trim();
+
+/** Keeps uploads understandable without replacing the form with a spinner. */
+function setUploadStatus({ visible = true, progress = 0, label = "" } = {}) {
+  const status = qs("[data-cf-upload-status]");
+  const bar = qs("[data-cf-upload-progress]");
+  const labelNode = qs("[data-cf-upload-label]");
+  if (!status || !bar || !labelNode) return;
+  status.hidden = !visible;
+  bar.value = Math.max(0, Math.min(100, progress));
+  if (label) labelNode.textContent = label;
+}
+
+/** Infers the prepared download folder from the selected file. */
+function downloadKindForFile(file, selectedKind) {
+  if (selectedKind) return selectedKind;
+  const extension = String(file?.name || "").split(".").pop()?.toLowerCase();
+  return extension === "apk" || extension === "zip" || extension === "pdf" ? extension : null;
+}
 
 // ---------------------------------------------------------------------
 // Media fields: file picker <-> URL field, with live previews
@@ -128,9 +147,11 @@ function resetForm() {
     "title", "title-ar", "description", "description-ar",
     "full-description", "full-description-ar", "time", "time-ar",
     "requirements", "requirements-ar", "instructions", "instructions-ar",
-    "thumb-url", "banner-url", "thumb-file", "banner-file",
+    "thumb-url", "banner-url", "thumb-file", "banner-file", "file-url",
   ];
   for (const name of textFields) setField(name, "");
+  setField("file-upload", "");
+  setField("file-kind", "");
   setField("category", "game");
   setField("difficulty", "easy");
   setField("reward", "");
@@ -195,6 +216,8 @@ async function loadForEdit(contentId) {
   // --- media (URLs + previews; file pickers stay empty)
   setField("thumb-url", item.image || "");
   setField("banner-url", item.banner || "");
+  setField("file-url", item.downloadUrl || "");
+  setField("file-kind", item.downloadType || "");
   thumbMedia.showPreview(item.image || "");
   bannerMedia.showPreview(item.banner || "");
 
@@ -242,17 +265,59 @@ async function saveContent() {
     errorNode.textContent = t("admin.offers.form.errors.rewardInvalid");
     return;
   }
+  const externalDownloadUrl = getField("file-url");
+  if (externalDownloadUrl) {
+    try {
+      const parsed = new URL(externalDownloadUrl);
+      if (!['http:', 'https:'].includes(parsed.protocol)) throw new Error("unsafe-url");
+    } catch (error) {
+      errorNode.textContent = t("admin.content.form.downloadUrlInvalid");
+      return;
+    }
+  }
 
   await withBusy(qs("[data-cf-save]"), async () => {
     try {
       // --- media: picked files are uploaded first; the URL is the fallback
       let image = getField("thumb-url") || null;
       const thumbFile = qs("[data-cf-thumb-file]").files?.[0];
-      if (thumbFile) image = await uploadContentImage(thumbFile, "thumbnail");
+      if (thumbFile) {
+        setUploadStatus({ label: t("admin.content.form.uploadingThumbnail") });
+        image = await uploadContentImage(
+          thumbFile,
+          "thumbnail",
+          (progress) => setUploadStatus({ progress, label: `${t("admin.content.form.uploadingThumbnail")} ${progress}%` }),
+        );
+      }
 
       let banner = getField("banner-url") || null;
       const bannerFile = qs("[data-cf-banner-file]").files?.[0];
-      if (bannerFile) banner = await uploadContentImage(bannerFile, "banner");
+      if (bannerFile) {
+        setUploadStatus({ label: t("admin.content.form.uploadingBanner") });
+        banner = await uploadContentImage(
+          bannerFile,
+          "banner",
+          (progress) => setUploadStatus({ progress, label: `${t("admin.content.form.uploadingBanner")} ${progress}%` }),
+        );
+      }
+
+      // Optional downloadable content supports either a trusted external
+      // URL or an admin upload. A picked file always wins over the URL.
+      const selectedFile = qs("[data-cf-file-upload]").files?.[0];
+      const selectedKind = qs("[data-cf-file-kind]").value;
+      let downloadUrl = getField("file-url") || null;
+      let downloadType = selectedKind || null;
+      if (selectedFile) {
+        downloadType = downloadKindForFile(selectedFile, selectedKind);
+        if (!downloadType) throw new Error("unsupported-file-type");
+        setUploadStatus({ label: t("admin.content.form.uploadingFile") });
+        downloadUrl = await uploadContentAsset(
+          selectedFile,
+          downloadType,
+          (progress) => setUploadStatus({ progress, label: `${t("admin.content.form.uploadingFile")} ${progress}%` }),
+        );
+      }
+      setUploadStatus({ visible: false });
 
       // --- the full form payload (schema lives in offers-service.js)
       const form = {
@@ -273,6 +338,9 @@ async function saveContent() {
         instructionsAr: getField("instructions-ar"),
         image,
         banner,
+        downloadUrl,
+        downloadType,
+        downloadSource: selectedFile ? "upload" : (downloadUrl ? "external" : null),
         status: qs('[data-cf-status]:checked')?.value === "draft" ? "draft" : "published",
         featured: qs("[data-cf-featured]").checked,
         displayOrder: Number(getField("order")) || 100,
@@ -285,6 +353,7 @@ async function saveContent() {
       toast(t("admin.content.form.saved"), "success");
       window.location.assign("content.html");
     } catch (error) {
+      setUploadStatus({ visible: false });
       console.error("[admin:content-form] save failed", error);
       errorNode.textContent = t("admin.offers.form.saveFailed");
     }

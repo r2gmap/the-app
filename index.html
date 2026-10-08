@@ -3,11 +3,11 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>The App — Play. Try. Earn.</title>
+    <title>The App — Play. Win. Earn.</title>
     <meta name="i18n-title" content="meta.title" />
     <meta
       name="description"
-      content="Discover games and apps, complete simple tasks, and earn rewards once your proof is reviewed and approved."
+      content="Browse clear opportunities across games, apps, websites, and offers. Submit proof and receive approved rewards."
     />
     <meta name="theme-color" content="#080a14" />
 
@@ -49,12 +49,12 @@
       })();
     </script>
 
-    <link rel="icon" href="assets/icons/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
     <link rel="preconnect" href="https://www.gstatic.com" />
-    <link rel="stylesheet" href="css/style.css" />
-    <link rel="stylesheet" href="css/components.css" />
-    <link rel="stylesheet" href="css/responsive.css" />
-    <script type="module" src="js/main.js"></script>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="components.css" />
+    <link rel="stylesheet" href="responsive.css" />
+    <script type="module" src="main.js"></script>
   </head>
 
   <body data-page="home">
@@ -63,29 +63,14 @@
     <header class="site-header">
       <div class="container site-header__bar">
         <a class="brand" href="index.html">
-          <svg class="brand__mark" viewBox="0 0 157 40" fill="none" role="img" aria-label="The App">
-              <!-- Custom monoline wordmark: drawn letterforms on one
-                   grid — "The" muted, "App" bright, accent full stop.
-                   Colours/size live in the .brand__mark CSS rules. -->
-              <g class="brand__mark-the" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M5 9H25M15 9V31" />
-                <path d="M31 9V31M31 19C31 15.8 33.2 14.5 36 14.5C38.8 14.5 41 15.8 41 19V31" />
-                <path d="M51 23.25H65M65 23.25A7 7 0 1 0 62.5 28.6" />
-              </g>
-              <g class="brand__mark-app" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M74 31L87 9L100 31M80 24H94" />
-                <path d="M105 14.5V37M105 14.5C113.5 14.5 121 16.8 121 22.9C121 29 113.5 31.3 105 31.3" />
-                <path d="M127 14.5V37M127 14.5C135.5 14.5 143 16.8 143 22.9C143 29 135.5 31.3 127 31.3" />
-              </g>
-              <circle class="brand__mark-dot" cx="151" cy="27.5" r="3.2" />
-            </svg>
+          <span class="brand__lockup" aria-label="The App"><span class="brand__lockup-kicker">the</span><span class="brand__lockup-name">APP</span></span>
         </a>
 
         <nav class="site-nav" aria-label="Main" data-i18n-aria-label="nav.primary">
           <ul class="site-nav__list">
             <!-- Primary navigation — identical on every page so visitors
                  always know where things are. Active link is marked by
-                 js/navigation.js via aria-current. -->
+                 navigation.js via aria-current. -->
             <li><a class="site-nav__link" href="index.html" data-nav="home" data-i18n="nav.home">Home</a></li>
             <li><a class="site-nav__link" href="games.html" data-nav="games" data-i18n="nav.games">Games</a></li>
             <li><a class="site-nav__link" href="apps.html" data-nav="apps" data-i18n="nav.apps">Apps</a></li>
@@ -100,9 +85,9 @@
           <div class="site-header__auth">
             <!-- Both states start hidden and stay that way until Firebase
                  reports the real session, so a returning user is never
-                 shown "Log in" for a flicker before it does. -->
+                 shown "Sign in" for a flicker before it does. -->
             <div data-auth-guest hidden>
-              <a class="btn btn--ghost btn--sm" href="login.html" data-i18n="nav.login">Log in</a>
+              <a class="btn btn--ghost btn--sm" href="login.html" data-i18n="nav.login">Sign in</a>
               <a class="btn btn--primary btn--sm" href="register.html" data-i18n="nav.signUp">
                 Sign up
               </a>
@@ -147,20 +132,16 @@
               <li><a class="mobile-nav__link" href="apps.html" data-i18n="nav.apps">Apps</a></li>
               <li><a class="mobile-nav__link" href="websites.html" data-i18n="nav.websites">Websites</a></li>
               <li><a class="mobile-nav__link" href="offers.html" data-i18n="nav.offers">Offers</a></li>
-              <li>
-                <a class="mobile-nav__link" href="#how-it-works" data-i18n="nav.howItWorks">
-                  How it works
-                </a>
-              </li>
             </ul>
           </nav>
           <div class="mobile-nav__actions" data-auth-guest hidden>
-            <a class="btn btn--secondary" href="login.html" data-i18n="nav.login">Log in</a>
+            <a class="btn btn--secondary" href="login.html" data-i18n="nav.login">Sign in</a>
             <a class="btn btn--primary" href="register.html" data-i18n="nav.signUp">Sign up</a>
           </div>
           <div class="mobile-nav__actions" data-auth-user hidden>
             <span class="site-header__user-name site-header__user-name--mobile" data-auth-user-name></span>
             <a class="btn btn--secondary" href="dashboard.html" data-i18n="nav.dashboard">Dashboard</a>
+            <a class="btn btn--secondary" href="profile.html" data-i18n="nav.profile">Profile</a>
             <button class="btn btn--secondary" type="button" data-auth-logout data-i18n="nav.logout">
               Log out
             </button>
@@ -172,6 +153,16 @@
     <main id="main">
       <!-- ============================================ hero -->
       <section class="hero">
+        <!-- Cinematic ambient loop. The poster remains the deliberate static
+             fallback when media is unavailable or motion is reduced. -->
+        <div class="hero__media" data-hero-media aria-hidden="true">
+          <video class="hero__video" data-hero-video autoplay loop muted playsinline preload="metadata" poster="assets/hero-poster.png">
+            <source src="assets/hero-loop.mp4" type="video/mp4" />
+          </video>
+          <div class="hero__media-fallback" data-hero-video-fallback>
+            <span data-i18n="hero.mediaFallback">A quiet preview of what is possible.</span>
+          </div>
+        </div>
         <div class="container hero__grid">
           <div>
             <!-- Staggered three-word headline — the signature of the
@@ -180,17 +171,16 @@
                  Arabic mirrors automatically). Copy lives in i18n keys
                  hero.play / hero.win / hero.earn. -->
             <h1 class="hero__title">
-              <span class="hero__title-line" data-i18n="hero.play">Play.</span>
-              <span class="hero__title-line hero__title-line--accent" data-i18n="hero.win">Win.</span>
-              <span class="hero__title-line hero__title-line--step" data-i18n="hero.earn">Earn.</span>
+              <span class="hero__title-line" data-i18n="hero.play">PLAY.</span>
+              <span class="hero__title-line hero__title-line--accent" data-i18n="hero.win">WIN.</span>
+              <span class="hero__title-line hero__title-line--step" data-i18n="hero.earn">EARN.</span>
             </h1>
             <p class="hero__lead" data-i18n="hero.subtitle">
-              Discover games and apps, complete a simple task, and earn a reward once your proof is
-              approved.
+              Discover a clear opportunity, complete the requirement, submit proof, and receive an approved reward.
             </p>
             <div class="hero__actions">
               <a class="btn btn--primary btn--lg" href="offers.html" data-i18n="hero.primaryCta">
-                Browse rewards
+                Start exploring
               </a>
               <a class="btn btn--secondary btn--lg" href="#how-it-works" data-i18n="hero.secondaryCta">
                 How it works
@@ -220,16 +210,16 @@
                     <span class="hero-demo__line"></span>
                   </div>
                   <div class="hero-demo__content">
-                    <p class="hero-demo__label" data-i18n="hero.demo.stepOffer">Pick an offer</p>
+                    <p class="hero-demo__label" data-i18n="hero.demo.stepOffer">Choose an opportunity</p>
                     <div class="hero-demo__row">
                       <div class="hero-demo__thumb" data-hero-thumb></div>
                       <div class="hero-demo__text">
-                        <p class="hero-demo__name" data-i18n="hero.demo.offerTitle">Space Frontier</p>
+                        <p class="hero-demo__name" data-i18n="hero.demo.offerTitle">Example opportunity</p>
                         <p class="hero-demo__meta" data-i18n="hero.demo.offerRequirement">
-                          Reach level 5
+                          Complete the listed requirement
                         </p>
                       </div>
-                      <p class="hero-demo__amount" data-demo-amount>$0.50</p>
+                      <p class="hero-demo__amount" data-demo-amount>Reward</p>
                     </div>
                   </div>
                 </li>
@@ -240,7 +230,7 @@
                     <span class="hero-demo__line"></span>
                   </div>
                   <div class="hero-demo__content">
-                    <p class="hero-demo__label" data-i18n="hero.demo.stepProof">Send your proof</p>
+                    <p class="hero-demo__label" data-i18n="hero.demo.stepProof">Submit your proof</p>
                     <div class="hero-demo__row">
                       <span class="hero-demo__icon">
                         <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
@@ -251,11 +241,11 @@
                       </span>
                       <div class="hero-demo__text">
                         <p class="hero-demo__strong" data-i18n="hero.demo.proofLabel">
-                          Screenshot uploaded
+                          Proof submitted
                         </p>
                       </div>
                       <span class="badge badge--pending" data-i18n="hero.demo.proofStatus">
-                        Pending review
+                        In verification
                       </span>
                     </div>
                   </div>
@@ -266,7 +256,7 @@
                     <span class="hero-demo__dot hero-demo__dot--reward"></span>
                   </div>
                   <div class="hero-demo__content">
-                    <p class="hero-demo__label" data-i18n="hero.demo.stepReward">Get paid</p>
+                    <p class="hero-demo__label" data-i18n="hero.demo.stepReward">Reward after verification</p>
                     <div class="hero-demo__row hero-demo__row--reward">
                       <span class="hero-demo__icon hero-demo__icon--reward">
                         <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
@@ -281,7 +271,7 @@
                         </p>
                       </div>
                       <p class="hero-demo__amount hero-demo__amount--lg" data-demo-amount-credit>
-                        +$0.50
+                        Approved
                       </p>
                     </div>
                   </div>
@@ -308,24 +298,24 @@
 
           <ol class="steps">
             <li class="step">
-              <span class="step__number" aria-hidden="true">1</span>
-              <h3 class="step__title" data-i18n="how.step1Title">Choose an activity</h3>
+              <span class="step__number" aria-hidden="true">01</span>
+              <h3 class="step__title" data-i18n="how.step1Title">Choose an opportunity</h3>
               <p class="step__body" data-i18n="how.step1Body">
-                Browse games, apps and websites, and pick the reward that suits you.
+                Browse the catalog and choose what fits your time.
               </p>
             </li>
             <li class="step">
-              <span class="step__number" aria-hidden="true">2</span>
-              <h3 class="step__title" data-i18n="how.step2Title">Complete it</h3>
+              <span class="step__number" aria-hidden="true">02</span>
+              <h3 class="step__title" data-i18n="how.step2Title">Complete the requirement</h3>
               <p class="step__body" data-i18n="how.step2Body">
-                Follow the stated requirement — for example, reaching a specific level.
+                Follow the listed requirement exactly, from start to finish.
               </p>
             </li>
             <li class="step">
-              <span class="step__number" aria-hidden="true">3</span>
-              <h3 class="step__title" data-i18n="how.step3Title">Get rewarded</h3>
+              <span class="step__number" aria-hidden="true">03</span>
+              <h3 class="step__title" data-i18n="how.step3Title">Submit and get rewarded</h3>
               <p class="step__body" data-i18n="how.step3Body">
-                Submit your proof. Our verification team reviews it, and once it is approved the reward is credited to your wallet.
+                Send clear proof. Approved rewards are added to your wallet after verification.
               </p>
             </li>
           </ol>
@@ -366,14 +356,7 @@
                 Choose an offer, complete the requirement, and submit your proof.
               </p>
             </div>
-            <span class="badge badge--pending" data-offers-demo-badge hidden data-i18n="common.demoLabel">
-              Demo preview
-            </span>
           </header>
-
-          <p class="notice notice--demo" data-offers-notice hidden data-i18n="common.demoNotice">
-            Example content, shown while no live offers are published.
-          </p>
 
           <!-- Loading, empty and error states are painted here. -->
           <div data-offers-status></div>
@@ -468,9 +451,9 @@
                 </svg>
               </span>
               <div>
-                <h3 class="trust__title" data-i18n="trust.reviewTitle">A person reviews it</h3>
+                <h3 class="trust__title" data-i18n="trust.reviewTitle">Submissions are verified</h3>
                 <p class="trust__body" data-i18n="trust.reviewBody">
-                  Submissions are checked manually by an administrator, not by an automated tracker.
+                  Clear requirements and verification status keep the process transparent.
                 </p>
               </div>
             </li>
@@ -517,7 +500,7 @@
               </p>
               <div class="final-cta__actions">
                 <a class="btn btn--primary btn--lg" href="register.html" data-i18n="cta.button">
-                  Create free account
+                  Start exploring
                 </a>
               </div>
             </div>
@@ -531,22 +514,7 @@
         <div class="site-footer__grid">
           <div class="site-footer__about">
             <div class="brand">
-              <svg class="brand__mark" viewBox="0 0 157 40" fill="none" role="img" aria-label="The App">
-              <!-- Custom monoline wordmark: drawn letterforms on one
-                   grid — "The" muted, "App" bright, accent full stop.
-                   Colours/size live in the .brand__mark CSS rules. -->
-              <g class="brand__mark-the" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M5 9H25M15 9V31" />
-                <path d="M31 9V31M31 19C31 15.8 33.2 14.5 36 14.5C38.8 14.5 41 15.8 41 19V31" />
-                <path d="M51 23.25H65M65 23.25A7 7 0 1 0 62.5 28.6" />
-              </g>
-              <g class="brand__mark-app" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M74 31L87 9L100 31M80 24H94" />
-                <path d="M105 14.5V37M105 14.5C113.5 14.5 121 16.8 121 22.9C121 29 113.5 31.3 105 31.3" />
-                <path d="M127 14.5V37M127 14.5C135.5 14.5 143 16.8 143 22.9C143 29 135.5 31.3 127 31.3" />
-              </g>
-              <circle class="brand__mark-dot" cx="151" cy="27.5" r="3.2" />
-            </svg>
+              <span class="brand__lockup" aria-label="The App"><span class="brand__lockup-kicker">the</span><span class="brand__lockup-name">APP</span></span>
             </div>
             <p class="site-footer__tagline" data-i18n="footer.description">
               Complete simple activities across games, apps and websites — and receive verified rewards, right to your wallet.
@@ -588,15 +556,15 @@
               <li>
                 <a class="site-footer__link" href="terms.html" data-i18n="footer.terms">Terms of service</a>
               </li>
+              <li>
+                <a class="site-footer__link" href="admin/login" data-i18n="footer.adminAccess">Admin Access</a>
+              </li>
             </ul>
           </div>
         </div>
 
         <div class="site-footer__bottom">
-          <p class="site-footer__copyright">
-            © <span data-current-year>2026</span> The App.
-            <span data-i18n="footer.rights">All rights reserved.</span>
-          </p>
+          <p class="site-footer__copyright">© The App</p>
           <div class="lang-switch" data-lang-switch aria-label="Change language"></div>
         </div>
       </div>
@@ -605,8 +573,8 @@
     <!--
       Offer card markup lives here rather than in a JavaScript string, so
       the card stays editable as HTML. It is cloned per offer and filled
-      through the data-card-* hooks — identical whether the data is the
-      demo set or a Firestore document.
+      through the data-card-* hooks — identical for every Firestore
+      document.
     -->
     <template id="offer-card-template">
       <article class="card card--interactive offer-card">

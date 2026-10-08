@@ -15,11 +15,11 @@
 // The "offers" category is served by offers.html (tabbed browser).
 // =====================================================================
 
-import { waitForAuthState } from "../firebase.js";
-import { t, onLocaleChange } from "../i18n.js";
-import { qs, renderState, el } from "../ui.js";
-import { renderOfferCard, categoryLabelPlural } from "../offers.js";
-import { fetchActiveOffers } from "../services/offers-service.js";
+import { waitForAuthState } from "./firebase.js";
+import { t, onLocaleChange } from "./i18n.js";
+import { qs, renderState, el } from "./ui.js";
+import { renderOfferCard, categoryLabelPlural } from "./offers.js";
+import { fetchActiveOffers } from "./offers-service.js";
 
 let authed = false;
 let category = null; // "game" | "app" | "website"

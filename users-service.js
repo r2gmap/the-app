@@ -5,15 +5,16 @@
 //
 //   users/{uid}: {
 //     uid, email, displayName, photoURL,
-//     role: "user" | "admin",        // "admin" is granted ONLY via the
-//                                    // Firebase console / Admin SDK —
-//                                    // never writable from the browser.
+//     role: "user" | "admin",        // "admin" is granted ONLY by the
+//                                    // backend Secret Manager flow or
+//                                    // trusted Firebase Admin SDK — never
+//                                    // writable from the browser.
 //     preferredLanguage, createdAt, updatedAt
 //   }
 // =====================================================================
 
-import { getFirebase } from "../firebase.js";
-import { getLocale } from "../i18n.js";
+import { getFirebase } from "./firebase.js";
+import { getLocale } from "./i18n.js";
 
 // ---------------------------------------------------------------------
 // Profile lifecycle (called from the auth flows)

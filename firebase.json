@@ -8,13 +8,35 @@
   "storage": {
     "rules": "storage.rules"
   },
+  "functions": {
+    "source": "functions",
+    "runtime": "nodejs20"
+  },
   "hosting": {
     "public": ".",
     "ignore": [
       "firebase.json",
       "**/.*",
       "**/node_modules/**",
+      "functions/**",
       "firebase script code.txt"
+    ],
+    "rewrites": [
+      {
+        "source": "/api/admin/login",
+        "function": {
+          "functionId": "adminLogin",
+          "region": "africa-south1"
+        }
+      },
+      {
+        "source": "/admin/login",
+        "destination": "/admin/login.html"
+      },
+      {
+        "source": "/admin",
+        "destination": "/admin/login.html"
+      }
     ]
   }
 }

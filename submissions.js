@@ -6,11 +6,11 @@
 // submission-card component (same card as the dashboard).
 // =====================================================================
 
-import { requireAuth } from "../auth.js";
-import { t, onLocaleChange } from "../i18n.js";
-import { qs, renderState, el } from "../ui.js";
-import { fetchUserSubmissions } from "../services/submissions-service.js";
-import { renderSubmissionCard } from "../components/submission-card.js";
+import { requireAuth } from "./auth.js";
+import { t, onLocaleChange } from "./i18n.js";
+import { qs, renderState, el } from "./ui.js";
+import { fetchUserSubmissions } from "./submissions-service.js";
+import { renderSubmissionCard } from "./submission-card.js";
 
 // ---------------------------------------------------------------------
 // Rendering

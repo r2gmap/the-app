@@ -7,12 +7,12 @@
 // red, adjustments neutral.
 // =====================================================================
 
-import { requireAuth } from "../auth.js";
-import { t, onLocaleChange } from "../i18n.js";
-import { qs, renderState } from "../ui.js";
-import { formatMoney } from "../format.js";
-import { fetchUserTransactions, computeUserBalance } from "../services/wallet-service.js";
-import { renderTransactionRow } from "../components/transaction-row.js";
+import { requireAuth } from "./auth.js";
+import { t, onLocaleChange } from "./i18n.js";
+import { qs, renderState } from "./ui.js";
+import { formatMoney } from "./format.js";
+import { fetchUserTransactions, computeUserBalance } from "./wallet-service.js";
+import { renderTransactionRow } from "./transaction-row.js";
 
 // ---------------------------------------------------------------------
 // Page rendering

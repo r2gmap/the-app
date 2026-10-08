@@ -7,17 +7,16 @@ rules_version = '2';
 // file decides what a signed-in identity may read or write.
 //
 // Security model, in short:
-//   - Unauthenticated requests can only read ACTIVE offers and resolve
-//     admin username aliases (adminUsernames/{username}).
+//   - Unauthenticated requests can only read ACTIVE offers.
 //   - A signed-in user may read/write their own profile (limited
 //     fields), create submissions + withdrawal requests, and read/
 //     mark-read their own notifications and transactions.
 //   - Users can NEVER write transactions or notifications, and can
 //     never change a submission status — money moves only through an
 //     admin (role == "admin" on users/{uid}).
-//   - The admin role is granted ONLY via the Firebase console or the
-//     Admin SDK. There is no client path to self-promotion, at create
-//     time or afterwards.
+//   - The admin role is granted ONLY by the backend admin-login function
+//     using Secret Manager credentials, or by a trusted Admin SDK operator.
+//     There is no client path to self-promotion, at create time or afterwards.
 //
 // Collections:
 //   users/{uid}                 user profiles (role, wallet-facing data)
@@ -27,8 +26,7 @@ rules_version = '2';
 //   transactions/{id}           append-only wallet ledger (admin writes)
 //   withdrawals/{id}            payout requests
 //   notifications/{id}          in-app user notifications
-//   config/telegram             Telegram bot config (admin only)
-//   adminUsernames/{username}   optional username -> email admin aliases
+//   supportTickets/{id}         private member support queue
 // =====================================================================
 
 service cloud.firestore {
@@ -45,8 +43,9 @@ service cloud.firestore {
     }
 
     // The admin check reads the caller's own profile. "admin" can only
-    // be set through the console/Admin SDK — the users rules below make
-    // the client unable to ever write `role`.
+    // be set by the backend Secret Manager login flow or a trusted
+    // Admin SDK operator — the users rules below make the client unable
+    // to ever write `role`.
     function isAdmin() {
       return isSignedIn()
         && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
@@ -133,6 +132,9 @@ service cloud.firestore {
         && request.resource.data.featured is bool
         && request.resource.data.displayOrder is number
         && request.resource.data.requirements is list
+        && (!('downloadUrl' in request.resource.data) || request.resource.data.downloadUrl == null || request.resource.data.downloadUrl is string)
+        && (!('downloadType' in request.resource.data) || request.resource.data.downloadType == null || request.resource.data.downloadType in ['apk', 'zip', 'pdf'])
+        && (!('downloadSource' in request.resource.data) || request.resource.data.downloadSource == null || request.resource.data.downloadSource in ['upload', 'external'])
         && isTimestamp(request.resource.data.createdAt);
 
       allow update: if isAdmin()
@@ -148,6 +150,9 @@ service cloud.firestore {
         && request.resource.data.featured is bool
         && request.resource.data.displayOrder is number
         && request.resource.data.requirements is list
+        && (!('downloadUrl' in request.resource.data) || request.resource.data.downloadUrl == null || request.resource.data.downloadUrl is string)
+        && (!('downloadType' in request.resource.data) || request.resource.data.downloadType == null || request.resource.data.downloadType in ['apk', 'zip', 'pdf'])
+        && (!('downloadSource' in request.resource.data) || request.resource.data.downloadSource == null || request.resource.data.downloadSource in ['upload', 'external'])
         && isTimestamp(request.resource.data.updatedAt);
 
       allow delete: if isAdmin();
@@ -164,6 +169,11 @@ service cloud.firestore {
       // with their real authenticated identity — no spoofing another
       // user or pre-approving themselves.
       allow create: if isOwner(request.resource.data.userId)
+        && request.resource.data.keys().hasOnly([
+             'userId', 'userName', 'email', 'offerId', 'offerTitle',
+             'taskTitle', 'message', 'walletNumber', 'proofImages',
+             'rewardSnapshot', 'status', 'createdAt', 'updatedAt'
+           ])
         && request.resource.data.keys().hasAll([
              'userId', 'userName', 'email', 'offerId', 'offerTitle',
              'taskTitle', 'message', 'walletNumber', 'proofImages',
@@ -191,11 +201,56 @@ service cloud.firestore {
 
       // Admin review: flip status to approved/rejected with a reason.
       allow update: if isAdmin()
+        && resource.data.status == 'pending'
         && request.resource.data.status in ['approved', 'rejected']
+        && request.resource.data.reviewedBy == request.auth.uid
+        && isTimestamp(request.resource.data.reviewedAt)
+        && isTimestamp(request.resource.data.updatedAt)
+        && (request.resource.data.status == 'approved'
+            || ('rejectionReason' in request.resource.data
+                && request.resource.data.rejectionReason is string
+                && request.resource.data.rejectionReason.size() > 0))
         && request.resource.data.diff(resource.data).affectedKeys()
              .hasOnly(['status', 'rejectionReason', 'reviewedBy', 'reviewedAt', 'updatedAt']);
 
       allow delete: if false;
+    }
+
+    // ================================================================
+    // supportTickets — private member support queue
+    // ================================================================
+    // Members may create a ticket containing only their own identity.
+    // Queue reads are admin-only; there is no public contact collection
+    // that exposes messages, email addresses, or attachments.
+    match /supportTickets/{ticketId} {
+      allow read: if isAdmin();
+
+      allow create: if isSignedIn()
+        && request.resource.data.keys().hasOnly([
+             'userId', 'userName', 'email', 'category', 'message',
+             'attachmentUrls', 'status', 'createdAt'
+           ])
+        && request.resource.data.keys().hasAll([
+             'userId', 'userName', 'email', 'category', 'message',
+             'attachmentUrls', 'status', 'createdAt'
+           ])
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.userName is string
+        && request.resource.data.email == request.auth.token.email
+        && request.resource.data.category in ['reward', 'submission', 'withdrawal', 'account', 'other', 'verification', 'payout', 'technical']
+        && request.resource.data.message is string
+        && request.resource.data.message.size() > 0
+        && request.resource.data.message.size() <= 4000
+        && request.resource.data.attachmentUrls is list
+        && request.resource.data.attachmentUrls.size() <= 1
+        && (request.resource.data.attachmentUrls.size() == 0
+            || request.resource.data.attachmentUrls[0] is string)
+        && request.resource.data.status == 'open'
+        && isTimestamp(request.resource.data.createdAt);
+
+      // Ticket status and content are immutable from the browser. A
+      // backend/admin workflow may add a reply or close it later.
+      allow update, delete: if false;
     }
 
     // ================================================================
@@ -232,6 +287,9 @@ service cloud.firestore {
       // The owner creates their own request, always pending, positive
       // amount, with their real identity.
       allow create: if isOwner(request.resource.data.userId)
+        && request.resource.data.keys().hasOnly([
+             'userId', 'userName', 'email', 'amount', 'walletNumber',
+             'status', 'createdAt', 'updatedAt'])
         && request.resource.data.keys().hasAll(
              ['userId', 'userName', 'email', 'amount', 'walletNumber',
               'status', 'createdAt', 'updatedAt'])
@@ -245,7 +303,15 @@ service cloud.firestore {
 
       // Only admins move a request out of pending.
       allow update: if isAdmin()
+        && resource.data.status == 'pending'
         && request.resource.data.status in ['approved', 'rejected']
+        && request.resource.data.reviewedBy == request.auth.uid
+        && isTimestamp(request.resource.data.reviewedAt)
+        && isTimestamp(request.resource.data.updatedAt)
+        && (request.resource.data.status == 'approved'
+            || ('rejectionReason' in request.resource.data
+                && request.resource.data.rejectionReason is string
+                && request.resource.data.rejectionReason.size() > 0))
         && request.resource.data.diff(resource.data).affectedKeys()
              .hasOnly(['status', 'rejectionReason', 'reviewedBy', 'reviewedAt', 'updatedAt']);
 
@@ -273,26 +339,6 @@ service cloud.firestore {
         && request.resource.data.read == true;
 
       allow delete: if false;
-    }
-
-    // ================================================================
-    // config — service settings (Telegram)
-    // ================================================================
-    match /config/{docId} {
-      // Admin-only: contains the Telegram bot token + chat id.
-      allow read, write: if isAdmin();
-    }
-
-    // ================================================================
-    // adminUsernames — optional username -> email aliases for the
-    // admin login page ("Email or username" field)
-    // ================================================================
-    match /adminUsernames/{username} {
-      // Unauthenticated GET so the login page can resolve a username
-      // before signing in. Enumeration reveals only the email bound to
-      // an already-known username; documents are created via console.
-      allow get: if true;
-      allow list, create, update, delete: if false;
     }
 
     // ------------------------------------------------ catch-all

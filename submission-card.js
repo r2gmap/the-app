@@ -7,9 +7,9 @@
 // reasons and proof thumbnails appear only when relevant.
 // =====================================================================
 
-import { t, getLocale } from "../i18n.js";
-import { formatMoney, formatDateTime } from "../format.js";
-import { qs, el } from "../ui.js";
+import { t, getLocale } from "./i18n.js";
+import { formatMoney, formatDateTime } from "./format.js";
+import { qs, el } from "./ui.js";
 
 // ---------------------------------------------------------------------
 // Status badge
@@ -41,15 +41,27 @@ function renderSubmissionCard(container, submission) {
   const card = template.content.firstElementChild.cloneNode(true);
   const locale = getLocale();
 
+  // Template content lives in a DocumentFragment, so the global
+  // translation pass cannot see it before cloning. Apply its small set of
+  // interface labels here so the same card is correct in English and Arabic.
+  card.querySelectorAll("[data-i18n]").forEach((node) => {
+    node.textContent = t(node.getAttribute("data-i18n"));
+  });
+
   // --- status badge
   const badge = qs("[data-sub-status]", card);
   const meta = statusMeta(submission.status);
   badge.textContent = t(meta.key);
   badge.classList.add(meta.class);
 
-  // --- core details
+  // --- identity and submission details
   qs("[data-sub-offer]", card).textContent = submission.offerTitle || "—";
   qs("[data-sub-task]", card).textContent = submission.taskTitle || "—";
+  qs("[data-sub-user]", card).textContent = submission.userName || submission.email || "—";
+  qs("[data-sub-user-id]", card).textContent = submission.userId || "—";
+  qs("[data-sub-email]", card).textContent = submission.email || "—";
+  qs("[data-sub-message]", card).textContent = submission.message || "—";
+  qs("[data-sub-wallet]", card).textContent = submission.walletNumber || "—";
   qs("[data-sub-reward]", card).textContent = formatMoney(submission.rewardSnapshot, locale);
   qs("[data-sub-date]", card).textContent = formatDateTime(submission.createdAt, locale);
 
@@ -62,7 +74,10 @@ function renderSubmissionCard(container, submission) {
 
   // --- proof thumbnails (open full-size in a new tab)
   const proofWrap = qs("[data-sub-proof]", card);
-  for (const url of submission.proofImages || []) {
+  const proofImages = submission.proofImages || [];
+  const proofBlock = qs("[data-sub-proof-block]", card);
+  if (proofBlock) proofBlock.hidden = proofImages.length === 0;
+  for (const url of proofImages) {
     const link = el("a", {
       class: "proof-thumb",
       href: url,

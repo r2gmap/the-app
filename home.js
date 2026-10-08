@@ -7,16 +7,17 @@
 //      an empty marketing section)
 //   2. Category groups — Games / Apps / Websites / Offers, each fed
 //      by its own Firestore category and linking to its own page
-//   - falls back to the demo catalogue while nothing is published
+//   - renders a clear empty state when nothing is published
 //   - re-renders when the visitor switches language
-// The hero "demo" card art is generated locally (no network).
+// The hero preview is clearly labelled decoration; catalogue cards always
+// come from Firestore.
 // =====================================================================
 
-import { waitForAuthState } from "../firebase.js";
-import { t, onLocaleChange } from "../i18n.js";
-import { qs, qsa, renderState } from "../ui.js";
-import { renderOfferCard, demoOffers, generatedCoverStyle, CATEGORIES } from "../offers.js";
-import { fetchActiveOffers, fetchFeaturedOffers } from "../services/offers-service.js";
+import { waitForAuthState } from "./firebase.js";
+import { t, onLocaleChange } from "./i18n.js";
+import { qs, qsa, renderState } from "./ui.js";
+import { renderOfferCard, generatedCoverStyle, CATEGORIES } from "./offers.js";
+import { fetchActiveOffers, fetchFeaturedOffers } from "./offers-service.js";
 
 // ---------------------------------------------------------------------
 // Hero demo thumbnail (pure decoration, generated cover art)
@@ -26,6 +27,31 @@ function paintHeroThumb() {
   const thumb = qs("[data-hero-thumb]");
   if (!thumb) return;
   thumb.setAttribute("style", generatedCoverStyle("game"));
+}
+
+// The poster is a first-class fallback: blocked media, a missing asset, and
+// reduced-motion preferences all resolve to the same calm static treatment.
+function initHeroVideo() {
+  const video = qs("[data-hero-video]");
+  const fallback = qs("[data-hero-video-fallback]");
+  if (!video || !fallback) return;
+
+  const showFallback = (show) => {
+    fallback.hidden = !show;
+    video.classList.toggle("hero__video--unavailable", show);
+  };
+  const reduced = Boolean(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  if (reduced) {
+    video.pause();
+    video.hidden = true;
+    showFallback(true);
+    return;
+  }
+
+  video.addEventListener("loadeddata", () => showFallback(false), { once: true });
+  video.addEventListener("error", () => showFallback(true), { once: true });
+  showFallback(video.readyState < 2);
+  video.play().catch(() => showFallback(true));
 }
 
 // ---------------------------------------------------------------------
@@ -74,8 +100,6 @@ async function loadFeaturedSection() {
 async function loadOffersSection() {
   const statusArea = qs("[data-offers-status]");
   const groupsWrap = qs("[data-offers-groups]");
-  const demoBadge = qs("[data-offers-demo-badge]");
-  const notice = qs("[data-offers-notice]");
   if (!statusArea || !groupsWrap) return;
 
   renderState(statusArea, "loading", { title: t("offers.loading") });
@@ -86,8 +110,8 @@ async function loadOffersSection() {
     offers = await fetchActiveOffers();
   } catch (error) {
     if (error?.message === "firebase-unavailable") {
-      // SDK unreachable (offline / blocked CDN): fall back to the demo
-      // catalogue, clearly badged, instead of an error wall.
+      // SDK unreachable (offline / blocked CDN): render the same honest
+      // empty state as an unpublished catalogue, never invented offers.
       offers = [];
     } else {
       renderState(statusArea, "error", {
@@ -100,13 +124,8 @@ async function loadOffersSection() {
     }
   }
 
-  // Nothing published yet -> demo catalogue with a clear "demo" badge.
-  const usingDemo = offers.length === 0;
-  if (usingDemo) offers = demoOffers();
-  if (demoBadge) demoBadge.hidden = !usingDemo;
-  if (notice) notice.hidden = !usingDemo;
-
-  // Split by category into the page's groups (all four categories).
+  // Split published Firestore content by category into the page's groups.
+  // Nothing is fabricated when the catalogue is empty.
   const byCategory = Object.fromEntries(CATEGORIES.map((category) => [category, []]));
   for (const offer of offers) {
     if (byCategory[offer.category]) byCategory[offer.category].push(offer);
@@ -118,7 +137,7 @@ async function loadOffersSection() {
     grid.replaceChildren();
     const group = grid.closest(".offer-group");
     for (const offer of byCategory[category] || []) {
-      renderOfferCard(grid, offer, { authed, linkToDetails: !usingDemo });
+      renderOfferCard(grid, offer, { authed, linkToDetails: true });
     }
     const count = (byCategory[category] || []).length;
     // Hide a whole group when its category is empty (e.g. no websites).
@@ -142,6 +161,7 @@ async function loadOffersSection() {
 
 async function init() {
   paintHeroThumb();
+  initHeroVideo();
 
   // Wait for the real session so card CTAs point to the right place
   // (offer details for signed-in visitors, register for guests).
